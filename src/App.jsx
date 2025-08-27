@@ -122,7 +122,7 @@ export function Menu() {
   );
 }
 
-export function Pizza({ name}) {
+export function Pizza({ name }, { ingredients }) {
   return (
     <div className=" list-none">
       <img
@@ -134,7 +134,7 @@ export function Pizza({ name}) {
       <div className=" p-2">
         <p className=" text-2xl my-4">{name}</p>
         <p className="leading-[1.5] mb-4">
-          Juicy beef with fresh lettuce, tomato, cheese, and special sause
+          {ingredients}
         </p>
 
         <span className="flex items-center justify-between">
