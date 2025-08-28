@@ -67,35 +67,35 @@ export function Menu() {
           <FaSearch className="absolute top-1/2 transform -translate-y-1/2 ml-4" />
         </div>
 
-        <div className=" my-6 text-center space-x-15 bg-[#f6f4f9] p-1.5 rounded-[12px]">
+        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] p-1.5 rounded-[12px]">
           <button
             onClick={() => setItems("all")}
             className={`${
               items === "all" && "bg-pc"
-            } active:bg-[#ffffff]  rounded-[12px] py-1 px-2`}
+            } active:bg-[#ffffff] duration-300  rounded-[12px] py-1 px-2`}
           >
-            All items
+            Main dishes
           </button>
           <button
             onClick={() => setItems("main")}
             className={`${
               items === "main" && "bg-pc"
-            } active:bg-[#ffffff]  rounded-[12px] py-1 px-2`}
+            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2`}
           >
-            Mains
+            Proteins
           </button>
 
           <button
             onClick={() => setItems("salad")}
             className={`${
               items === "salad" && "bg-pc"
-            } active:bg-[#ffffff]  rounded-[12px] py-1 px-2`}
+            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2`}
           >
-            Salad
+            Extras/drinks
           </button>
         </div>
       </div>
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6  md:grid-cols-3">
         {items === "all" &&
           pizzaData.map((pizza) => (
             <Pizza
@@ -109,6 +109,18 @@ export function Menu() {
         {items === "main" &&
           pizzaData
             .filter((mainPizza) => mainPizza.type === "main")
+            .map((pizza) => (
+              <Pizza
+                key={pizza.name}
+                name={pizza.name}
+                ingredients={pizza.ingredients}
+                price={pizza.price}
+                photoName={pizza.photoName}
+              />
+            ))}
+        {items === "salad" &&
+          pizzaData
+            .filter((mainPizza) => mainPizza.type === "salad")
             .map((pizza) => (
               <Pizza
                 key={pizza.name}

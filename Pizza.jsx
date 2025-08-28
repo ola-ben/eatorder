@@ -2,11 +2,11 @@ import { IoIosAdd } from "react-icons/io";
 
 export function Pizza({ name, ingredients, price, photoName }) {
   return (
-    <div className=" list-none">
+    <div className=" list-none shadow-sm rounded-b-[10px]">
       <img
         src={photoName}
         alt={name}
-        className=" w-full h-62 rounded-t-[15px]
+        className=" w-full h-62 rounded-t-[15px] 
           "
       />
       <div className=" p-2">
