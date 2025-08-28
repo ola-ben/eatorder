@@ -6,7 +6,7 @@ export function Pizza({ name, ingredients, price, photoName }) {
       <img
         src={photoName}
         alt={name}
-        className=" w-full h-62 rounded-t-[15px] 
+        className=" w-full h-64 rounded-t-[15px] 
           "
       />
       <div className=" p-2">
@@ -14,7 +14,7 @@ export function Pizza({ name, ingredients, price, photoName }) {
         <p className="leading-[1.5] mb-4">{ingredients}</p>
 
         <span className="flex items-center justify-between mb-5">
-          <p className="text-ph text-xl">${price}</p>
+          <p className="text-ph text-xl">#{price}</p>
           <button className="bg-ph p-3 rounded-xl hover:bg-orange-700 duration-300">
             <IoIosAdd className=" text-white text-xl " />
           </button>

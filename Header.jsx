@@ -25,7 +25,7 @@ export function Header() {
           <FaStar className=" text-white" />
           4.9 rating
         </p>
-        <button className="text-white bg-[#2ec2b3] rounded-[13px] flex items-center gap-2 px-12 py-0.5 hover:bg-[#2ecb] duration-300 ease-linear mb-6">
+        <button className="text-white bg-[#069494] rounded-[13px] flex items-center gap-2 px-12 py-0.5 hover:bg-[#047b68bb] duration-300 ease-linear mb-6">
           <IoCall className=" text-white" />
           call to order: (555) 123-456
         </button>

@@ -2,59 +2,120 @@ import { useState } from "react";
 import { Pizza } from "./pizza";
 import { FaSearch } from "react-icons/fa";
 
-const pizzaData = [
+const dishesData = [
   {
-    name: "Classic Burger",
+    name: "Jollof Rice",
     ingredients:
-      "Juicy beef with fresh lettuce, tomato, cheese, and special sause",
-    price: 12.99,
-    photoName: "/pizzaimages/Classicburger.jpg",
-    type: "main",
+      "Made with long-grain parboiled rice, tomatoes, tomato paste, onions, bell peppers, Scotch bonnet peppers, garlic, and ginger.",
+    price: 1500,
+    photoName: "/pizzaimages/jollofricee.jpg",
+    type: "maindishes",
   },
 
   {
-    name: "Ceaser Salad",
+    name: "Amala & Beans Soup",
     ingredients:
-      "Crisp romaine lettuce with grilled chicken, crouton, and parmesan cheese",
-    price: 9.99,
-    photoName: "/pizzaimages/Classicburger.jpg",
-    type: "salad",
+      "Made from yam flour (elubo) mixed with hot water into a smooth, stretchy dough. Beans soup, often prepared as ewa alagbado or gbegiri, includes peeled cooked beans, palm oil,  seasoning cubes with meat",
+    price: 1700,
+    photoName: "/pizzaimages/amalaa.jpg",
+    type: "maindishes",
+  },
+  {
+    name: "Pounded Yam",
+    ingredients:
+      "Made by boiling yam pieces until soft and then pounding or blending them into a smooth, stretchy dough using only yam and water.",
+    price: 900,
+    photoName: "/pizzaimages/poundedyammm.jpg",
+    type: "maindishes",
+  },
+  {
+    name: "Eba & Efo",
+    ingredients:
+      "made from garri (cassava flakes) mixed with hot water, while Efo (vegetable soup) is prepared with spinach or fluted pumpkin leaves, palm oil, tomatoes, peppers, onions, crayfish, locust beans, and assorted meat or fish.",
+    price: 15.99,
+    photoName: "/pizzaimages/ebaa.jpg",
+    type: "maindishes",
+  },
+  {
+    name: "Fried rice and Chicken",
+    ingredients:
+      "Fried rice with chicken  made with parboiled rice, mixed vegetables (carrots, peas, sweet corn, green beans), onions, garlic, soy sauce, curry powder, and seasoning, served with seasoned and fried or grilled chicken.",
+    price: 2000,
+    photoName: "/pizzaimages/friedricewithchicken.jpg",
+    type: "maindishes",
+  },
+  {
+    name: "Yam and Egg",
+    ingredients:
+      "Made with boiled yam slices served alongside a fried egg sauce prepared with eggs, tomatoes, onions, peppers, and seasoning.",
+    price: 1700,
+    photoName: "/pizzaimages/yamegg.jpg",
+    type: "proteins",
+  },
+  {
+    name: "Fish",
+    ingredients:
+      "Made with ingredients like fresh or smoked fish, onions, peppers, tomatoes, garlic, seasoning cubes, and palm or vegetable oil, depending on the cooking style.",
+    price: 2500,
+    photoName: "/pizzaimages/fish.jpg",
+    type: "proteins",
+  },
+  {
+    name: "Moi Moi",
+    ingredients:
+      "made from blended peeled beans, onions, peppers, oil (usually palm or vegetable), seasoning cubes, and optional additions like eggs, fish, or ground crayfish.",
+    price: 500,
+    photoName: "/pizzaimages/moimoii.jpg",
+    type: "proteins",
+  },
+  {
+    name: "Bush Meat",
+    ingredients:
+      "Prepared with ingredients like the meat itself (such as antelope or grasscutter), onions, peppers, garlic, ginger, seasoning cubes, and palm oil or vegetable oil, often cooked in a spicy sauce or soup.",
+    price: 500,
+    photoName: "/pizzaimages/bushmeat.jpg",
+    type: "proteins",
+  },
+  {
+    name: "Fanta",
+    ingredients: "Carbonated drinks",
+    price: 500,
+    photoName: "/pizzaimages/fanta.jpeg",
+    type: "extrasanddrinks",
   },
   {
     name: "Margerita Pizza",
     ingredients:
       "Fresh mozzarella, tomato sause, and basil on our hand-tossed dough",
-    price: 14.99,
+    price: 4500,
     photoName: "/pizzaimages/Margheritapizza.jpg",
-    type: "main",
+    type: "extrasanddrinks",
   },
   {
-    name: "Backon Cheeseburger",
-    ingredients:
-      "Double beef patty with cripsy bcon, cheedar cheese, and barbecue sause",
-    price: 15.99,
-    photoName: "/pizzaimages/Baconcheeseburger.jpg",
-    type: "main",
+    name: "Shamawa",
+    ingredients: "Carbonated drinks",
+    price: 1000,
+    photoName: "/pizzaimages/shawama.jpg",
+    type: "extrasanddrinks",
   },
   {
-    name: "Mediterranean Salad",
-    ingredients:
-      "Mixed greens with olives, feta cheese, cucumbers, and balsamic dressing",
-    price: 11.99,
-    photoName: "/pizzaimages/Mediterranean Salad.jpg",
-    type: "salad",
+    name: "Coke",
+    ingredients: "Carbonated drinks",
+    price: 1000,
+    photoName: "/pizzaimages/coke.jpg",
+    type: "extrasanddrinks",
   },
   {
-    name: "Pepproni Pizza",
-    ingredients: "Classic pepperoni with mozzarella cheeese and tomato sause",
-    price: 16.99,
-    photoName: "/pizzaimages/Pepperonipizza.jpg",
-    type: "main",
+    name: "Sprite",
+    ingredients: "Carbonated drinks",
+    price: 1000,
+    photoName: "/pizzaimages/sprite.jpeg",
+    type: "extrasanddrinks",
   },
 ];
 
 export function Menu() {
-  const [items, setItems] = useState("all");
+  const [items, setItems] = useState("maindishes");
   return (
     <section className=" mt-5 p-2">
       <div className="">
@@ -69,26 +130,26 @@ export function Menu() {
 
         <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] p-1.5 rounded-[12px]">
           <button
-            onClick={() => setItems("all")}
+            onClick={() => setItems("maindishes")}
             className={`${
-              items === "all" && "bg-pc"
+              items === "maindishes" && "bg-pc"
             } active:bg-[#ffffff] duration-300  rounded-[12px] py-1 px-2`}
           >
             Main dishes
           </button>
           <button
-            onClick={() => setItems("main")}
+            onClick={() => setItems("proteins")}
             className={`${
-              items === "main" && "bg-pc"
+              items === "proteins" && "bg-pc"
             } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2`}
           >
             Proteins
           </button>
 
           <button
-            onClick={() => setItems("salad")}
+            onClick={() => setItems("extrasanddrinks")}
             className={`${
-              items === "salad" && "bg-pc"
+              items === "extrasanddrinks" && "bg-pc"
             } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2`}
           >
             Extras/drinks
@@ -96,8 +157,8 @@ export function Menu() {
         </div>
       </div>
       <div className="grid gap-6  md:grid-cols-3">
-        {items === "all" &&
-          pizzaData.map((pizza) => (
+        {items === "maindishes" &&
+          dishesData.map((pizza) => (
             <Pizza
               key={pizza.name}
               name={pizza.name}
@@ -106,9 +167,9 @@ export function Menu() {
               photoName={pizza.photoName}
             />
           ))}
-        {items === "main" &&
-          pizzaData
-            .filter((mainPizza) => mainPizza.type === "main")
+        {items === "proteins" &&
+          dishesData
+            .filter((mainPizza) => mainPizza.type === "proteins")
             .map((pizza) => (
               <Pizza
                 key={pizza.name}
@@ -118,9 +179,9 @@ export function Menu() {
                 photoName={pizza.photoName}
               />
             ))}
-        {items === "salad" &&
-          pizzaData
-            .filter((mainPizza) => mainPizza.type === "salad")
+        {items === "extrasanddrinks" &&
+          dishesData
+            .filter((mainPizza) => mainPizza.type === "extrasanddrinks")
             .map((pizza) => (
               <Pizza
                 key={pizza.name}
