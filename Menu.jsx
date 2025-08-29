@@ -7,7 +7,7 @@ const dishesData = [
     name: "Jollof Rice",
     ingredients:
       "Made with long-grain parboiled rice, tomatoes, tomato paste, onions, bell peppers, Scotch bonnet peppers, garlic, and ginger.",
-    price: 1500,
+    price: 1500.0,
     photoName: "/pizzaimages/jollofricee.jpg",
     type: "maindishes",
   },
@@ -16,7 +16,7 @@ const dishesData = [
     name: "Amala & Beans Soup",
     ingredients:
       "Made from yam flour (elubo) mixed with hot water into a smooth, stretchy dough. Beans soup, often prepared as ewa alagbado or gbegiri, includes peeled cooked beans, palm oil,  seasoning cubes with meat",
-    price: 1700,
+    price: 1700.0,
     photoName: "/pizzaimages/amalaa.jpg",
     type: "maindishes",
   },
@@ -24,7 +24,7 @@ const dishesData = [
     name: "Pounded Yam",
     ingredients:
       "Made by boiling yam pieces until soft and then pounding or blending them into a smooth, stretchy dough using only yam and water.",
-    price: 900,
+    price: 900.0,
     photoName: "/pizzaimages/poundedyammm.jpg",
     type: "maindishes",
   },
@@ -32,7 +32,7 @@ const dishesData = [
     name: "Eba & Efo",
     ingredients:
       "made from garri (cassava flakes) mixed with hot water, while Efo (vegetable soup) is prepared with spinach or fluted pumpkin leaves, palm oil, tomatoes, peppers, onions, crayfish, locust beans, and assorted meat or fish.",
-    price: 15.99,
+    price: 1500.0,
     photoName: "/pizzaimages/ebaa.jpg",
     type: "maindishes",
   },
@@ -40,7 +40,7 @@ const dishesData = [
     name: "Fried rice and Chicken",
     ingredients:
       "Fried rice with chicken  made with parboiled rice, mixed vegetables (carrots, peas, sweet corn, green beans), onions, garlic, soy sauce, curry powder, and seasoning, served with seasoned and fried or grilled chicken.",
-    price: 2000,
+    price: 2000.0,
     photoName: "/pizzaimages/friedricewithchicken.jpg",
     type: "maindishes",
   },
@@ -48,7 +48,7 @@ const dishesData = [
     name: "Yam and Egg",
     ingredients:
       "Made with boiled yam slices served alongside a fried egg sauce prepared with eggs, tomatoes, onions, peppers, and seasoning.",
-    price: 1700,
+    price: 1700.0,
     photoName: "/pizzaimages/yamegg.jpg",
     type: "proteins",
   },
@@ -56,7 +56,7 @@ const dishesData = [
     name: "Fish",
     ingredients:
       "Made with ingredients like fresh or smoked fish, onions, peppers, tomatoes, garlic, seasoning cubes, and palm or vegetable oil, depending on the cooking style.",
-    price: 2500,
+    price: 2500.0,
     photoName: "/pizzaimages/fish.jpg",
     type: "proteins",
   },
@@ -64,7 +64,7 @@ const dishesData = [
     name: "Moi Moi",
     ingredients:
       "made from blended peeled beans, onions, peppers, oil (usually palm or vegetable), seasoning cubes, and optional additions like eggs, fish, or ground crayfish.",
-    price: 500,
+    price: 500.0,
     photoName: "/pizzaimages/moimoii.jpg",
     type: "proteins",
   },
@@ -72,14 +72,14 @@ const dishesData = [
     name: "Bush Meat",
     ingredients:
       "Prepared with ingredients like the meat itself (such as antelope or grasscutter), onions, peppers, garlic, ginger, seasoning cubes, and palm oil or vegetable oil, often cooked in a spicy sauce or soup.",
-    price: 500,
+    price: 500.0,
     photoName: "/pizzaimages/bushmeat.jpg",
     type: "proteins",
   },
   {
     name: "Fanta",
     ingredients: "Carbonated drinks",
-    price: 500,
+    price: 500.0,
     photoName: "/pizzaimages/fanta.jpeg",
     type: "extrasanddrinks",
   },
@@ -87,28 +87,28 @@ const dishesData = [
     name: "Margerita Pizza",
     ingredients:
       "Fresh mozzarella, tomato sause, and basil on our hand-tossed dough",
-    price: 4500,
+    price: 4500.0,
     photoName: "/pizzaimages/Margheritapizza.jpg",
     type: "extrasanddrinks",
   },
   {
     name: "Shamawa",
     ingredients: "Carbonated drinks",
-    price: 1000,
+    price: 1000.0,
     photoName: "/pizzaimages/shawama.jpg",
     type: "extrasanddrinks",
   },
   {
     name: "Coke",
     ingredients: "Carbonated drinks",
-    price: 1000,
+    price: 1000.0,
     photoName: "/pizzaimages/coke.jpg",
     type: "extrasanddrinks",
   },
   {
     name: "Sprite",
     ingredients: "Carbonated drinks",
-    price: 1000,
+    price: 1000.0,
     photoName: "/pizzaimages/sprite.jpeg",
     type: "extrasanddrinks",
   },
@@ -123,17 +123,17 @@ export function Menu() {
           <input
             type="text"
             placeholder="Select menu items..."
-            className="border rounded-[13px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10"
+            className="border rounded-[13px] text-[14.5px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10"
           />
           <FaSearch className="absolute top-1/2 transform -translate-y-1/2 ml-4" />
         </div>
 
-        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] p-1.5 rounded-[12px]">
+        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] text-[14.5px]  p-1.5 rounded-[12px]">
           <button
             onClick={() => setItems("maindishes")}
             className={`${
               items === "maindishes" && "bg-pc"
-            } active:bg-[#ffffff] duration-300  rounded-[12px] py-1 px-2`}
+            } active:bg-[#ffffff] duration-300  rounded-[12px]  py-1 px-2 text-[#4f2b00]`}
           >
             Main dishes
           </button>
@@ -141,7 +141,7 @@ export function Menu() {
             onClick={() => setItems("proteins")}
             className={`${
               items === "proteins" && "bg-pc"
-            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2`}
+            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2 text-[#4f2b00]`}
           >
             Proteins
           </button>
@@ -150,7 +150,7 @@ export function Menu() {
             onClick={() => setItems("extrasanddrinks")}
             className={`${
               items === "extrasanddrinks" && "bg-pc"
-            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2`}
+            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2 text-[#4f2b00]`}
           >
             Extras/drinks
           </button>

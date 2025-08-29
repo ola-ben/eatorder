@@ -3,11 +3,12 @@ import { FaLocationDot } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa";
 import { IoCall } from "react-icons/io5";
 
+
 export function Header() {
   return (
-    <section className="bg-ph h-vh">
+    <section className="bg-ph h-vh font-rubik">
       <div className=" p-2 leading-11">
-        <h1 className="text-white text-[29px] font-bold mb-3 text-balance">
+        <h1 className="text-white text-[29px] font-medium mb-3 text-balance leading-[1.2]">
           Delicious Food Delivered
         </h1>
         <p className="text-white leading-[1.5] mb-2">
@@ -19,7 +20,7 @@ export function Header() {
         </p>
         <p className="text-white flex items-center gap-2">
           <FaLocationDot className=" text-white" />
-          Free delivery over $25
+          Free delivery over #7000.00
         </p>
         <p className="text-white flex items-center gap-2 mb-2">
           <FaStar className=" text-white" />
