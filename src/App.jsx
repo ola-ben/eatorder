@@ -2,6 +2,8 @@ import { Header } from "../Header";
 import { Menu } from "../menu";
 import Loginsignup from "../Loginsignup";
 import Loginbtn from "../Loginbtn";
+import Cartbtn from "../Cartbtn";
+
 
 export default function App() {
   return (
@@ -10,6 +12,7 @@ export default function App() {
       <Loginsignup />
       <Header />
       <Menu />
+      <Cartbtn />
     </section>
   );
 }

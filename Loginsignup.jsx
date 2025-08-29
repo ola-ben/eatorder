@@ -6,8 +6,8 @@ export default function Loginsignup() {
   const [page, setPage] = useState("login");
 
   return (
-    <section className=" left-full fixe bg-[#f6f4f9]  p-5 mb-70 font-montserrat">
-      <p className=" text-center text-xl mb-1.5 font-bold  ">
+    <section className=" left-full fixe bg-[#f6f4f9]  p-5  font-montserrat h-svh">
+      <p className=" text-center text-xl mb-1.5 font-bold  my-24">
         Welcome to Delicious Food
       </p>
       <p className=" capitalize font-montserrat font-medium  text-gray-500 text-center mb-9  ">
