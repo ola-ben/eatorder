@@ -4,7 +4,6 @@ import Loginsignup from "../Loginsignup";
 import Loginbtn from "../Loginbtn";
 import Cartbtn from "../Cartbtn";
 
-
 export default function App() {
   return (
     <section className="">

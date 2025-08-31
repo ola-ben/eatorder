@@ -123,17 +123,17 @@ export function Menu() {
           <input
             type="text"
             placeholder="Select menu items..."
-            className="border rounded-[13px] text-[14.5px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10"
+            className="border md:text-[20px] rounded-[13px] text-[14.5px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10"
           />
           <FaSearch className="absolute top-1/2 transform -translate-y-1/2 ml-4" />
         </div>
 
-        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] text-[14.5px]  p-1.5 rounded-[12px]">
+        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] text-[14.5px]  p-1.5 rounded-[12px] md:space-x-12 lg:mx-[400px]">
           <button
             onClick={() => setItems("maindishes")}
             className={`${
               items === "maindishes" && "bg-pc"
-            } active:bg-[#ffffff] duration-300  rounded-[12px]  py-1 px-2 text-[#4f2b00]`}
+            } duration-300 md:text-[16.5px]  rounded-[12px]  py-1 px-2 text-[#4f2b00]`}
           >
             Main dishes
           </button>
@@ -141,7 +141,7 @@ export function Menu() {
             onClick={() => setItems("proteins")}
             className={`${
               items === "proteins" && "bg-pc"
-            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2 text-[#4f2b00]`}
+            } duration-300 md:text-[16.5px]  rounded-[12px] py-1 px-2 text-[#4f2b00]`}
           >
             Proteins
           </button>
@@ -150,13 +150,13 @@ export function Menu() {
             onClick={() => setItems("extrasanddrinks")}
             className={`${
               items === "extrasanddrinks" && "bg-pc"
-            } active:bg-[#ffffff] duration-300   rounded-[12px] py-1 px-2 text-[#4f2b00]`}
+            } duration-300 md:text-[16.5px]   rounded-[12px] py-1 px-2 text-[#4f2b00]`}
           >
             Extras/drinks
           </button>
         </div>
       </div>
-      <div className="grid gap-6  md:grid-cols-3">
+      <div className="grid gap-6  md:grid-cols-2 lg:grid-cols-3">
         {items === "maindishes" &&
           dishesData.map((pizza) => (
             <Pizza
