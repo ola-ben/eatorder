@@ -3,6 +3,8 @@ import { Menu } from "../menu";
 import Loginsignup from "../Loginsignup";
 import Loginbtn from "../Loginbtn";
 import Cartbtn from "../Cartbtn";
+import Cartpage from "./assets/pages/Cartpage";
+import Checkoutpage from "./assets/pages/Checkoutpage";
 
 export default function App() {
   return (
@@ -12,6 +14,8 @@ export default function App() {
       <Header />
       <Menu />
       <Cartbtn />
+      <Cartpage />
+      <Checkoutpage />
     </section>
   );
 }
