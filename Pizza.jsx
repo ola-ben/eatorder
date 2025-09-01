@@ -29,11 +29,11 @@ export function Pizza({ name, ingredients, price, photoName }) {
   }
 
   return (
-    <div className="shadow-sm rounded-b-[10px] mx-0.5">
+    <div className="shadow-sm rounded-b-[10px] mx-0.5 overflow-hidden">
       <img
         src={photoName}
         alt={name}
-        className=" w-full h-64 rounded-t-[15px] 
+        className=" w-full h-64 rounded-t-[15px] duration-300  object-cover transition-transform hover:scale-110
           "
       />
       <div className=" p-2">
@@ -71,12 +71,12 @@ export function Pizza({ name, ingredients, price, photoName }) {
             {showModal && (
               <div
                 className="fixed top-0 left-0 bg-white border border-gray-300 z-50
-               px-4 py-4 rounded shadow-lg w-full  leading-7"
+               px-4 py-4 rounded shadow-lg w-full leading-7 duration-300"
               >
                 <p className="text-[#523410] text-start   font-rubik text-[14.5px] capitalize">
                   {modalMessage}
                 </p>
-                <p className="text-[#523410] text-start text-[14.5px] capitalize  font-rubik">
+                <p className="text-[#523410] text-start text-[14.5px] capitalize  font-rubikt">
                   {modalMessage2}
                 </p>
               </div>

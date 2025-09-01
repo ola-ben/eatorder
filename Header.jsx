@@ -9,8 +9,8 @@ export function Header() {
       className="font-rubik relative bg-cover bg-center text-[#f6f4f9]  md:p-2"
       style={{ backgroundImage: 'url("./pizzaimages/amalaa.jpg")' }}
     >
-      <div className=" absolute inset-0 bg-ph opacity-80 "></div>
-      <div className=" p-2 leading-11 relative  ">
+      <div className=" absolute inset-0 bg-ph opacity-75 "></div>
+      <div className=" p-2 leading-11 relative">
         <h1 className=" text-[29px] font-medium mb-3 text-balance leading-[1.2] md:text-[40px] my-2.5">
           Delicious Food Delivered
         </h1>

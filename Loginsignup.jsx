@@ -1,19 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { CiLogin } from "react-icons/ci";
+import { HiArrowSmallLeft } from "react-icons/hi2";
 import { MdOutlinePersonAdd } from "react-icons/md";
 
 export default function Loginsignup() {
+  const navigate = useNavigate();
   const [page, setPage] = useState("login");
 
   return (
-    <section className="bg-[#f6f4f9]  p-5 font-montserrat h-svh">
-      <div
-        className=" md:mx-[100px] lg:mx-[400px]
-      "
-      >
-        <p className=" text-center text-xl mb-1.5 font-bold my-24 md:text-3xl lg:text-xl">
-          Welcome to Delicious Food
-        </p>
+    <section className="bg-[#f6f4f9] p-5 font-montserrat h-svh">
+      <div className=" md:mx-[100px] lg:mx-[400px] my-17">
+        <div className="flex gap-3">
+          <HiArrowSmallLeft onClick={() => navigate("/")} />
+          <p className=" text-center text-xl mb-1.5 font-bold md:text-3xl lg:text-xl">
+            Welcome to Delicious Food
+          </p>
+        </div>
+
         <p className=" capitalize font-montserrat font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[16px]">
           quick setup let's go
         </p>
