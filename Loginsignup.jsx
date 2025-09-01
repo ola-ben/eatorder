@@ -59,7 +59,7 @@ export function Login() {
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-2 focus:border-ph focus:outline-none mb-7.5"
+            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5"
             required
           />
         </div>
@@ -68,12 +68,12 @@ export function Login() {
           <input
             type="password"
             placeholder="Enter your password"
-            className="w-full bg-transparent border rounded-[10px] p-2 border-gray-400 focus:border-ph focus:outline-none"
+            className="w-full bg-transparent border rounded-[10px] p-1.5 border-gray-400 focus:border-ph focus:outline-none"
             required
           />
         </div>
         <div className="flex justify-center relative">
-          <button className="bg-ph mt-8 w-full p-2 text-white rounded-[13px] md:text-xl lg:text-[17px]">
+          <button className="bg-ph mt-8 w-full p-1.5 text-white rounded-[13px] md:text-xl lg:text-[17px]">
             login
           </button>
           <CiLogin className="  text-xl absolute top-2/3 transform -translate-y-1/3  mr-17 text-white" />
@@ -95,7 +95,7 @@ export function SignUp() {
           <input
             type="text"
             placeholder="Enter your full name"
-            className="w-full border border-gray-400  rounded-[10px] p-2 focus:border-ph focus:outline-none mb-7.5 lg:text-[17px]"
+            className="w-full border border-gray-400  rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[17px]"
             required
           />
         </div>
@@ -104,7 +104,7 @@ export function SignUp() {
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-2 focus:border-ph focus:outline-none mb-7.5 lg:text-[17px]"
+            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[17px]"
             required
           />
         </div>
@@ -113,12 +113,12 @@ export function SignUp() {
           <input
             type="password"
             placeholder="Create a password"
-            className="w-full bg-transparent border rounded-[10px] p-2 border-gray-400 focus:border-ph focus:outline-none "
+            className="w-full bg-transparent border rounded-[10px] p-1.5 border-gray-400 focus:border-ph focus:outline-none "
             required
           />
         </div>
         <div className="flex justify-center relative">
-          <button className="bg-ph my-8 w-full p-2  md:text-xl text-white rounded-[13px] font-medium lg:text-[17px]">
+          <button className="bg-ph my-8 w-full p-1.5  md:text-xl text-white rounded-[13px] font-medium lg:text-[17px]">
             SignUp
           </button>
           <MdOutlinePersonAdd className="text-xl absolute top-1/2 transform -translate-y-1/2  mr-23 text-white" />

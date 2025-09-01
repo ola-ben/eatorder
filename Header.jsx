@@ -11,7 +11,7 @@ export function Header() {
     >
       <div className=" absolute inset-0 bg-ph opacity-75 "></div>
       <div className=" p-2 leading-11 relative">
-        <h1 className=" text-[29px] font-medium mb-3 text-balance leading-[1.2] md:text-[40px] my-2.5">
+        <h1 className=" text-[29px] font-medium mb-3 text-balance leading-[1.2] md:text-[40px] mt-8">
           Delicious Food Delivered
         </h1>
         <p className=" leading-[1.5] mb-2 md:text-[20px]">

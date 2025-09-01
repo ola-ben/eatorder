@@ -1,5 +1,5 @@
 import { IoIosAdd } from "react-icons/io";
-import { FaMinus } from "react-icons/fa";
+import { HiMinusSmall } from "react-icons/hi2";
 import { useState } from "react";
 
 export function Pizza({ name, ingredients, price, photoName }) {
@@ -52,7 +52,7 @@ export function Pizza({ name, ingredients, price, photoName }) {
                   onClick={removeQuantity}
                   className="bg-red-500  p-2.5 text-white text-xl  md:text-2xl rounded-xl duration-300"
                 >
-                  <FaMinus />
+                  <HiMinusSmall />
                 </button>
                 <span className="mx-6">{qauntity}</span>
               </>
@@ -76,7 +76,7 @@ export function Pizza({ name, ingredients, price, photoName }) {
                 <p className="text-[#523410] text-start   font-rubik text-[14.5px] capitalize">
                   {modalMessage}
                 </p>
-                <p className="text-[#523410] text-start text-[14.5px] capitalize  font-rubikt">
+                <p className="text-[#523410] leading-[1.5] text-start text-[14.5px] capitalize  font-rubik">
                   {modalMessage2}
                 </p>
               </div>
