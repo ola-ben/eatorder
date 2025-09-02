@@ -118,7 +118,7 @@ export function Menu() {
   const [items, setItems] = useState("maindishes");
   return (
     <section className=" mt-5 p-2">
-      <div className="">
+      <div className="lg:justify-center">
         <div className=" relative">
           <input
             type="text"
