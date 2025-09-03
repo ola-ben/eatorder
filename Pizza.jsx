@@ -29,7 +29,7 @@ export function Pizza({ name, ingredients, price, photoName }) {
   }
 
   return (
-    <div className="shadow-sm rounded-b-[10px] mx-0.5 overflow-hidden">
+    <div className="shadow-sm rounded-b-[10px] mx-0.5 overflow-hidden lg:mx-2">
       <img
         src={photoName}
         alt={name}
@@ -37,10 +37,10 @@ export function Pizza({ name, ingredients, price, photoName }) {
           "
       />
       <div className=" p-2">
-        <p className=" text-2xl my-1.5 font-rubik text-[#4f2b00] md:text-2xl">
+        <p className=" text-xl my-1.5 font-rubik text-[#1a0e00] md:text-2xl">
           {name}
         </p>
-        <p className="leading-[1.5] mb-4 text-[14.5px] font-rubik text-[#523410] md:text-[16px]">
+        <p className="leading-[1.5] mb-4 text-[15px] font-dmsans text-[#564d42] md:text-[16px] lg:text-[14px]">
           {ingredients}
         </p>
         <span className="flex items-center justify-between mb-2">

@@ -10,15 +10,15 @@ export default function Loginsignup() {
 
   return (
     <section className="bg-[#f6f4f9] p-5 font-montserrat h-svh">
-      <div className=" md:mx-[100px] lg:mx-[400px] my-17">
-        <div className="flex gap-3">
-          <HiArrowSmallLeft onClick={() => navigate("/")} />
+      <div className=" md:mx-[100px] lg:mx-[450px] my-17">
+        <HiArrowSmallLeft onClick={() => navigate("/")} />
+        <div className="flex gap-3 lg:justify-center justify-center">
           <p className=" text-center text-xl mb-1.5 font-bold md:text-3xl lg:text-xl">
             Welcome to Delicious Food
           </p>
         </div>
 
-        <p className=" capitalize font-montserrat font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[16px]">
+        <p className=" capitalize font-montserrat font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[14px]">
           quick setup let's go
         </p>
         <div className=" flex space-x-3 bg-[#f6f4f9] text-[14.5px] rounded-[12px] justify-center mx-12 my-4.5  p-1.5">
@@ -54,7 +54,7 @@ export function Login() {
   return (
     <section>
       <div>
-        <div className="grid grid-cols-1 font-medium text-gray-700 text-[15px] md:text-xl lg:text-[17px]">
+        <div className="grid grid-cols-1 font-medium text-gray-700 text-[15px] md:text-xl lg:text-[13.5px]">
           <label htmlFor="Email">Email</label>
           <input
             type="text"
@@ -63,7 +63,7 @@ export function Login() {
             required
           />
         </div>
-        <div className="grid grid-cols-1 font-medium text-gray-700 text-[15px] md:text-xl lg:text-[17px]">
+        <div className="grid grid-cols-1 font-medium text-gray-700 text-[15px] md:text-xl lg:text-[13.5px]">
           <label htmlFor="Password ">Password </label>
           <input
             type="password"
@@ -73,10 +73,10 @@ export function Login() {
           />
         </div>
         <div className="flex justify-center relative">
-          <button className="bg-ph mt-8 w-full p-1.5 text-white rounded-[13px] md:text-xl lg:text-[17px]">
+          <button className="bg-ph mt-8 w-full p-1.5 text-white rounded-[10px] md:text-xl lg:text-[13.5px]">
             login
           </button>
-          <CiLogin className="  text-xl absolute top-2/3 transform -translate-y-1/3  mr-17 text-white" />
+          <CiLogin className="text-xl absolute top-2/3 transform -translate-y-1/3  mr-17 text-white" />
         </div>
         <p className=" text-[13px] text-center mt-1.5">
           demo: admin@restaurant.com/password
@@ -90,25 +90,25 @@ export function SignUp() {
   return (
     <section>
       <div className="">
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px] md:text-xl lg:text-[17px]">
+        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px] md:text-xl lg:text-[13.5px]">
           <label htmlFor="Email">Full Name</label>
           <input
             type="text"
             placeholder="Enter your full name"
-            className="w-full border border-gray-400  rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[17px]"
+            className="w-full border border-gray-400  rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[13.5px]"
             required
           />
         </div>
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px]  md:text-xl">
+        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px]  md:text-xl lg:text-[13.5px]">
           <label htmlFor="Email">Email</label>
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[17px]"
+            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5"
             required
           />
         </div>
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px]  md:text-xl lg:text-[17px]">
+        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px]  md:text-xl lg:text-[13.5px]">
           <label htmlFor="Password ">Password </label>
           <input
             type="password"
@@ -118,7 +118,7 @@ export function SignUp() {
           />
         </div>
         <div className="flex justify-center relative">
-          <button className="bg-ph my-8 w-full p-1.5  md:text-xl text-white rounded-[13px] font-medium lg:text-[17px]">
+          <button className="bg-ph my-8 w-full p-1.5  md:text-xl text-white rounded-[10px] font-medium lg:text-[13.5px]">
             SignUp
           </button>
           <MdOutlinePersonAdd className="text-xl absolute top-1/2 transform -translate-y-1/2  mr-23 text-white" />

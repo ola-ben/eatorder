@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pizza } from "./pizza";
+import { Pizza } from "./Pizza";
 import { FaSearch } from "react-icons/fa";
 
 const dishesData = [
@@ -119,21 +119,21 @@ export function Menu() {
   return (
     <section className=" mt-5 p-2">
       <div className="lg:justify-center">
-        <div className=" relative">
+        <div className=" relative lg:flex lg:justify-center">
           <input
             type="text"
             placeholder="Select menu items..."
-            className="border md:text-[20px] rounded-[13px] text-[14.5px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10"
+            className="border md:text-[20px] rounded-[10px] text-[14.5px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10 lg:w-100 lg:p-1 lg:text-[14px] lg:pl-10"
           />
-          <FaSearch className="absolute top-1/2 transform -translate-y-1/2 ml-4" />
+          <FaSearch className="absolute top-1/2 transform -translate-y-1/2 ml-4 lg:left-112" />
         </div>
 
-        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] text-[14.5px]  p-1.5 rounded-[12px] md:space-x-12 lg:mx-[400px]">
+        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] text-[14.5px] p-1.5 rounded-[10px] md:space-x-12 lg:mx-[450px] lg:p-1 lg:space-x-6">
           <button
             onClick={() => setItems("maindishes")}
             className={`${
               items === "maindishes" && "bg-pc"
-            } duration-300 md:text-[16.5px]  rounded-[12px]  py-1 px-2 text-[#4f2b00]`}
+            } duration-300 md:text-[16.5px] lg:text-[14px] rounded-[10px]  py-1 px-2 text-[#4f2b00]`}
           >
             Main dishes
           </button>
@@ -141,7 +141,7 @@ export function Menu() {
             onClick={() => setItems("proteins")}
             className={`${
               items === "proteins" && "bg-pc"
-            } duration-300 md:text-[16.5px]  rounded-[12px] py-1 px-2 text-[#4f2b00]`}
+            } duration-300 md:text-[16.5px] lg:text-[14px] rounded-[10px] py-1 px-2 text-[#4f2b00]`}
           >
             Proteins
           </button>
@@ -150,7 +150,7 @@ export function Menu() {
             onClick={() => setItems("extrasanddrinks")}
             className={`${
               items === "extrasanddrinks" && "bg-pc"
-            } duration-300 md:text-[16.5px]   rounded-[12px] py-1 px-2 text-[#4f2b00]`}
+            } duration-300 md:text-[16.5px] lg:text-[14px]  rounded-[12px] py-1 px-2 text-[#4f2b00]`}
           >
             Extras/drinks
           </button>
