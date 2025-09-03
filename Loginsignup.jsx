@@ -9,7 +9,10 @@ export default function Loginsignup() {
   const [page, setPage] = useState("login");
 
   return (
-    <section className="bg-[#f6f4f9] p-5 font-montserrat h-svh">
+    <section
+      className="bg-[#f6f4f9] p-5 font-montserrat h-svh relative"
+      style={{ backgroundImage: 'url("./pizzaimages/amalaa.jpg")' }}
+    >
       <div className=" md:mx-[100px] lg:mx-[450px] my-17">
         <HiArrowSmallLeft onClick={() => navigate("/")} />
         <div className="flex gap-3 lg:justify-center justify-center">
@@ -21,7 +24,7 @@ export default function Loginsignup() {
         <p className=" capitalize font-montserrat font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[14px]">
           quick setup let's go
         </p>
-        <div className=" flex space-x-3 bg-[#f6f4f9] text-[14.5px] rounded-[12px] justify-center mx-12 my-4.5  p-1.5">
+        <div className=" flex space-x-3 bg-[#d4d4d9] text-[14.5px] rounded-[12px] justify-center mx-12 my-4.5  p-1.5">
           <button
             onClick={() => setPage("login")}
             className={`${

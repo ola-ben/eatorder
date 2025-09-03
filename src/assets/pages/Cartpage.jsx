@@ -4,7 +4,7 @@ import { HiArrowSmallLeft } from "react-icons/hi2";
 export default function Cartpage() {
   const navigate = useNavigate();
   return (
-    <section className=" font-poppins mx-1.5  my-10">
+    <section className=" font-poppins mx-1.5  my-10 lg:mx-80">
       <HiArrowSmallLeft onClick={() => navigate("/")} />
       <p className=" capitalize  text-center text-xl font-bold">your order</p>
       <span className="flex justify-between">
