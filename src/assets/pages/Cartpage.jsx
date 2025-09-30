@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router";
 import { HiArrowSmallLeft } from "react-icons/hi2";
 
-export default function Cartpage() {
+export default function Cartpage({ modalMessage, modalMessage2, showModal }) {
   const navigate = useNavigate();
   return (
     <section className=" font-poppins mx-1.5  my-10 lg:mx-80">
+      <p>{modalMessage}</p>
+      <p>{modalMessage2}</p>
+      <p>{showModal}</p>
       <HiArrowSmallLeft onClick={() => navigate("/")} />
       <p className=" capitalize  text-center text-xl font-bold">your order</p>
       <span className="flex justify-between">

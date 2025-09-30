@@ -3,6 +3,7 @@ import { Menu } from "../../../menu";
 import Loginbtn from "../../../Loginbtn";
 import Cartbtn from "../../../Cartbtn";
 
+
 export default function Homepage() {
   return (
     <section>

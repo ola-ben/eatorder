@@ -11,7 +11,7 @@ export default function Loginsignup() {
   return (
     <section
       className="bg-[#f6f4f9] p-5 font-montserrat h-svh relative"
-      style={{ backgroundImage: 'url("./pizzaimages/amalaa.jpg")' }}
+      // style={{ backgroundImage: 'url("./pizzaimages/amalaa.jpg")' }}
     >
       <div className=" md:mx-[100px] lg:mx-[450px] my-17">
         <HiArrowSmallLeft onClick={() => navigate("/")} />
@@ -24,12 +24,12 @@ export default function Loginsignup() {
         <p className=" capitalize font-montserrat font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[14px]">
           quick setup let's go
         </p>
-        <div className=" flex space-x-3 bg-[#d4d4d9] text-[14.5px] rounded-[12px] justify-center mx-12 my-4.5  p-1.5">
+        <div className=" flex space-x-3 bg-[#d4d4d9] text-[14.5px] rounded-[12px] justify-center mx-12 my-4.5 p-1.5">
           <button
             onClick={() => setPage("login")}
             className={`${
               page === "login" && "bg-pc"
-            }  duration-300  rounded-[6px] w-full  capitalize p-1 md:text-xl lg:text-[14.5px] lg:w-[150px]`}
+            }  duration-300  rounded-[6px] w-full  text-[12.5px]  capitalize p-1 md:text-xl lg:text-[14.5px] lg:w-[150px]`}
           >
             login
           </button>
@@ -37,7 +37,7 @@ export default function Loginsignup() {
             onClick={() => setPage("signup")}
             className={`${
               page === "signup" && "bg-pc"
-            } duration-300  rounded-[6px] w-full capitalize  p-1  md:text-xl lg:text-[14.5px] lg:w-[150px]`}
+            } duration-300  rounded-[6px] w-full capitalize text-[12.5px]  p-0.5  md:text-xl lg:text-[14.5px] lg:w-[150px]`}
           >
             sign up
           </button>
@@ -57,26 +57,26 @@ export function Login() {
   return (
     <section>
       <div>
-        <div className="grid grid-cols-1 font-medium text-gray-700 text-[15px] md:text-xl lg:text-[13.5px]">
+        <div className="grid grid-cols-1 font-medium  text-gray-700 text-[12.5px] md:text-xl lg:text-[13.5px]">
           <label htmlFor="Email">Email</label>
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5"
+            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-2.5 focus:border-ph focus:outline-none mb-7.5"
             required
           />
         </div>
-        <div className="grid grid-cols-1 font-medium text-gray-700 text-[15px] md:text-xl lg:text-[13.5px]">
+        <div className="grid grid-cols-1 font-medium text-gray-700 text-[12.5px] md:text-xl lg:text-[13.5px]">
           <label htmlFor="Password ">Password </label>
           <input
             type="password"
             placeholder="Enter your password"
-            className="w-full bg-transparent border rounded-[10px] p-1.5 border-gray-400 focus:border-ph focus:outline-none"
+            className="w-full bg-transparent border rounded-[10px] p-2.5 border-gray-400 focus:border-ph focus:outline-none"
             required
           />
         </div>
         <div className="flex justify-center relative">
-          <button className="bg-ph mt-8 w-full p-1.5 text-white rounded-[10px] md:text-xl lg:text-[13.5px]">
+          <button className="bg-ph mt-8 w-full p-2.5 text-white text-[12.5px] rounded-[10px] md:text-xl lg:text-[13.5px]">
             login
           </button>
           <CiLogin className="text-xl absolute top-2/3 transform -translate-y-1/3  mr-17 text-white" />
@@ -93,35 +93,35 @@ export function SignUp() {
   return (
     <section>
       <div className="">
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px] md:text-xl lg:text-[13.5px]">
+        <div className="grid grid-cols-1  font-medium text-gray-700 text-[12.5px] md:text-xl lg:text-[13.5px]">
           <label htmlFor="Email">Full Name</label>
           <input
             type="text"
             placeholder="Enter your full name"
-            className="w-full border border-gray-400  rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[13.5px]"
+            className="w-full border border-gray-400  rounded-[10px] p-2.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[13.5px]"
             required
           />
         </div>
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px]  md:text-xl lg:text-[13.5px]">
+        <div className="grid grid-cols-1  font-medium text-gray-700 text-[12.5px]  md:text-xl lg:text-[13.5px]">
           <label htmlFor="Email">Email</label>
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-1.5 focus:border-ph focus:outline-none mb-7.5"
+            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-2.5 focus:border-ph focus:outline-none mb-7.5"
             required
           />
         </div>
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[15px]  md:text-xl lg:text-[13.5px]">
+        <div className="grid grid-cols-1  font-medium text-gray-700 text-[12.5px]  md:text-xl lg:text-[13.5px]">
           <label htmlFor="Password ">Password </label>
           <input
             type="password"
             placeholder="Create a password"
-            className="w-full bg-transparent border rounded-[10px] p-1.5 border-gray-400 focus:border-ph focus:outline-none "
+            className="w-full bg-transparent border rounded-[10px] p-2.5 border-gray-400 focus:border-ph focus:outline-none "
             required
           />
         </div>
         <div className="flex justify-center relative">
-          <button className="bg-ph my-8 w-full p-1.5  md:text-xl text-white rounded-[10px] font-medium lg:text-[13.5px]">
+          <button className="bg-ph my-8 w-full p-2.5  md:text-xl text-[12.5px] text-white rounded-[10px] font-medium lg:text-[13.5px]">
             SignUp
           </button>
           <MdOutlinePersonAdd className="text-xl absolute top-1/2 transform -translate-y-1/2  mr-23 text-white" />

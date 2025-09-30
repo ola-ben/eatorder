@@ -40,7 +40,7 @@ export function Pizza({ name, ingredients, price, photoName }) {
         <p className=" text-xl my-1.5 font-rubik text-[#1a0e00] md:text-2xl">
           {name}
         </p>
-        <p className="leading-[1.5] mb-4 text-[15px] font-dmsans text-[#564d42] md:text-[16px] lg:text-[14px]">
+        <p className="leading-[1.5] mb-4 text-[14px] font-dmsans text-[#564d42] md:text-[16px] lg:text-[14px]">
           {ingredients}
         </p>
         <span className="flex items-center justify-between mb-2">
