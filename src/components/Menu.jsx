@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-// import { useEffect } from "react";
+import { useState } from "react";
 import { Pizza } from "./Pizza";
 import { FaSearch } from "react-icons/fa";
 
@@ -9,16 +8,15 @@ const dishesData = [
     ingredients:
       "Made with long-grain parboiled rice, tomatoes, tomato paste, onions, bell peppers, Scotch bonnet peppers, garlic, and ginger.",
     price: 1500.0,
-    photoName: "/pizzaimages/jollofricee.jpg",
+    photoName: "/src/assets/pizzaimages/jollofricee.jpg",
     type: "maindishes",
   },
-
   {
     name: "Amala & Beans Soup",
     ingredients:
       "Made from yam flour (elubo) mixed with hot water into a smooth, stretchy dough. Beans soup, often prepared as ewa alagbado or gbegiri, includes peeled cooked beans, palm oil,  seasoning cubes with meat",
     price: 1700.0,
-    photoName: "/pizzaimages/amalaa.jpg",
+    photoName: "/src/assets/pizzaimages/amalaa.jpg",
     type: "maindishes",
   },
   {
@@ -26,7 +24,7 @@ const dishesData = [
     ingredients:
       "Made by boiling yam pieces until soft and then pounding or blending them into a smooth, stretchy dough using only yam and water.",
     price: 900.0,
-    photoName: "/pizzaimages/poundedyammm.jpg",
+    photoName: "./src/assets/pizzaimages/poundedyammm.jpg",
     type: "maindishes",
   },
   {
@@ -34,7 +32,7 @@ const dishesData = [
     ingredients:
       "made from garri (cassava flakes) mixed with hot water, while Efo (vegetable soup) is prepared with spinach or fluted pumpkin leaves, palm oil, tomatoes, peppers, onions, crayfish, locust beans, and assorted meat or fish.",
     price: 1500.0,
-    photoName: "/pizzaimages/ebaa.jpg",
+    photoName: "./src/assets/pizzaimages/ebaa.jpg",
     type: "maindishes",
   },
   {
@@ -42,7 +40,7 @@ const dishesData = [
     ingredients:
       "Fried rice with chicken  made with parboiled rice, mixed vegetables (carrots, peas, sweet corn, green beans), onions, garlic, soy sauce, curry powder, and seasoning, served with seasoned and fried or grilled chicken.",
     price: 2000.0,
-    photoName: "/pizzaimages/friedricewithchicken.jpg",
+    photoName: "./src/assets/pizzaimages/friedricewithchicken.jpg",
     type: "maindishes",
   },
   {
@@ -50,7 +48,7 @@ const dishesData = [
     ingredients:
       "Made with boiled yam slices served alongside a fried egg sauce prepared with eggs, tomatoes, onions, peppers, and seasoning.",
     price: 1700.0,
-    photoName: "/pizzaimages/yamegg.jpg",
+    photoName: "/src/assets//pizzaimages/yamegg.jpg",
     type: "proteins",
   },
   {
@@ -58,7 +56,7 @@ const dishesData = [
     ingredients:
       "Made with ingredients like fresh or smoked fish, onions, peppers, tomatoes, garlic, seasoning cubes, and palm or vegetable oil, depending on the cooking style.",
     price: 2500.0,
-    photoName: "/pizzaimages/fish.jpg",
+    photoName: "./src/assets/pizzaimages/fish.jpg",
     type: "proteins",
   },
   {
@@ -66,7 +64,7 @@ const dishesData = [
     ingredients:
       "made from blended peeled beans, onions, peppers, oil (usually palm or vegetable), seasoning cubes, and optional additions like eggs, fish, or ground crayfish.",
     price: 500.0,
-    photoName: "/pizzaimages/moimoii.jpg",
+    photoName: "./src/assets/pizzaimages/moimoii.jpg",
     type: "proteins",
   },
   {
@@ -74,14 +72,14 @@ const dishesData = [
     ingredients:
       "Prepared with ingredients like the meat itself (such as antelope or grasscutter), onions, peppers, garlic, ginger, seasoning cubes, and palm oil or vegetable oil, often cooked in a spicy sauce or soup.",
     price: 500.0,
-    photoName: "/pizzaimages/bushmeat.jpg",
+    photoName: "./src/assets/pizzaimages/bushmeat.jpg",
     type: "proteins",
   },
   {
     name: "Fanta",
     ingredients: "Carbonated drinks",
     price: 500.0,
-    photoName: "/pizzaimages/fanta.jpeg",
+    photoName: "./src/assets/pizzaimages/fanta.jpeg",
     type: "extrasanddrinks",
   },
   {
@@ -89,118 +87,137 @@ const dishesData = [
     ingredients:
       "Fresh mozzarella, tomato sause, and basil on our hand-tossed dough",
     price: 4500.0,
-    photoName: "/pizzaimages/Margheritapizza.jpg",
+    photoName: "./src/assets/pizzaimages/Margheritapizza.jpg",
     type: "extrasanddrinks",
   },
   {
     name: "Shamawa",
     ingredients: "Carbonated drinks",
     price: 1000.0,
-    photoName: "/pizzaimages/shawama.jpg",
+    photoName: "./src/assets/pizzaimages/shawama.jpg",
     type: "extrasanddrinks",
   },
   {
     name: "Coke",
     ingredients: "Carbonated drinks",
     price: 1000.0,
-    photoName: "/pizzaimages/coke.jpg",
+    photoName: "./src/assets/pizzaimages/coke.jpg",
     type: "extrasanddrinks",
   },
   {
     name: "Sprite",
     ingredients: "Carbonated drinks",
     price: 1000.0,
-    photoName: "/pizzaimages/sprite.jpeg",
+    photoName: "./src/assets/pizzaimages/sprite.jpeg",
     type: "extrasanddrinks",
   },
 ];
 
-const KEY = "eb94aa52";
-
 export function Menu() {
-  const [items, setItems] = useState("maindishes");
-  // useEffect(function () {
-  //   fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=thor`)
-  //     .then((res) => res.json())
-  //     .then((data) => setItems(data.Search));
-  // }, []);
+  const [selectedCategory, setSelectedCategory] = useState("maindishes");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter dishes based on selected category and search query
+  const getFilteredDishes = () => {
+    // First filter by category
+    const categoryFiltered = dishesData.filter(
+      (dish) => dish.type === selectedCategory,
+    );
+
+    // If there's a search query, filter further by name or ingredients
+    if (searchQuery.trim() === "") {
+      return categoryFiltered;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    return categoryFiltered.filter(
+      (dish) =>
+        dish.name.toLowerCase().includes(query) ||
+        dish.ingredients.toLowerCase().includes(query),
+    );
+  };
+
+  const filteredDishes = getFilteredDishes();
 
   return (
-    <section className=" mt-5 p-2 md:mx-1.5">
+    <section className="mt-5 p-2 md:mx-1.5">
       <div className="lg:justify-center">
-        <div className=" relative lg:flex lg:justify-center md:flex md:justify-center">
+        {/* Search box with icon inside - FIXED POSITIONING */}
+        <div className="relative flex justify-center">
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base" />
           <input
             type="text"
-            placeholder="Select menu items..."
-            className="border md:text-[14px] rounded-[10px] text-[14.5px] border-gray-300 focus:border-pc focus:outline-none relative w-[100%] p-2 pl-10 md:w-[400px] lg:w-100 lg:p-1 lg:text-[14px] lg:pl-10"
+            placeholder="Search menu items..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border rounded-[10px] text-sm md:text-base border-gray-300 focus:border-pc focus:outline-none w-full max-w-[400px] p-2 pl-10 md:p-2.5 lg:p-2"
           />
-          <FaSearch className="absolute top-1/2 transform -translate-y-1/2 ml-4 lg:left-112 md:left-45" />
         </div>
 
-        <div className=" my-6 text-center space-x-2 bg-[#f6f4f9] text-[14.5px] p-1.5 rounded-[10px] md:space-x-12 lg:mx-[450px] lg:p-1 lg:space-x-6 md:mx-40">
+        {/* Category buttons - IMPROVED RESPONSIVENESS */}
+        <div className="my-6 text-center space-x-2 bg-[#f6f4f9] text-sm md:text-base p-1.5 rounded-[10px] md:space-x-4 lg:space-x-6 max-w-fit mx-auto">
           <button
-            onClick={() => setItems("maindishes")}
+            onClick={() => {
+              setSelectedCategory("maindishes");
+              setSearchQuery("");
+            }}
             className={`${
-              items === "maindishes" && "bg-pc"
-            } duration-300 md:text-[14px] lg:text-[14px] rounded-[10px]  py-1 px-2 text-[#4f2b00]`}
+              selectedCategory === "maindishes" ? "bg-pc" : ""
+            } duration-300 rounded-[10px] py-1.5 px-3 md:px-4 text-[#4f2b00] text-sm md:text-base whitespace-nowrap`}
           >
             Main dishes
           </button>
           <button
-            onClick={() => setItems("proteins")}
+            onClick={() => {
+              setSelectedCategory("proteins");
+              setSearchQuery("");
+            }}
             className={`${
-              items === "proteins" && "bg-pc"
-            } duration-300 md:text-[14px] lg:text-[14px] rounded-[10px] py-1 px-2 text-[#4f2b00]`}
+              selectedCategory === "proteins" ? "bg-pc" : ""
+            } duration-300 rounded-[10px] py-1.5 px-3 md:px-4 text-[#4f2b00] text-sm md:text-base whitespace-nowrap`}
           >
             Proteins
           </button>
-
           <button
-            onClick={() => setItems("extrasanddrinks")}
+            onClick={() => {
+              setSelectedCategory("extrasanddrinks");
+              setSearchQuery("");
+            }}
             className={`${
-              items === "extrasanddrinks" && "bg-pc"
-            } duration-300 md:text-[14px] lg:text-[14px] rounded-[12px] py-1 px-2 text-[#4f2b00]`}
+              selectedCategory === "extrasanddrinks" ? "bg-pc" : ""
+            } duration-300 rounded-[10px] py-1.5 px-3 md:px-4 text-[#4f2b00] text-sm md:text-base whitespace-nowrap`}
           >
             Extras/drinks
           </button>
         </div>
       </div>
-      <div className="grid gap-6  md:grid-cols-2 lg:grid-cols-3">
-        {items === "maindishes" &&
-          dishesData.map((pizza) => (
+
+      {/* Display results */}
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {filteredDishes.length > 0 ? (
+          filteredDishes.map((dish) => (
             <Pizza
-              key={pizza.name}
-              name={pizza.name}
-              ingredients={pizza.ingredients}
-              price={pizza.price}
-              photoName={pizza.photoName}
+              key={dish.name}
+              name={dish.name}
+              ingredients={dish.ingredients}
+              price={dish.price}
+              photoName={dish.photoName}
             />
-          ))}
-        {items === "proteins" &&
-          dishesData
-            .filter((mainPizza) => mainPizza.type === "proteins")
-            .map((pizza) => (
-              <Pizza
-                key={pizza.name}
-                name={pizza.name}
-                ingredients={pizza.ingredients}
-                price={pizza.price}
-                photoName={pizza.photoName}
-              />
-            ))}
-        {items === "extrasanddrinks" &&
-          dishesData
-            .filter((mainPizza) => mainPizza.type === "extrasanddrinks")
-            .map((pizza) => (
-              <Pizza
-                key={pizza.name}
-                name={pizza.name}
-                ingredients={pizza.ingredients}
-                price={pizza.price}
-                photoName={pizza.photoName}
-              />
-            ))}
+          ))
+        ) : (
+          <div className="col-span-full text-center py-10 text-gray-500 text-sm md:text-base">
+            No items found matching "{searchQuery}"
+          </div>
+        )}
       </div>
+
+      {/* Optional: Show result count */}
+      {filteredDishes.length > 0 && (
+        <div className="text-center mt-4 text-xs md:text-sm text-gray-500">
+          Showing {filteredDishes.length} item(s)
+        </div>
+      )}
     </section>
   );
 }
+

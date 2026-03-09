@@ -7,7 +7,7 @@ export function Header() {
   return (
     <section
       className="font-rubik relative bg-cover bg-center text-[#f6f4f9]  md:p-2"
-      style={{ backgroundImage: 'url("./pizzaimages/amalaa.jpg")' }}
+      style={{ backgroundImage: 'url("./src/assets/pizzaimages/amalaa.jpg")' }}
     >
       <div className=" absolute inset-0 bg-ph opacity-75 "></div>
       <div className=" p-2 leading-11 relative  lg:my-6.5">
