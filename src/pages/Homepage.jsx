@@ -1,7 +1,7 @@
-import { Header } from "../../../Header";
-import { Menu } from "../../../menu";
-import Loginbtn from "../../../Loginbtn";
-import Cartbtn from "../../../Cartbtn";
+import { Header } from "../components/Header";
+import { Menu } from "../components/Menu";
+import Loginbtn from "../components/Loginbtn";
+import Cartbtn from "../components/Cartbtn";
 
 
 export default function Homepage() {

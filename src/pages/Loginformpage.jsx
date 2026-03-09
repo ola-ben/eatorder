@@ -1,4 +1,4 @@
-import Loginsignup from "../../Loginsignup";
+import Loginsignup from "../components/Loginsignup";
 
 export default function Loginformpage() {
   return (
