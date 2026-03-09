@@ -8,7 +8,7 @@ const dishesData = [
     ingredients:
       "Made with long-grain parboiled rice, tomatoes, tomato paste, onions, bell peppers, Scotch bonnet peppers, garlic, and ginger.",
     price: 1500.0,
-    photoName: "/src/assets/pizzaimages/jollofricee.jpg",
+    photoName: "../../public/images/pizzaimages/jollofricee.jpg",
     type: "maindishes",
   },
   {
