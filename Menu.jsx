@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+// import { useEffect } from "react";
 import { Pizza } from "./Pizza";
 import { FaSearch } from "react-icons/fa";
 
@@ -119,13 +119,12 @@ const KEY = "eb94aa52";
 
 export function Menu() {
   const [items, setItems] = useState("maindishes");
-  useEffect(function () {
-    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=thor`)
-      .then((res) => res.json())
-      .then((data) => setItems(data.Search));
-  }, []);
+  // useEffect(function () {
+  //   fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=thor`)
+  //     .then((res) => res.json())
+  //     .then((data) => setItems(data.Search));
+  // }, []);
 
-  
   return (
     <section className=" mt-5 p-2 md:mx-1.5">
       <div className="lg:justify-center">
