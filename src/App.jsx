@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import Loginformpage from "./assets/pages/Loginformpage";
-import Homepage from "./assets/pages/Homepage";
-import Cartpage from "./assets/pages/Cartpage";
-import Checkoutpage from "./assets/pages/Checkoutpage";
+import Loginformpage from "./pages/Loginformpage";
+import Homepage from "./pages/Homepage";
+import Cartpage from "./pages/Cartpage";
+import Checkoutpage from "./pages/Checkoutpage";
 
 export default function App() {
   return (
