@@ -61,7 +61,7 @@ export default function Header() {
 
           <p className="flex items-center gap-2 md:text-[18px]">
             <FaStar />
-            <span>4.9 rating (500+ reviews)</span>
+            <span>4.95 rating (500+ reviews)</span>
           </p>
         </div>
 
