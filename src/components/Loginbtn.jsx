@@ -1,18 +1,18 @@
 import { MdOutlinePersonAdd } from "react-icons/md";
-
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 export default function Loginbtn() {
   const navigate = useNavigate();
+
   return (
-    <section className="font-rubik ml-3 fixed top-2 right-2 z-10 px-2.5">
+    <div className="fixed top-3 right-3 z-[9999]">
       <button
         onClick={() => navigate("/logiformpage")}
-        className="bg-ph w-22 p-2 text-white rounded-[12px] pl-5.5 capitalize"
+        className="bg-ph text-white rounded-[12px] flex items-center gap-2 px-4 py-2 shadow-lg"
       >
-        login
+        <MdOutlinePersonAdd className="text-xl" />
+        <span className="capitalize">login</span>
       </button>
-      <MdOutlinePersonAdd className="text-xl absolute top-1/2 transform -translate-y-2/3  text-white ml-2" />
-    </section>
+    </div>
   );
 }
