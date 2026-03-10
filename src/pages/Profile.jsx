@@ -1,6 +1,7 @@
 // src/pages/Profile.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   HiArrowSmallLeft,
   HiChevronDown,
@@ -16,25 +17,21 @@ import {
 export default function Profile() {
   const navigate = useNavigate();
 
-  // Profile info
   const [fullName] = useState(localStorage.getItem("fullName") || "Guest User");
   const [phone] = useState(localStorage.getItem("phone") || "Not provided");
   const [email] = useState(localStorage.getItem("email") || "Not provided");
   const [address] = useState(localStorage.getItem("address") || "");
 
-  // Orders
   const [orders, setOrders] = useState(() => {
     const saved = localStorage.getItem("orders");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Wishlist from localStorage
   const [wishlist] = useState(() => {
     const saved = localStorage.getItem("wishlist");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Tabs
   const tabs = [
     { id: "overview", label: "Overview", icon: HiUser },
     { id: "orders", label: "Orders", icon: HiShoppingBag },
@@ -47,10 +44,8 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("overview");
   const [openOrderIndex, setOpenOrderIndex] = useState(null);
 
-  const toggleOrder = (index) => {
+  const toggleOrder = (index) =>
     setOpenOrderIndex(openOrderIndex === index ? null : index);
-  };
-
   const clearOrders = () => {
     localStorage.removeItem("orders");
     setOrders([]);
@@ -60,9 +55,20 @@ export default function Profile() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-6">
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6"
+          >
             {/* Profile Summary */}
-            <div className="bg-gradient-to-r from-ph/80 to-orange-500 text-white p-6 rounded-xl">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-r from-ph/80 to-orange-500 text-white p-6 rounded-xl"
+            >
               <div className="flex items-center space-x-4">
                 <div className="bg-white/20 p-4 rounded-full">
                   <HiUser className="text-3xl" />
@@ -72,11 +78,16 @@ export default function Profile() {
                   <p className="text-white/80">{email}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4 }}
+                className="bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-500 text-sm">Total Orders</p>
@@ -86,9 +97,14 @@ export default function Profile() {
                     <HiShoppingBag className="text-red-600 text-xl" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-500 text-sm">Wishlist Items</p>
@@ -98,9 +114,14 @@ export default function Profile() {
                     <HiHeart className="text-pink-600 text-xl" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-500 text-sm">Saved Addresses</p>
@@ -110,20 +131,26 @@ export default function Profile() {
                     <HiMapPin className="text-green-600 text-xl" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         );
 
       case "orders":
         return (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <motion.div
+            key="orders"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          >
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-semibold text-lg">Order History</h3>
               {orders.length > 0 && (
                 <button
                   onClick={clearOrders}
-                  className="text-red-500 hover:text-red-600 text-sm font-medium"
+                  className="text-orange-500 hover:text-red-600 text-sm font-medium"
                 >
                   Clear All
                 </button>
@@ -137,8 +164,11 @@ export default function Profile() {
                 .slice()
                 .reverse()
                 .map((order, idx) => (
-                  <div
+                  <motion.div
                     key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: idx * 0.1 }}
                     className="border rounded-lg overflow-hidden mb-3"
                   >
                     <button
@@ -182,64 +212,58 @@ export default function Profile() {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </motion.div>
                 ))
             )}
-          </div>
+          </motion.div>
         );
 
       case "wishlist":
         return (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <motion.div
+            key="wishlist"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          >
             <h3 className="font-semibold text-lg mb-4">My Wishlist</h3>
             {wishlist.length === 0 ? (
               <p className="text-gray-500 text-center py-8">Coming Soon</p>
             ) : (
-              <div className="space-y-3">
+              <motion.div
+                className="space-y-3"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.1 } },
+                }}
+              >
                 {wishlist.map((item) => (
-                  <div
+                  <motion.div
                     key={item.id}
                     className="flex justify-between items-center p-3 border rounded-lg"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
                   >
                     <span>{item.name}</span>
                     <span className="font-semibold">₦{item.price}</span>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
-          </div>
-        );
-
-      case "addresses":
-        return (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-lg mb-4">Saved Addresses</h3>
-            {address ? (
-              <p>{address}</p>
-            ) : (
-              <p className="text-gray-500 text-center py-8">Coming Soon</p>
-            )}
-          </div>
-        );
-
-      case "payment":
-        return (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-lg mb-4">Payment Methods</h3>
-            <p className="text-gray-500 text-center py-8">Coming Soon</p>
-          </div>
-        );
-
-      case "settings":
-        return (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-lg mb-4">Account Settings</h3>
-            <p className="text-gray-500 text-center py-8">Coming Soon</p>
-          </div>
+          </motion.div>
         );
 
       default:
-        return null;
+        return (
+          <motion.div
+            key="default"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          />
+        );
     }
   };
 
@@ -281,7 +305,7 @@ export default function Profile() {
         </div>
 
         {/* Tab Content */}
-        <div className="transition-all duration-300">{renderTabContent()}</div>
+        {renderTabContent()}
       </div>
     </div>
   );
