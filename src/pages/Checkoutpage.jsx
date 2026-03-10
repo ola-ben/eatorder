@@ -1,22 +1,45 @@
 import { HiArrowSmallLeft } from "react-icons/hi2";
 import { CiCircleCheck } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext"; // your cart context
 
 export default function Checkoutpage() {
   const navigate = useNavigate();
-  const { cart, totalPrice } = useCart(); // cart items and total price
+  const { cart, totalPrice, clearCart } = useCart(); // include clearCart
 
   const [delivery, setDelivery] = useState("pickup");
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+
+  // Load saved profile info from localStorage
+  const [fullName, setFullName] = useState(
+    () => localStorage.getItem("fullName") || "",
+  );
+  const [phone, setPhone] = useState(() => localStorage.getItem("phone") || "");
+  const [email, setEmail] = useState(() => localStorage.getItem("email") || "");
+  const [address, setAddress] = useState(
+    () => localStorage.getItem("address") || "",
+  );
   const [note, setNote] = useState("");
 
+  // Save changes to localStorage whenever inputs change
+  useEffect(() => {
+    localStorage.setItem("fullName", fullName);
+  }, [fullName]);
+
+  useEffect(() => {
+    localStorage.setItem("phone", phone);
+  }, [phone]);
+
+  useEffect(() => {
+    localStorage.setItem("email", email);
+  }, [email]);
+
+  useEffect(() => {
+    localStorage.setItem("address", address);
+  }, [address]);
+
   const handlePlaceOrder = () => {
-    // Simple validation
+    // Validation
     if (
       !fullName ||
       !phone ||
@@ -43,8 +66,8 @@ export default function Checkoutpage() {
       totalPrice,
     };
 
-    // Navigate to success page with order data
-    navigate("/successpage", { state: { order } });
+    clearCart(); // Clear cart after order
+    navigate("/successpage", { state: { order } }); // pass order to success page
   };
 
   return (

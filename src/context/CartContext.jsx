@@ -1,10 +1,13 @@
-// CartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
@@ -13,12 +16,13 @@ export function CartProvider({ children }) {
       0,
     );
     setTotalPrice(total);
+    localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (item) => {
     setCart((prev) => {
-      const existing = prev.find((p) => p.name === item.name);
-      if (existing) {
+      const exists = prev.find((p) => p.name === item.name);
+      if (exists) {
         return prev.map((p) =>
           p.name === item.name ? { ...p, quantity: p.quantity + 1 } : p,
         );
@@ -38,9 +42,11 @@ export function CartProvider({ children }) {
     );
   };
 
+  const clearCart = () => setCart([]);
+
   return (
     <CartContext.Provider
-      value={{ cart, totalPrice, addToCart, removeFromCart }}
+      value={{ cart, addToCart, removeFromCart, totalPrice, clearCart }}
     >
       {children}
     </CartContext.Provider>

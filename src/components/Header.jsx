@@ -3,9 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { FaRegClock, FaStar } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoCall } from "react-icons/io5";
+import { useEffect } from "react";
 
 export default function Header() {
   const navigate = useNavigate();
+
+  // Scroll to top whenever header mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleLoginClick = (e) => {
     e.stopPropagation();

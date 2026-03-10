@@ -1,10 +1,16 @@
 import { HiCheckCircle } from "react-icons/hi2";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function Successpage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Order details passed via state from checkout page
   const order = location.state?.order;
