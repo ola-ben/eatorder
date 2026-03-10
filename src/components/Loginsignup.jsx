@@ -1,130 +1,218 @@
+// src/pages/Loginsignup.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { CiLogin } from "react-icons/ci";
 import { HiArrowSmallLeft } from "react-icons/hi2";
 import { MdOutlinePersonAdd } from "react-icons/md";
+import toast from "react-hot-toast";
 
 export default function Loginsignup() {
   const navigate = useNavigate();
   const [page, setPage] = useState("login");
 
   return (
-    <section
-      className="bg-[#f6f4f9] p-5 font-montserrat h-svh relative"
-      // style={{ backgroundImage: 'url("./pizzaimages/amalaa.jpg")' }}
-    >
-      <div className=" md:mx-[100px] lg:mx-[450px] my-17">
-        <HiArrowSmallLeft onClick={() => navigate("/")} />
-        <div className="flex gap-3 lg:justify-center justify-center">
-          <p className=" text-center text-xl mb-1.5 font-bold md:text-3xl lg:text-xl">
+    <section className="bg-[#f6f4f9] p-5 font-montserrat min-h-screen relative">
+      <div className="md:mx-[100px] lg:mx-[450px] my-17">
+        <HiArrowSmallLeft
+          className="text-2xl cursor-pointer"
+          onClick={() => navigate("/")}
+        />
+
+        <div className="flex justify-center">
+          <p className="text-center text-xl mb-1.5 font-bold md:text-3xl lg:text-xl">
             Welcome to Delicious Food
           </p>
         </div>
 
-        <p className=" capitalize font-montserrat font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[14px]">
-          quick setup let's go
+        <p className="capitalize font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[14px]">
+          Quick setup, let's go
         </p>
-        <div className=" flex space-x-3 bg-[#d4d4d9] text-[14.5px] rounded-[12px] justify-center mx-12 my-4.5 p-1.5">
+
+        {/* Tabs */}
+        <div className="flex space-x-3 bg-[#d4d4d9] rounded-[12px] justify-center mx-12 my-4.5 p-1.5">
           <button
             onClick={() => setPage("login")}
             className={`${
-              page === "login" && "bg-pc"
-            }  duration-300  rounded-[6px] w-full  text-[12.5px]  capitalize p-1 md:text-xl lg:text-[14.5px] lg:w-[150px]`}
+              page === "login" ? "bg-red-600 text-white" : ""
+            } duration-300 rounded-[6px] w-full capitalize p-1`}
           >
-            login
+            Login
           </button>
+
           <button
             onClick={() => setPage("signup")}
             className={`${
-              page === "signup" && "bg-pc"
-            } duration-300  rounded-[6px] w-full capitalize text-[12.5px]  p-0.5  md:text-xl lg:text-[14.5px] lg:w-[150px]`}
+              page === "signup" ? "bg-red-600 text-white" : ""
+            } duration-300 rounded-[6px] w-full capitalize p-1`}
           >
-            sign up
+            Sign Up
           </button>
         </div>
-        <form action="" className="">
-          {page === "login" && <Login />}
-        </form>
-        <form action="" className="">
-          {page === "signup" && <SignUp />}
-        </form>
+
+        {page === "login" && <LoginForm />}
+        {page === "signup" && <SignUpForm />}
       </div>
     </section>
   );
 }
 
-export function Login() {
+/////////////////////////////////////////////////////
+// LOGIN FORM
+/////////////////////////////////////////////////////
+
+function LoginForm() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      toast.error("No account found. Please sign up first.");
+      return;
+    }
+
+    if (email === user.email && password === user.password) {
+      localStorage.setItem("loggedIn", "true");
+
+      toast.success("Login successful!");
+
+      // notify app login state changed
+      window.dispatchEvent(new Event("authChanged"));
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } else {
+      toast.error("Invalid email or password");
+    }
+  };
+
   return (
     <section>
-      <div>
-        <div className="grid grid-cols-1 font-medium  text-gray-700 text-[12.5px] md:text-xl lg:text-[13.5px]">
-          <label htmlFor="Email">Email</label>
+      <div className="grid gap-6">
+        <div className="grid">
+          <label className="font-medium text-gray-700">Email</label>
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-2.5 focus:border-ph focus:outline-none mb-7.5"
-            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
           />
         </div>
-        <div className="grid grid-cols-1 font-medium text-gray-700 text-[12.5px] md:text-xl lg:text-[13.5px]">
-          <label htmlFor="Password ">Password </label>
+
+        <div className="grid">
+          <label className="font-medium text-gray-700">Password</label>
           <input
             type="password"
             placeholder="Enter your password"
-            className="w-full bg-transparent border rounded-[10px] p-2.5 border-gray-400 focus:border-ph focus:outline-none"
-            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
           />
         </div>
-        <div className="flex justify-center relative">
-          <button className="bg-ph mt-8 w-full p-2.5 text-white text-[12.5px] rounded-[10px] md:text-xl lg:text-[13.5px]">
-            login
+
+        <div className="relative flex justify-center">
+          <button
+            onClick={handleLogin}
+            className="bg-red-600 mt-4 w-full p-2.5 text-white rounded-[10px]"
+          >
+            Login
           </button>
-          <CiLogin className="text-xl absolute top-2/3 transform -translate-y-1/3  mr-17 text-white" />
+
+          <CiLogin className="text-xl absolute top-1/2 -translate-y-1/2 right-3 text-white" />
         </div>
-        <p className=" text-[13px] text-center mt-1.5">
-          demo: admin@restaurant.com/password
-        </p>
       </div>
     </section>
   );
 }
 
-export function SignUp() {
+/////////////////////////////////////////////////////
+// SIGNUP FORM
+/////////////////////////////////////////////////////
+
+function SignUpForm() {
+  const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignup = () => {
+    if (!fullName || !email || !password) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    const user = {
+      fullName,
+      email,
+      password,
+    };
+
+    // save account
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // auto login
+    localStorage.setItem("loggedIn", "true");
+
+    toast.success("Account created successfully!");
+
+    // notify login state change
+    window.dispatchEvent(new Event("authChanged"));
+
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
+  };
+
   return (
     <section>
-      <div className="">
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[12.5px] md:text-xl lg:text-[13.5px]">
-          <label htmlFor="Email">Full Name</label>
+      <div className="grid gap-6">
+        <div className="grid">
+          <label className="font-medium text-gray-700">Full Name</label>
           <input
             type="text"
             placeholder="Enter your full name"
-            className="w-full border border-gray-400  rounded-[10px] p-2.5 focus:border-ph focus:outline-none mb-7.5 lg:text-[13.5px]"
-            required
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
           />
         </div>
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[12.5px]  md:text-xl lg:text-[13.5px]">
-          <label htmlFor="Email">Email</label>
+
+        <div className="grid">
+          <label className="font-medium text-gray-700">Email</label>
           <input
             type="text"
             placeholder="Enter your email"
-            className="w-full bg-transparent border border-gray-400 rounded-[10px] p-2.5 focus:border-ph focus:outline-none mb-7.5"
-            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
           />
         </div>
-        <div className="grid grid-cols-1  font-medium text-gray-700 text-[12.5px]  md:text-xl lg:text-[13.5px]">
-          <label htmlFor="Password ">Password </label>
+
+        <div className="grid">
+          <label className="font-medium text-gray-700">Password</label>
           <input
             type="password"
             placeholder="Create a password"
-            className="w-full bg-transparent border rounded-[10px] p-2.5 border-gray-400 focus:border-ph focus:outline-none "
-            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
           />
         </div>
-        <div className="flex justify-center relative">
-          <button className="bg-ph my-8 w-full p-2.5  md:text-xl text-[12.5px] text-white rounded-[10px] font-medium lg:text-[13.5px]">
-            SignUp
+
+        <div className="relative flex justify-center">
+          <button
+            onClick={handleSignup}
+            className="bg-red-600 mt-4 w-full p-2.5 text-white rounded-[10px]"
+          >
+            Sign Up
           </button>
-          <MdOutlinePersonAdd className="text-xl absolute top-1/2 transform -translate-y-1/2  mr-23 text-white" />
+
+          <MdOutlinePersonAdd className="text-xl absolute top-1/2 -translate-y-1/2 right-3 text-white" />
         </div>
       </div>
     </section>
