@@ -1,4 +1,3 @@
-// src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -8,6 +7,7 @@ import Cartpage from "./pages/Cartpage";
 import Checkoutpage from "./pages/Checkoutpage";
 import Successpage from "./pages/Successpage";
 import Profile from "./pages/Profile";
+// Remove Loginbtn import
 
 import { CartProvider } from "./context/CartContext";
 
@@ -15,7 +15,9 @@ export default function App() {
   return (
     <CartProvider>
       <BrowserRouter>
-        {/* Toast container (must be here once) */}
+        {/* Remove Loginbtn from here */}
+
+        {/* Toast container */}
         <Toaster
           position="top-center"
           reverseOrder={false}
@@ -33,11 +35,11 @@ export default function App() {
 
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="cartpage" element={<Cartpage />} />
-          <Route path="checkoutpage" element={<Checkoutpage />} />
-          <Route path="logiformpage" element={<Loginformpage />} />
-          <Route path="successpage" element={<Successpage />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="/cartpage" element={<Cartpage />} />
+          <Route path="/checkoutpage" element={<Checkoutpage />} />
+          <Route path="/logiformpage" element={<Loginformpage />} />
+          <Route path="/successpage" element={<Successpage />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

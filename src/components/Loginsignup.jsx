@@ -1,4 +1,3 @@
-// src/pages/Loginsignup.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CiLogin } from "react-icons/ci";
@@ -14,7 +13,7 @@ export default function Loginsignup() {
     <section className="bg-[#f6f4f9] p-5 font-montserrat min-h-screen relative">
       <div className="md:mx-[100px] lg:mx-[450px] my-17">
         <HiArrowSmallLeft
-          className="text-2xl cursor-pointer"
+          className="text-2xl cursor-pointer hover:text-red-600 transition-colors"
           onClick={() => navigate("/")}
         />
 
@@ -33,8 +32,8 @@ export default function Loginsignup() {
           <button
             onClick={() => setPage("login")}
             className={`${
-              page === "login" ? "bg-red-600 text-white" : ""
-            } duration-300 rounded-[6px] w-full capitalize p-1`}
+              page === "login" ? "bg-red-600 text-white" : "hover:bg-gray-300"
+            } duration-300 rounded-[6px] w-full capitalize p-1 transition-colors`}
           >
             Login
           </button>
@@ -42,15 +41,15 @@ export default function Loginsignup() {
           <button
             onClick={() => setPage("signup")}
             className={`${
-              page === "signup" ? "bg-red-600 text-white" : ""
-            } duration-300 rounded-[6px] w-full capitalize p-1`}
+              page === "signup" ? "bg-red-600 text-white" : "hover:bg-gray-300"
+            } duration-300 rounded-[6px] w-full capitalize p-1 transition-colors`}
           >
             Sign Up
           </button>
         </div>
 
-        {page === "login" && <LoginForm />}
-        {page === "signup" && <SignUpForm />}
+        {page === "login" && <LoginForm setPage={setPage} />}
+        {page === "signup" && <SignUpForm setPage={setPage} />}
       </div>
     </section>
   );
@@ -60,12 +59,20 @@ export default function Loginsignup() {
 // LOGIN FORM
 /////////////////////////////////////////////////////
 
-function LoginForm() {
+function LoginForm({ setPage }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
@@ -74,58 +81,93 @@ function LoginForm() {
     }
 
     if (email === user.email && password === user.password) {
+      // Set login state
       localStorage.setItem("loggedIn", "true");
 
       toast.success("Login successful!");
 
-      // notify app login state changed
+      // Dispatch multiple events to ensure all listeners catch it
       window.dispatchEvent(new Event("authChanged"));
+      window.dispatchEvent(new Event("storage"));
 
+      // Also trigger a manual storage event for cross-tab sync
+      const storageEvent = new StorageEvent("storage", {
+        key: "loggedIn",
+        newValue: "true",
+        oldValue: "false",
+        storageArea: localStorage,
+        url: window.location.href,
+      });
+      window.dispatchEvent(storageEvent);
+
+      // Navigate back to home page
       setTimeout(() => {
         navigate("/");
-      }, 1000);
+      }, 500);
     } else {
       toast.error("Invalid email or password");
     }
   };
 
   return (
-    <section>
+    <form onSubmit={handleLogin}>
       <div className="grid gap-6">
         <div className="grid">
           <label className="font-medium text-gray-700">Email</label>
           <input
-            type="text"
+            type="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
+            required
           />
         </div>
 
         <div className="grid">
           <label className="font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-400 rounded-[10px] p-2.5 w-full focus:border-red-600 focus:outline-none"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
 
         <div className="relative flex justify-center">
           <button
-            onClick={handleLogin}
-            className="bg-red-600 mt-4 w-full p-2.5 text-white rounded-[10px]"
+            type="submit"
+            className="bg-red-600 hover:bg-red-700 transition-colors mt-4 w-full p-2.5 text-white rounded-[10px]"
           >
             Login
           </button>
 
           <CiLogin className="text-xl absolute top-1/2 -translate-y-1/2 right-3 text-white" />
         </div>
+
+        <p className="text-center text-sm text-gray-500 mt-2">
+          Don't have an account?{" "}
+          <button
+            type="button"
+            onClick={() => setPage("signup")}
+            className="text-red-600 hover:underline"
+          >
+            Sign up
+          </button>
+        </p>
       </div>
-    </section>
+    </form>
   );
 }
 
@@ -133,16 +175,37 @@ function LoginForm() {
 // SIGNUP FORM
 /////////////////////////////////////////////////////
 
-function SignUpForm() {
+function SignUpForm({ setPage }) {
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignup = () => {
-    if (!fullName || !email || !password) {
+  const handleSignup = (e) => {
+    e.preventDefault();
+
+    if (!fullName || !email || !password || !confirmPassword) {
       toast.error("Please fill all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    // Check if user already exists
+    const existingUser = JSON.parse(localStorage.getItem("user"));
+    if (existingUser && existingUser.email === email) {
+      toast.error("An account with this email already exists");
       return;
     }
 
@@ -150,26 +213,39 @@ function SignUpForm() {
       fullName,
       email,
       password,
+      createdAt: new Date().toISOString(),
     };
 
-    // save account
+    // Save account
     localStorage.setItem("user", JSON.stringify(user));
 
-    // auto login
+    // Auto login
     localStorage.setItem("loggedIn", "true");
 
     toast.success("Account created successfully!");
 
-    // notify login state change
+    // Dispatch multiple events to ensure all listeners catch it
     window.dispatchEvent(new Event("authChanged"));
+    window.dispatchEvent(new Event("storage"));
 
+    // Also trigger a manual storage event for cross-tab sync
+    const storageEvent = new StorageEvent("storage", {
+      key: "loggedIn",
+      newValue: "true",
+      oldValue: "false",
+      storageArea: localStorage,
+      url: window.location.href,
+    });
+    window.dispatchEvent(storageEvent);
+
+    // Navigate back to home page
     setTimeout(() => {
       navigate("/");
-    }, 1000);
+    }, 500);
   };
 
   return (
-    <section>
+    <form onSubmit={handleSignup}>
       <div className="grid gap-6">
         <div className="grid">
           <label className="font-medium text-gray-700">Full Name</label>
@@ -179,42 +255,80 @@ function SignUpForm() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
+            required
           />
         </div>
 
         <div className="grid">
           <label className="font-medium text-gray-700">Email</label>
           <input
-            type="text"
+            type="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
+            required
           />
         </div>
 
         <div className="grid">
           <label className="font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            placeholder="Create a password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Create a password (min. 6 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-400 rounded-[10px] p-2.5 w-full focus:border-red-600 focus:outline-none"
+              required
+              minLength={6}
+            />
+          </div>
+        </div>
+
+        <div className="grid">
+          <label className="font-medium text-gray-700">Confirm Password</label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="border border-gray-400 rounded-[10px] p-2.5 w-full focus:border-red-600 focus:outline-none"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
 
         <div className="relative flex justify-center">
           <button
-            onClick={handleSignup}
-            className="bg-red-600 mt-4 w-full p-2.5 text-white rounded-[10px]"
+            type="submit"
+            className="bg-red-600 hover:bg-red-700 transition-colors mt-4 w-full p-2.5 text-white rounded-[10px]"
           >
             Sign Up
           </button>
 
           <MdOutlinePersonAdd className="text-xl absolute top-1/2 -translate-y-1/2 right-3 text-white" />
         </div>
+
+        <p className="text-center text-sm text-gray-500 mt-2">
+          Already have an account?{" "}
+          <button
+            type="button"
+            onClick={() => setPage("login")}
+            className="text-red-600 hover:underline"
+          >
+            Login
+          </button>
+        </p>
       </div>
-    </section>
+    </form>
   );
 }

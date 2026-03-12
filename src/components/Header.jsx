@@ -1,22 +1,14 @@
-import { MdOutlinePersonAdd } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
 import { FaRegClock, FaStar } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoCall } from "react-icons/io5";
 import { useEffect } from "react";
 
 export default function Header() {
-  const navigate = useNavigate();
 
   // Scroll to top whenever header mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const handleLoginClick = (e) => {
-    e.stopPropagation();
-    navigate("/logiformpage");
-  };
 
   return (
     <section
@@ -25,17 +17,6 @@ export default function Header() {
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-ph opacity-75 pointer-events-none z-0"></div>
-
-      {/* Login Button */}
-      <div className="fixed top-3 right-3 z-[9999]">
-        <button
-          onClick={handleLoginClick}
-          className="bg-ph hover:bg-ph/90 text-white rounded-[12px] flex items-center gap-2 px-4 py-2 shadow-lg transition-all duration-300 cursor-pointer"
-        >
-          <MdOutlinePersonAdd className="text-xl" />
-          <span className="capitalize">login</span>
-        </button>
-      </div>
 
       {/* Content */}
       <div className="relative p-3 lg:my-8 z-10 max-w-6xl">
