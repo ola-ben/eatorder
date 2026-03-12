@@ -3,144 +3,301 @@ import { HiMinusSmall } from "react-icons/hi2";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  HiOutlineShoppingBag,
+  HiOutlineCheckCircle,
+  HiOutlineExclamationCircle,
+  HiOutlineTrash,
+} from "react-icons/hi2";
+import { FaNairaSign } from "react-icons/fa6";
 
 export function Pizza({ name, ingredients, price, photoName }) {
   const { cart, addToCart, removeFromCart } = useCart();
-
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalMessage2, setModalMessage2] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [toast, setToast] = useState({ show: false, type: "", message: "" });
 
   const item = cart.find((p) => p.name === name);
   const quantity = item?.quantity || 0;
 
   const fallbackImage = `https://placehold.co/600x400/4f2b00/white?text=${encodeURIComponent(name)}`;
 
-  const showCustomModal = (message, itemMessage) => {
-    setModalMessage(message);
-    setModalMessage2(itemMessage);
-    setShowModal(true);
+  const showToast = (type, itemName) => {
+    let title = "";
+    let message = "";
+    let icon = null;
 
-    setTimeout(() => setShowModal(false), 2000);
+    switch (type) {
+      case "add":
+        title = "Added to cart";
+        message = `${itemName} has been added`;
+        icon = <HiOutlineShoppingBag className="text-green-500 text-xl" />;
+        break;
+      case "remove":
+        title = "Removed from cart";
+        message = `${itemName} has been removed`;
+        icon = <HiOutlineTrash className="text-red-500 text-xl" />;
+        break;
+      case "max":
+        title = "Maximum limit reached";
+        message = "You cannot add more than 10 items";
+        icon = (
+          <HiOutlineExclamationCircle className="text-yellow-500 text-xl" />
+        );
+        break;
+      default:
+        break;
+    }
+
+    setToast({
+      show: true,
+      type,
+      title,
+      message,
+      icon,
+    });
+
+    setTimeout(() => setToast({ show: false, type: "", message: "" }), 2000);
   };
 
   function handleAdd() {
     if (quantity < 10) {
       addToCart({ name, ingredients, price, photoName });
-      showCustomModal("Added to cart", `${name} has been added to your cart`);
+      showToast("add", name);
     } else {
-      showCustomModal(
-        "Maximum limit reached",
-        "You cannot add more than 10 items",
-      );
+      showToast("max", name);
     }
   }
 
   function handleRemove() {
     if (quantity > 0) {
       removeFromCart(name);
-      showCustomModal(
-        "Removed from cart",
-        `${name} has been removed from your cart`,
-      );
+      showToast("remove", name);
     }
   }
 
   return (
-    <div className="shadow-sm rounded-b-[10px] mx-0.5 overflow-hidden lg:mx-2 relative">
-      {/* Image */}
-      <div className="w-full h-64 overflow-hidden rounded-t-[15px] bg-gray-100">
-        <img
-          src={imgError ? fallbackImage : photoName}
-          alt={name}
-          onError={() => setImgError(true)}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-        />
-      </div>
+    <>
+      {/* Pizza Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.3 }}
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        className="bg-white rounded-2xl shadow-lg overflow-hidden relative group cursor-pointer border border-gray-100 hover:border-red-200 transition-all duration-300"
+      >
+        {/* Image Container with Gradient Overlay */}
+        <div className="relative overflow-hidden h-52 md:h-64">
+          <motion.img
+            animate={{ scale: isHovered ? 1.1 : 1 }}
+            transition={{ duration: 0.4 }}
+            src={imgError ? fallbackImage : photoName}
+            alt={name}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover"
+          />
 
-      <div className="p-2">
-        <p className="text-xl my-1.5 font-rubik text-[#1a0e00] md:text-2xl">
-          {name}
-        </p>
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        <p className="leading-[1.5] mb-4 text-[14px] font-dmsans text-[#564d42] md:text-[16px] lg:text-[14px]">
-          {ingredients}
-        </p>
-
-        <span className="flex items-center justify-between mb-2">
-          <p className="text-ph text-xl font-rubik md:text-2xl">₦{price}.00</p>
-
-          <div className="flex items-center">
-            {quantity > 0 && (
-              <>
-                <button
-                  onClick={handleRemove}
-                  className="bg-red-500 p-2.5 text-white text-xl md:text-2xl rounded-xl hover:bg-red-600 duration-300"
-                >
-                  <HiMinusSmall />
-                </button>
-
-                <span className="mx-6 font-semibold">{quantity}</span>
-              </>
-            )}
-
-            <button
-              onClick={handleAdd}
-              className={`${
-                quantity >= 1
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-ph hover:bg-opacity-80"
-              } p-2.5 rounded-xl text-xl md:text-2xl text-white duration-300`}
+          {/* Popular Tag - You can make this dynamic based on sales */}
+          {quantity > 5 && (
+            <motion.div
+              initial={{ x: 100 }}
+              animate={{ x: 0 }}
+              className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg"
             >
-              <IoIosAdd />
-            </button>
-          </div>
-        </span>
-      </div>
+              🔥 Popular
+            </motion.div>
+          )}
 
-      {/* Animated Toast - Positioned at very top */}
+          {/* Quantity Badge (when item is in cart) */}
+          <AnimatePresence>
+            {quantity > 0 && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                className="absolute top-3 left-3 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-lg"
+              >
+                {quantity}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Content */}
+        <div className="p-4 md:p-5">
+          {/* Name and Price Row */}
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-800 font-rubik">
+              {name}
+            </h3>
+            <div className="flex items-center bg-red-50 px-3 py-1.5 rounded-full">
+              <FaNairaSign className="text-red-500 text-sm" />
+              <span className="text-red-600 font-bold text-lg">{price}</span>
+            </div>
+          </div>
+
+          {/* Ingredients */}
+          <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2 font-dmsans">
+            {ingredients}
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between mt-2">
+            {/* Quantity Controls - Animated */}
+            <AnimatePresence mode="wait">
+              {quantity > 0 ? (
+                <motion.div
+                  key="controls"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="flex items-center gap-2 bg-gray-100 rounded-xl p-1"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleRemove}
+                    className="bg-white text-red-500 p-2 rounded-lg shadow-sm hover:bg-red-500 hover:text-white transition-all duration-300"
+                  >
+                    <HiMinusSmall className="text-lg" />
+                  </motion.button>
+
+                  <motion.span
+                    key={quantity}
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    className="font-bold text-gray-700 w-8 text-center"
+                  >
+                    {quantity}
+                  </motion.span>
+
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleAdd}
+                    disabled={quantity >= 10}
+                    className={`p-2 rounded-lg transition-all duration-300 ${
+                      quantity >= 10
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-green-500 text-white hover:bg-green-600 shadow-md hover:shadow-lg"
+                    }`}
+                  >
+                    <IoIosAdd className="text-lg" />
+                  </motion.button>
+                </motion.div>
+              ) : (
+                <motion.button
+                  key="add"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleAdd}
+                  className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <HiOutlineShoppingBag className="text-lg" />
+                  <span className="font-medium">Add to Cart</span>
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            {/* Price per item (only shown when multiple quantities) */}
+            {quantity > 1 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-xs text-gray-500"
+              >
+                <span className="font-medium">₦{price}</span> each
+              </motion.div>
+            )}
+          </div>
+
+          {/* Item Total (when multiple) */}
+          {quantity > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center"
+            >
+              <span className="text-sm text-gray-600">Item total:</span>
+              <span className="text-red-600 font-bold">
+                ₦{price * quantity}
+              </span>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Animated Border on Hover */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-red-600"
+        />
+      </motion.div>
+
+      {/* Global Toast Notification */}
       <AnimatePresence>
-        {showModal && (
+        {toast.show && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            initial={{ opacity: 0, y: -50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            exit={{ opacity: 0, y: -50, scale: 0.9 }}
             transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
-            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[99999] pointer-events-none"
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[99999] pointer-events-none"
           >
-            <div className="bg-white border-l-4 border-ph rounded-lg shadow-2xl px-6 py-3 min-w-[300px] max-w-md">
+            <div className="bg-white border-l-4 border-ph rounded-xl shadow-2xl px-5 py-3 min-w-[320px] max-w-md backdrop-blur-sm bg-opacity-95">
               <div className="flex items-center gap-3">
                 <div
-                  className={`text-2xl ${modalMessage.includes("Added") ? "text-green-500" : modalMessage.includes("Removed") ? "text-red-500" : "text-yellow-500"}`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    toast.type === "add"
+                      ? "bg-green-100"
+                      : toast.type === "remove"
+                        ? "bg-red-100"
+                        : "bg-yellow-100"
+                  }`}
                 >
-                  {modalMessage.includes("Added")
-                    ? "🛒"
-                    : modalMessage.includes("Removed")
-                      ? "🗑️"
-                      : "⚠️"}
+                  {toast.icon}
                 </div>
                 <div className="flex-1">
-                  <p className="text-[#523410] font-rubik text-[14.5px] font-semibold">
-                    {modalMessage}
+                  <p className="text-gray-800 font-semibold text-sm">
+                    {toast.title}
                   </p>
-                  <p className="text-[#523410] text-[13px] mt-0.5 opacity-80">
-                    {modalMessage2}
+                  <p className="text-gray-600 text-xs mt-0.5">
+                    {toast.message}
                   </p>
                 </div>
+
+                {/* Success Check for Add */}
+                {toast.type === "add" && (
+                  <HiOutlineCheckCircle className="text-green-500 text-xl" />
+                )}
               </div>
 
-              {/* Progress bar */}
+              {/* Progress Bar */}
               <motion.div
                 initial={{ width: "100%" }}
                 animate={{ width: "0%" }}
                 transition={{ duration: 2, ease: "linear" }}
-                className="h-1 bg-ph rounded-full mt-2"
+                className={`h-1 rounded-full mt-2 ${
+                  toast.type === "add"
+                    ? "bg-green-500"
+                    : toast.type === "remove"
+                      ? "bg-red-500"
+                      : "bg-yellow-500"
+                }`}
               />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

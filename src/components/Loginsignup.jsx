@@ -1,55 +1,156 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CiLogin } from "react-icons/ci";
-import { HiArrowSmallLeft } from "react-icons/hi2";
-import { MdOutlinePersonAdd } from "react-icons/md";
+import { CiLogin, CiMail, CiLock } from "react-icons/ci";
+import { HiArrowSmallLeft, HiOutlineSparkles } from "react-icons/hi2";
+import {
+  MdOutlinePersonAdd,
+  MdVisibility,
+  MdVisibilityOff,
+} from "react-icons/md";
+import { FaUser } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
 export default function Loginsignup() {
   const navigate = useNavigate();
   const [page, setPage] = useState("login");
 
+  // Animation variants
+  const pageVariants = {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 20 },
+  };
+
   return (
-    <section className="bg-[#f6f4f9] p-5 font-montserrat min-h-screen relative">
-      <div className="md:mx-[100px] lg:mx-[450px] my-17">
-        <HiArrowSmallLeft
-          className="text-2xl cursor-pointer hover:text-red-600 transition-colors"
-          onClick={() => navigate("/")}
+    <section className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen py-8 px-4 relative">
+      {/* Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-20 -right-20 w-64 h-64 bg-red-500/5 rounded-full blur-3xl"
         />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-20 -left-20 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl"
+        />
+      </div>
 
-        <div className="flex justify-center">
-          <p className="text-center text-xl mb-1.5 font-bold md:text-3xl lg:text-xl">
-            Welcome to Delicious Food
+      <div className="max-w-md mx-auto relative z-10">
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => navigate("/")}
+          className="mb-6 text-gray-600 hover:text-red-600 transition-colors flex items-center gap-1 group"
+        >
+          <HiArrowSmallLeft className="text-2xl group-hover:-translate-x-1 transition-transform" />
+          <span className="text-sm">Back</span>
+        </motion.button>
+
+        {/* Header Card */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-gray-200 mb-6 text-center"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full mb-4 shadow-lg"
+          >
+            <HiOutlineSparkles className="text-lg" />
+            <span className="text-sm font-medium">Welcome Back</span>
+          </motion.div>
+
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            Delicious Food
+          </h1>
+
+          <p className="text-gray-600">
+            {page === "login"
+              ? "Sign in to continue your food journey"
+              : "Create an account to get started"}
           </p>
-        </div>
-
-        <p className="capitalize font-medium text-gray-500 text-center mb-9 md:text-xl lg:text-[14px]">
-          Quick setup, let's go
-        </p>
+        </motion.div>
 
         {/* Tabs */}
-        <div className="flex space-x-3 bg-[#d4d4d9] rounded-[12px] justify-center mx-12 my-4.5 p-1.5">
-          <button
-            onClick={() => setPage("login")}
-            className={`${
-              page === "login" ? "bg-red-600 text-white" : "hover:bg-gray-300"
-            } duration-300 rounded-[6px] w-full capitalize p-1 transition-colors`}
-          >
-            Login
-          </button>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white/20 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-white/30 mb-8"
+        >
+          <div className="grid grid-cols-2 gap-1.5">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setPage("login")}
+              className={`
+                relative py-3 rounded-xl font-medium text-sm transition-all duration-300
+                ${page === "login" ? "text-white" : "text-gray-600 hover:text-gray-900"}
+              `}
+            >
+              {page === "login" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500 to-red-600 shadow-lg"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <CiLogin className="text-lg" />
+                Login
+              </span>
+            </motion.button>
 
-          <button
-            onClick={() => setPage("signup")}
-            className={`${
-              page === "signup" ? "bg-red-600 text-white" : "hover:bg-gray-300"
-            } duration-300 rounded-[6px] w-full capitalize p-1 transition-colors`}
-          >
-            Sign Up
-          </button>
-        </div>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setPage("signup")}
+              className={`
+                relative py-3 rounded-xl font-medium text-sm transition-all duration-300
+                ${page === "signup" ? "text-white" : "text-gray-600 hover:text-gray-900"}
+              `}
+            >
+              {page === "signup" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500 to-red-600 shadow-lg"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <MdOutlinePersonAdd className="text-lg" />
+                Sign Up
+              </span>
+            </motion.button>
+          </div>
+        </motion.div>
 
-        {page === "login" && <LoginForm setPage={setPage} />}
-        {page === "signup" && <SignUpForm setPage={setPage} />}
+        {/* Forms */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            {page === "login" ? (
+              <LoginForm setPage={setPage} />
+            ) : (
+              <SignUpForm setPage={setPage} />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );
@@ -64,110 +165,165 @@ function LoginForm({ setPage }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!email || !password) {
       toast.error("Please fill in all fields");
+      setIsLoading(false);
       return;
     }
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
       toast.error("No account found. Please sign up first.");
+      setIsLoading(false);
       return;
     }
 
     if (email === user.email && password === user.password) {
-      // Set login state
       localStorage.setItem("loggedIn", "true");
 
-      toast.success("Login successful!");
+      toast.success(
+        <div className="flex items-center gap-2">
+          <span className="text-green-500">✅</span>
+          <div>
+            <p className="font-semibold">Welcome back, {user.fullName}!</p>
+            <p className="text-xs">Login successful</p>
+          </div>
+        </div>,
+        { duration: 3000 },
+      );
 
-      // Dispatch multiple events to ensure all listeners catch it
       window.dispatchEvent(new Event("authChanged"));
       window.dispatchEvent(new Event("storage"));
 
-      // Also trigger a manual storage event for cross-tab sync
-      const storageEvent = new StorageEvent("storage", {
-        key: "loggedIn",
-        newValue: "true",
-        oldValue: "false",
-        storageArea: localStorage,
-        url: window.location.href,
-      });
-      window.dispatchEvent(storageEvent);
-
-      // Navigate back to home page
       setTimeout(() => {
         navigate("/");
       }, 500);
     } else {
       toast.error("Invalid email or password");
     }
+
+    setIsLoading(false);
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <div className="grid gap-6">
-        <div className="grid">
-          <label className="font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
-            required
-          />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-gray-200"
+    >
+      <form onSubmit={handleLogin} className="space-y-5">
+        {/* Email Field */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+            <CiMail className="text-lg" />
+            Email
+          </label>
+          <div className="relative">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-4 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white/50"
+              required
+            />
+          </div>
         </div>
 
-        <div className="grid">
-          <label className="font-medium text-gray-700">Password</label>
+        {/* Password Field */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+            <CiLock className="text-lg" />
+            Password
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-gray-400 rounded-[10px] p-2.5 w-full focus:border-red-600 focus:outline-none"
+              className="w-full pl-4 pr-12 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white/50"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? (
+                <MdVisibilityOff className="text-xl" />
+              ) : (
+                <MdVisibility className="text-xl" />
+              )}
             </button>
           </div>
         </div>
 
-        <div className="relative flex justify-center">
+        {/* Forgot Password Link */}
+        <div className="text-right">
           <button
-            type="submit"
-            className="bg-red-600 hover:bg-red-700 transition-colors mt-4 w-full p-2.5 text-white rounded-[10px]"
+            type="button"
+            className="text-sm text-red-600 hover:text-red-700 hover:underline transition-colors"
+            onClick={() => toast.success("Password reset feature coming soon!")}
           >
-            Login
+            Forgot password?
           </button>
-
-          <CiLogin className="text-xl absolute top-1/2 -translate-y-1/2 right-3 text-white" />
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-2">
+        {/* Submit Button */}
+        <div className="relative">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group"
+          >
+            {isLoading ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
+              />
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <CiLogin className="text-xl" />
+                Login
+              </span>
+            )}
+
+            {/* Shine effect */}
+            <motion.div
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            />
+          </motion.button>
+        </div>
+
+        {/* Sign Up Link */}
+        <p className="text-center text-sm text-gray-500 mt-4">
           Don't have an account?{" "}
           <button
             type="button"
             onClick={() => setPage("signup")}
-            className="text-red-600 hover:underline"
+            className="text-red-600 font-medium hover:text-red-700 hover:underline transition-colors"
           >
             Sign up
           </button>
         </p>
-      </div>
-    </form>
+      </form>
+    </motion.div>
   );
 }
 
@@ -177,35 +333,63 @@ function LoginForm({ setPage }) {
 
 function SignUpForm({ setPage }) {
   const navigate = useNavigate();
-
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const handleSignup = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "password") {
+      // Calculate password strength
+      let strength = 0;
+      if (value.length >= 6) strength += 1;
+      if (value.match(/[A-Z]/)) strength += 1;
+      if (value.match(/[0-9]/)) strength += 1;
+      if (value.match(/[^A-Za-z0-9]/)) strength += 1;
+      setPasswordStrength(strength);
+    }
+  };
+
+  const handleSignup = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
+    const { fullName, email, password, confirmPassword } = formData;
 
     if (!fullName || !email || !password || !confirmPassword) {
       toast.error("Please fill all fields");
+      setIsLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters long");
+      setIsLoading(false);
       return;
     }
 
-    // Check if user already exists
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const existingUser = JSON.parse(localStorage.getItem("user"));
     if (existingUser && existingUser.email === email) {
       toast.error("An account with this email already exists");
+      setIsLoading(false);
       return;
     }
 
@@ -216,119 +400,233 @@ function SignUpForm({ setPage }) {
       createdAt: new Date().toISOString(),
     };
 
-    // Save account
     localStorage.setItem("user", JSON.stringify(user));
-
-    // Auto login
     localStorage.setItem("loggedIn", "true");
 
-    toast.success("Account created successfully!");
+    toast.success(
+      <div className="flex items-center gap-2">
+        <span className="text-green-500">🎉</span>
+        <div>
+          <p className="font-semibold">Welcome, {fullName}!</p>
+          <p className="text-xs">Account created successfully</p>
+        </div>
+      </div>,
+      { duration: 3000 },
+    );
 
-    // Dispatch multiple events to ensure all listeners catch it
     window.dispatchEvent(new Event("authChanged"));
     window.dispatchEvent(new Event("storage"));
 
-    // Also trigger a manual storage event for cross-tab sync
-    const storageEvent = new StorageEvent("storage", {
-      key: "loggedIn",
-      newValue: "true",
-      oldValue: "false",
-      storageArea: localStorage,
-      url: window.location.href,
-    });
-    window.dispatchEvent(storageEvent);
-
-    // Navigate back to home page
     setTimeout(() => {
       navigate("/");
     }, 500);
+
+    setIsLoading(false);
+  };
+
+  const getPasswordStrengthColor = () => {
+    switch (passwordStrength) {
+      case 1:
+        return "bg-red-500";
+      case 2:
+        return "bg-orange-500";
+      case 3:
+        return "bg-yellow-500";
+      case 4:
+        return "bg-green-500";
+      default:
+        return "bg-gray-200";
+    }
   };
 
   return (
-    <form onSubmit={handleSignup}>
-      <div className="grid gap-6">
-        <div className="grid">
-          <label className="font-medium text-gray-700">Full Name</label>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-gray-200"
+    >
+      <form onSubmit={handleSignup} className="space-y-4">
+        {/* Full Name Field */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+            <FaUser className="text-sm" />
+            Full Name
+          </label>
           <input
             type="text"
+            name="fullName"
             placeholder="Enter your full name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
+            value={formData.fullName}
+            onChange={handleChange}
+            className="w-full pl-4 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white/50"
             required
           />
         </div>
 
-        <div className="grid">
-          <label className="font-medium text-gray-700">Email</label>
+        {/* Email Field */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+            <CiMail className="text-lg" />
+            Email
+          </label>
           <input
             type="email"
+            name="email"
             placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border border-gray-400 rounded-[10px] p-2.5 focus:border-red-600 focus:outline-none"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full pl-4 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white/50"
             required
           />
         </div>
 
-        <div className="grid">
-          <label className="font-medium text-gray-700">Password</label>
+        {/* Password Field */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+            <CiLock className="text-lg" />
+            Password
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="Create a password (min. 6 characters)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border border-gray-400 rounded-[10px] p-2.5 w-full focus:border-red-600 focus:outline-none"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full pl-4 pr-12 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white/50"
               required
               minLength={6}
-            />
-          </div>
-        </div>
-
-        <div className="grid">
-          <label className="font-medium text-gray-700">Confirm Password</label>
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="border border-gray-400 rounded-[10px] p-2.5 w-full focus:border-red-600 focus:outline-none"
-              required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? (
+                <MdVisibilityOff className="text-xl" />
+              ) : (
+                <MdVisibility className="text-xl" />
+              )}
             </button>
           </div>
+
+          {/* Password Strength Indicator */}
+          {formData.password && (
+            <div className="mt-2 space-y-1">
+              <div className="flex gap-1 h-1">
+                {[1, 2, 3, 4].map((level) => (
+                  <motion.div
+                    key={level}
+                    initial={{ width: 0 }}
+                    animate={{ width: "25%" }}
+                    className={`h-full rounded-full transition-colors duration-300 ${
+                      level <= passwordStrength
+                        ? getPasswordStrengthColor()
+                        : "bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-gray-500">
+                {passwordStrength === 0 && "Very weak"}
+                {passwordStrength === 1 && "Weak"}
+                {passwordStrength === 2 && "Fair"}
+                {passwordStrength === 3 && "Good"}
+                {passwordStrength === 4 && "Strong"}
+              </p>
+            </div>
+          )}
         </div>
 
-        <div className="relative flex justify-center">
-          <button
+        {/* Confirm Password Field */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700">
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full pl-4 pr-12 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white/50"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              {showConfirmPassword ? (
+                <MdVisibilityOff className="text-xl" />
+              ) : (
+                <MdVisibility className="text-xl" />
+              )}
+            </button>
+          </div>
+
+          {/* Password Match Indicator */}
+          {formData.confirmPassword && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`text-xs mt-1 ${
+                formData.password === formData.confirmPassword
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
+            >
+              {formData.password === formData.confirmPassword
+                ? "✓ Passwords match"
+                : "✗ Passwords do not match"}
+            </motion.p>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <div className="relative pt-2">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
-            className="bg-red-600 hover:bg-red-700 transition-colors mt-4 w-full p-2.5 text-white rounded-[10px]"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group"
           >
-            Sign Up
-          </button>
+            {isLoading ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
+              />
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <MdOutlinePersonAdd className="text-xl" />
+                Create Account
+              </span>
+            )}
 
-          <MdOutlinePersonAdd className="text-xl absolute top-1/2 -translate-y-1/2 right-3 text-white" />
+            {/* Shine effect */}
+            <motion.div
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            />
+          </motion.button>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-2">
+        {/* Login Link */}
+        <p className="text-center text-sm text-gray-500 mt-4">
           Already have an account?{" "}
           <button
             type="button"
             onClick={() => setPage("login")}
-            className="text-red-600 hover:underline"
+            className="text-red-600 font-medium hover:text-red-700 hover:underline transition-colors"
           >
             Login
           </button>
         </p>
-      </div>
-    </form>
+      </form>
+    </motion.div>
   );
 }
