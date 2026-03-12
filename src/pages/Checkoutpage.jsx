@@ -2,11 +2,11 @@ import { HiArrowSmallLeft } from "react-icons/hi2";
 import { CiCircleCheck } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useCart } from "../context/CartContext"; // your cart context
+import { useCart } from "../context/CartContext";
 
 export default function Checkoutpage() {
   const navigate = useNavigate();
-  const { cart, totalPrice, clearCart } = useCart(); // include clearCart
+  const { cart, totalPrice, clearCart } = useCart();
 
   const [delivery, setDelivery] = useState("pickup");
 
@@ -50,7 +50,11 @@ export default function Checkoutpage() {
       return;
     }
 
+    // Generate order ID
+    const orderId = `ORD-${Date.now().toString().slice(-6)}`;
+
     const order = {
+      id: orderId,
       fullName,
       phone,
       email,
@@ -64,7 +68,14 @@ export default function Checkoutpage() {
         photoName: item.photoName,
       })),
       totalPrice,
+      date: new Date().toLocaleDateString(),
+      status: "Processing",
     };
+
+    // Save order to localStorage
+    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+    const updatedOrders = [order, ...existingOrders];
+    localStorage.setItem("orders", JSON.stringify(updatedOrders));
 
     clearCart(); // Clear cart after order
     navigate("/successpage", { state: { order } }); // pass order to success page

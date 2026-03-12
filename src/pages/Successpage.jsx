@@ -1,4 +1,5 @@
 import { HiCheckCircle } from "react-icons/hi2";
+import { HiShoppingBag } from "react-icons/hi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
@@ -57,6 +58,17 @@ export default function Successpage() {
       >
         Thank you, {order.fullName}. Your order has been received.
       </motion.p>
+
+      {/* Order Number */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+        className="bg-blue-50 p-4 rounded-xl mb-6 border border-blue-200"
+      >
+        <p className="text-sm text-blue-800">Order Number</p>
+        <p className="text-2xl font-bold text-blue-600">{order.id}</p>
+      </motion.div>
 
       {/* Animated Order summary */}
       <motion.div
@@ -123,15 +135,28 @@ export default function Successpage() {
         </div>
       </motion.div>
 
-      {/* Back home button */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => navigate("/")}
-        className="capitalize p-3 bg-ph text-white rounded-[13px] hover:bg-orange-700 duration-300"
+      {/* Action Buttons */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9, duration: 0.5 }}
+        className="flex flex-col gap-3"
       >
-        Back to Home
-      </motion.button>
+        <button
+          onClick={() => navigate("/orders")}
+          className="capitalize p-3 bg-ph text-white rounded-[13px] hover:bg-orange-700 duration-300 flex items-center justify-center gap-2"
+        >
+          <HiShoppingBag className="text-xl" />
+          View My Orders
+        </button>
+
+        <button
+          onClick={() => navigate("/")}
+          className="capitalize p-3 border border-ph text-ph rounded-[13px] hover:bg-orange-50 duration-300"
+        >
+          Back to Home
+        </button>
+      </motion.div>
     </section>
   );
 }

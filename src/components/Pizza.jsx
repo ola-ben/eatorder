@@ -30,14 +30,20 @@ export function Pizza({ name, ingredients, price, photoName }) {
       addToCart({ name, ingredients, price, photoName });
       showCustomModal("Added to cart", `${name} has been added to your cart`);
     } else {
-      showCustomModal("Maximum limit reached", "You cannot add more than 10 items");
+      showCustomModal(
+        "Maximum limit reached",
+        "You cannot add more than 10 items",
+      );
     }
   }
 
   function handleRemove() {
     if (quantity > 0) {
       removeFromCart(name);
-      showCustomModal("Removed from cart", `${name} has been removed from your cart`);
+      showCustomModal(
+        "Removed from cart",
+        `${name} has been removed from your cart`,
+      );
     }
   }
 
@@ -93,23 +99,45 @@ export function Pizza({ name, ingredients, price, photoName }) {
         </span>
       </div>
 
-      {/* Animated Toast */}
+      {/* Animated Toast - Positioned at very top */}
       <AnimatePresence>
         {showModal && (
           <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-300 z-50 px-6 py-4 rounded-lg shadow-lg w-11/12 max-w-md"
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[99999] pointer-events-none"
           >
-            <p className="text-[#523410] text-center font-rubik text-[14.5px] font-semibold">
-              {modalMessage}
-            </p>
+            <div className="bg-white border-l-4 border-ph rounded-lg shadow-2xl px-6 py-3 min-w-[300px] max-w-md">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`text-2xl ${modalMessage.includes("Added") ? "text-green-500" : modalMessage.includes("Removed") ? "text-red-500" : "text-yellow-500"}`}
+                >
+                  {modalMessage.includes("Added")
+                    ? "🛒"
+                    : modalMessage.includes("Removed")
+                      ? "🗑️"
+                      : "⚠️"}
+                </div>
+                <div className="flex-1">
+                  <p className="text-[#523410] font-rubik text-[14.5px] font-semibold">
+                    {modalMessage}
+                  </p>
+                  <p className="text-[#523410] text-[13px] mt-0.5 opacity-80">
+                    {modalMessage2}
+                  </p>
+                </div>
+              </div>
 
-            <p className="text-[#523410] text-center text-[14.5px] mt-1">
-              {modalMessage2}
-            </p>
+              {/* Progress bar */}
+              <motion.div
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                transition={{ duration: 2, ease: "linear" }}
+                className="h-1 bg-ph rounded-full mt-2"
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
