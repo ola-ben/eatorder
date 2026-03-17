@@ -122,7 +122,7 @@ export default function Header() {
             variants={itemVariants}
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight"
           >
-            Delicious Food
+            Benjamin’s Eatscape App
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">
               Delivered to Your Doorstep
             </span>
