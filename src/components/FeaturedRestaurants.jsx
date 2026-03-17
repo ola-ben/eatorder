@@ -484,6 +484,13 @@ function RestaurantCard({
         {restaurant.promo}
       </motion.div>
 
+      {/* Closed Badge */}
+      {!restaurant.isOpen && (
+        <div className="absolute top-2 right-2 z-10 bg-gray-800/80 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg">
+          Closed
+        </div>
+      )}
+
       {/* Image Container */}
       <div className="relative h-32 sm:h-36 overflow-hidden">
         <motion.img
@@ -523,6 +530,9 @@ function RestaurantCard({
             <span className="font-semibold text-[10px]">
               {restaurant.rating}
             </span>
+            <span className="text-[8px] text-gray-500">
+              ({restaurant.ratingCount})
+            </span>
           </div>
         </div>
 
@@ -553,6 +563,13 @@ function RestaurantCard({
             {restaurant.isOpen ? "Open now" : "Closed"}
           </span>
         </div>
+
+        {/* Featured indicator */}
+        {restaurant.isFeatured && (
+          <div className="absolute bottom-0 right-0 bg-gradient-to-l from-yellow-400 to-orange-500 text-white text-[8px] px-2 py-0.5 rounded-tl-lg">
+            Featured
+          </div>
+        )}
 
         <motion.div
           initial={{ width: 0 }}

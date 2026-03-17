@@ -330,13 +330,13 @@ export default function AllRestaurants() {
       {/* Spacer to prevent content from hiding behind fixed header */}
       <div style={{ height: headerHeight }} className="w-full" />
 
-      {/* Restaurants Grid - with proper z-index */}
+      {/* Restaurants Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         {filteredRestaurants.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6"
           >
             {filteredRestaurants.map((restaurant, index) => (
               <motion.div
@@ -428,7 +428,7 @@ function RestaurantCard({
       )}
 
       {/* Image Container */}
-      <div className="relative h-36 overflow-hidden">
+      <div className="relative h-28 sm:h-32 lg:h-36 overflow-hidden">
         <motion.img
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.4 }}
@@ -448,7 +448,7 @@ function RestaurantCard({
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="bg-white text-gray-800 px-3 py-1 rounded-full text-xs font-semibold shadow-lg"
+            className="bg-white text-gray-800 px-2 py-1 lg:px-3 lg:py-1 rounded-full text-[10px] lg:text-xs font-semibold shadow-lg"
           >
             View Menu →
           </motion.button>
@@ -456,53 +456,53 @@ function RestaurantCard({
       </div>
 
       {/* Content */}
-      <div className="p-3">
+      <div className="p-2 lg:p-3">
         <div className="flex justify-between items-start mb-1">
-          <h3 className="font-bold text-sm text-gray-800 group-hover:text-red-500 transition-colors line-clamp-1">
+          <h3 className="font-bold text-xs lg:text-sm text-gray-800 group-hover:text-red-500 transition-colors line-clamp-1">
             {restaurant.name}
           </h3>
-          <div className="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-full flex-shrink-0">
-            <FaStar className="text-yellow-500 text-[10px]" />
-            <span className="font-semibold text-[10px]">
+          <div className="flex items-center gap-1 bg-green-50 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full flex-shrink-0">
+            <FaStar className="text-yellow-500 text-[8px] lg:text-[10px]" />
+            <span className="font-semibold text-[8px] lg:text-[10px]">
               {restaurant.rating}
             </span>
-            <span className="text-[8px] text-gray-500">
+            <span className="text-[6px] lg:text-[8px] text-gray-500">
               ({restaurant.ratingCount})
             </span>
           </div>
         </div>
 
-        <p className="text-[10px] text-gray-500 mb-2 line-clamp-1">
+        <p className="text-[8px] lg:text-[10px] text-gray-500 mb-1 lg:mb-2 line-clamp-1">
           {restaurant.cuisine}
         </p>
 
-        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-gray-600 mb-2">
-          <span className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded-full">
-            <FaMotorcycle className="text-red-500 text-[8px]" />₦
+        <div className="flex flex-wrap items-center gap-1 lg:gap-1.5 text-[8px] lg:text-[10px] text-gray-600 mb-1 lg:mb-2">
+          <span className="flex items-center gap-1 bg-gray-100 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full">
+            <FaMotorcycle className="text-red-500 text-[6px] lg:text-[8px]" />₦
             {restaurant.deliveryFee}
           </span>
-          <span className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded-full">
-            <FaClock className="text-red-500 text-[8px]" />
+          <span className="flex items-center gap-1 bg-gray-100 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full">
+            <FaClock className="text-red-500 text-[6px] lg:text-[8px]" />
             {restaurant.deliveryTime} min
           </span>
-          <span className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded-full">
-            <MdLocationOn className="text-red-500 text-[8px]" />
+          <span className="flex items-center gap-1 bg-gray-100 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full">
+            <MdLocationOn className="text-red-500 text-[6px] lg:text-[8px]" />
             {restaurant.distance} km
           </span>
         </div>
 
         <div className="flex items-center gap-1">
           <span
-            className={`w-1.5 h-1.5 rounded-full ${restaurant.isOpen ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
+            className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${restaurant.isOpen ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
           />
-          <span className="text-[8px] text-gray-500">
+          <span className="text-[7px] lg:text-[8px] text-gray-500">
             {restaurant.isOpen ? "Open now" : "Closed"}
           </span>
         </div>
 
         {/* Featured indicator */}
         {restaurant.isFeatured && (
-          <div className="absolute bottom-0 right-0 bg-gradient-to-l from-yellow-400 to-orange-500 text-white text-[8px] px-2 py-0.5 rounded-tl-lg">
+          <div className="absolute bottom-0 right-0 bg-gradient-to-l from-yellow-400 to-orange-500 text-white text-[6px] lg:text-[8px] px-1 lg:px-2 py-0.5 rounded-tl-lg">
             Featured
           </div>
         )}
