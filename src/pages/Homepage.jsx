@@ -1,14 +1,14 @@
 import Header from "../components/Header";
-import { Menu } from "../components/Menu";
-import Loginbtn from "../components/Loginbtn"; // Add Loginbtn back
+import Loginbtn from "../components/Loginbtn";
 import Cartbtn from "../components/Cartbtn";
+import { FeaturedRestaurants } from "../components/FeaturedRestaurants";
 
 export default function Homepage() {
   return (
-    <section>
-      <Loginbtn /> {/* This will now only show on homepage */}
+    <section className="relative">
+      <Loginbtn />
       <Header />
-      <Menu />
+      <FeaturedRestaurants />
       <Cartbtn />
     </section>
   );

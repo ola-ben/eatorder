@@ -21,32 +21,28 @@ const restaurantsData = {
     dishes: [
       {
         name: "Jollof Rice with Chicken",
-        ingredients:
-          "Perfectly cooked jollof rice with grilled chicken, plantains, and coleslaw",
+        ingredients: "Perfectly cooked jollof rice with grilled chicken, plantains, and coleslaw",
         price: 2500,
         photoName: "/images/pizzaimages/jollofricee.jpg",
         type: "maindishes",
       },
       {
         name: "Shawarma Wrap",
-        ingredients:
-          "Grilled chicken, beef, vegetables, and special sauce wrapped in toasted bread",
+        ingredients: "Grilled chicken, beef, vegetables, and special sauce wrapped in toasted bread",
         price: 2000,
         photoName: "/images/pizzaimages/shawama.jpg",
         type: "extrasanddrinks",
       },
       {
         name: "Fried Rice & Chicken",
-        ingredients:
-          "Nigerian fried rice with mixed vegetables and fried chicken",
+        ingredients: "Nigerian fried rice with mixed vegetables and fried chicken",
         price: 2200,
         photoName: "/images/pizzaimages/friedricewithchicken.jpg",
         type: "maindishes",
       },
       {
         name: "Grilled Fish",
-        ingredients:
-          "Fresh tilapia grilled with peppers, onions, and special spices",
+        ingredients: "Fresh tilapia grilled with peppers, onions, and special spices",
         price: 3500,
         photoName: "/images/pizzaimages/fish.jpg",
         type: "proteins",
@@ -167,7 +163,7 @@ export function RestaurantMenu() {
   // Filter dishes based on category and search
   const getFilteredDishes = () => {
     const categoryFiltered = restaurant.dishes.filter(
-      (dish) => dish.type === selectedCategory,
+      (dish) => dish.type === selectedCategory
     );
 
     if (searchQuery.trim() === "") return categoryFiltered;
@@ -176,7 +172,7 @@ export function RestaurantMenu() {
     return categoryFiltered.filter(
       (dish) =>
         dish.name.toLowerCase().includes(query) ||
-        dish.ingredients.toLowerCase().includes(query),
+        dish.ingredients.toLowerCase().includes(query)
     );
   };
 
@@ -191,12 +187,9 @@ export function RestaurantMenu() {
   return (
     <section className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       {/* Restaurant Header */}
-      <div
-        className="relative h-48 md:h-64 bg-cover bg-center"
-        style={{ backgroundImage: `url(${restaurant.image})` }}
-      >
+      <div className="relative h-48 md:h-64 bg-cover bg-center" style={{ backgroundImage: `url(${restaurant.image})` }}>
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-
+        
         {/* Back Button */}
         <button
           onClick={() => navigate("/")}
@@ -212,9 +205,7 @@ export function RestaurantMenu() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-7xl mx-auto"
           >
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              {restaurant.name}
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">{restaurant.name}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <div className="flex items-center gap-1">
                 <FaStar className="text-yellow-400" />
@@ -241,12 +232,8 @@ export function RestaurantMenu() {
           animate={{ opacity: 1, y: 0 }}
           className="relative max-w-md mx-auto mb-8"
         >
-          <div
-            className={`relative flex items-center transition-all duration-300 ${isSearchFocused ? "scale-105" : ""}`}
-          >
-            <FaSearch
-              className={`absolute left-4 text-gray-400 transition-colors ${isSearchFocused ? "text-red-500" : ""}`}
-            />
+          <div className={`relative flex items-center transition-all duration-300 ${isSearchFocused ? "scale-105" : ""}`}>
+            <FaSearch className={`absolute left-4 text-gray-400 transition-colors ${isSearchFocused ? "text-red-500" : ""}`} />
             <input
               ref={searchInputRef}
               type="text"
@@ -295,7 +282,7 @@ export function RestaurantMenu() {
                 `}
               >
                 <div className="absolute inset-0 bg-white/40 backdrop-blur-sm" />
-
+                
                 {selectedCategory === category.id && (
                   <motion.div
                     layoutId="activeCategory"
@@ -305,9 +292,7 @@ export function RestaurantMenu() {
                 )}
 
                 <span className="relative z-10 flex flex-col items-center gap-1">
-                  <span
-                    className={`text-2xl md:text-3xl ${selectedCategory !== category.id ? "text-orange-500" : "text-white"}`}
-                  >
+                  <span className={`text-2xl md:text-3xl ${selectedCategory !== category.id ? "text-orange-500" : "text-white"}`}>
                     {category.icon}
                   </span>
                   <span className="text-[10px] md:text-xs font-medium">
@@ -328,17 +313,12 @@ export function RestaurantMenu() {
         >
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-xl bg-orange-500/10 backdrop-blur-sm border border-orange-500/30">
-              <span className="text-xl text-orange-500">
-                {currentCategory?.icon}
-              </span>
+              <span className="text-xl text-orange-500">{currentCategory?.icon}</span>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800 text-lg">
-                {currentCategory?.label}
-              </h3>
+              <h3 className="font-semibold text-gray-800 text-lg">{currentCategory?.label}</h3>
               <p className="text-sm text-gray-500">
-                {filteredDishes.length}{" "}
-                {filteredDishes.length === 1 ? "item" : "items"}
+                {filteredDishes.length} {filteredDishes.length === 1 ? "item" : "items"}
               </p>
             </div>
           </div>
@@ -378,13 +358,8 @@ export function RestaurantMenu() {
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg max-w-md mx-auto">
                   <div className="text-6xl mb-4">🔍</div>
                   <h3 className="text-xl font-semibold mb-2">No items found</h3>
-                  <p className="text-gray-600 mb-4">
-                    We couldn't find any items matching "{searchQuery}"
-                  </p>
-                  <button
-                    onClick={clearSearch}
-                    className="text-red-500 font-medium"
-                  >
+                  <p className="text-gray-600 mb-4">We couldn't find any items matching "{searchQuery}"</p>
+                  <button onClick={clearSearch} className="text-red-500 font-medium">
                     Clear search
                   </button>
                 </div>

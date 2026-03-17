@@ -12,8 +12,9 @@ import LoginDetails from "./pages/LoginDetails";
 import Referrals from "./pages/Referrals";
 import Addresses from "./pages/Addresses";
 import FAQs from "./pages/FAQs";
-import OrdersPage from "./pages/OrdersPage"; // Import OrdersPage
-// import Loginbtn from "./components/Loginbtn";
+import OrdersPage from "./pages/OrdersPage";
+import AllRestaurants from "./pages/AllRestaurants"; // Import All Restaurants page
+import { RestaurantMenu } from "./components/RestaurantMenu"; // Import Restaurant Menu component
 
 import { CartProvider } from "./context/CartContext";
 
@@ -39,19 +40,30 @@ export default function App() {
         />
 
         <Routes>
+          {/* Main Routes */}
           <Route path="/" element={<Homepage />} />
           <Route path="/cartpage" element={<Cartpage />} />
           <Route path="/checkoutpage" element={<Checkoutpage />} />
           <Route path="/logiformpage" element={<Loginformpage />} />
           <Route path="/successpage" element={<Successpage />} />
+
+          {/* Restaurant Routes - NEW */}
+          <Route path="/restaurants" element={<AllRestaurants />} />
+          <Route
+            path="/restaurant/:restaurantId"
+            element={<RestaurantMenu />}
+          />
+
+          {/* Profile Routes */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/details" element={<ProfileDetails />} />
           <Route path="/profile/login-details" element={<LoginDetails />} />
           <Route path="/profile/referrals" element={<Referrals />} />
           <Route path="/profile/addresses" element={<Addresses />} />
           <Route path="/profile/faqs" element={<FAQs />} />
-          <Route path="/orders" element={<OrdersPage />} />{" "}
-          {/* Add OrdersPage route */}
+
+          {/* Orders Route */}
+          <Route path="/orders" element={<OrdersPage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
