@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSearch, FaStar, FaArrowLeft } from "react-icons/fa";
 import { GiMeat, GiDrinkMe, GiNoodles } from "react-icons/gi";
-import { HiOutlineSparkles } from "react-icons/hi2";
 import { IoClose } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
 import { Pizza } from "./Pizza";
+import Cartbtn from "./Cartbtn";
 
 // Restaurant data
 const restaurantsData = {
@@ -477,6 +477,9 @@ export function RestaurantMenu() {
 
   return (
     <section className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      {/* Cart Button - Fixed Position */}
+      <Cartbtn />
+
       {/* Restaurant Header with Background Image */}
       <div className="relative h-48 md:h-64 bg-cover bg-center bg-gray-200">
         {/* Background Image with Loading State */}
@@ -502,7 +505,7 @@ export function RestaurantMenu() {
           alt={restaurant.name}
           className="hidden"
           onLoad={() => setImageLoaded(true)}
-          onError={() => setImageLoaded(true)} // Fallback in case image fails to load
+          onError={() => setImageLoaded(true)}
         />
 
         {/* Back Button */}
@@ -693,7 +696,7 @@ export function RestaurantMenu() {
                 className="col-span-full text-center py-16"
               >
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-                  <div className="text-6xl mb-4">🔍</div>
+                  <FaSearch className="text-6xl mx-auto mb-4 text-gray-300" />
                   <h3 className="text-xl font-semibold mb-2">No items found</h3>
                   <p className="text-gray-600 mb-4">
                     We couldn't find any items matching "{searchQuery}"
@@ -713,3 +716,8 @@ export function RestaurantMenu() {
     </section>
   );
 }
+
+
+
+
+
