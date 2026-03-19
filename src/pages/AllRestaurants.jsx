@@ -11,23 +11,28 @@ import {
 import { MdLocationOn } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-// Random placeholder images for restaurants
-const placeholderImages = [
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop",
+// Nigerian restaurant aesthetic images - mixing food and restaurant vibes
+const nigerianRestaurantImages = [
+  // Local food joints and bukas
+  "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=400&h=300&fit=crop", // Modern restaurant interior
+  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop", // Busy restaurant
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop", // Cozy restaurant
+  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&h=300&fit=crop", // Outdoor seating
+  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop", // Fine dining
+  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=300&fit=crop", // Street food vibe
+  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop", // Restaurant counter
+  "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop", // Food display
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop", // Colorful dishes
+  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop", // Traditional setting
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop", // Local kitchen
+  "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop", // Outdoor cooking
+  "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&h=300&fit=crop", // Jollof rice closeup
+  "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop", // Fried rice
+  "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=400&h=300&fit=crop", // Grilled fish
+  "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop", // Fried chicken
 ];
 
-// All restaurants data (combining featured and non-featured)
+// All restaurants data
 const allRestaurants = [
   {
     id: "item-7-go-iwo-road",
@@ -38,7 +43,7 @@ const allRestaurants = [
     deliveryFee: 700,
     deliveryTime: "20-30",
     distance: 0.7,
-    imageIndex: 0,
+    imageIndex: 0, // Modern restaurant interior
     promo: "Free drink on first order",
     isOpen: true,
     isFeatured: true,
@@ -52,7 +57,7 @@ const allRestaurants = [
     deliveryFee: 500,
     deliveryTime: "15-25",
     distance: 1.2,
-    imageIndex: 1,
+    imageIndex: 1, // Busy restaurant
     promo: "10% off on first order",
     isOpen: true,
     isFeatured: true,
@@ -66,7 +71,7 @@ const allRestaurants = [
     deliveryFee: 600,
     deliveryTime: "25-35",
     distance: 0.9,
-    imageIndex: 2,
+    imageIndex: 2, // Cozy restaurant
     promo: "Buy 1 Get 1 Free",
     isOpen: true,
     isFeatured: true,
@@ -80,7 +85,7 @@ const allRestaurants = [
     deliveryFee: 550,
     deliveryTime: "20-30",
     distance: 0.5,
-    imageIndex: 3,
+    imageIndex: 3, // Outdoor seating
     promo: "Free delivery",
     isOpen: true,
     isFeatured: true,
@@ -94,7 +99,7 @@ const allRestaurants = [
     deliveryFee: 650,
     deliveryTime: "25-40",
     distance: 1.5,
-    imageIndex: 4,
+    imageIndex: 4, // Fine dining
     promo: "20% off on grills",
     isOpen: true,
     isFeatured: true,
@@ -108,7 +113,7 @@ const allRestaurants = [
     deliveryFee: 600,
     deliveryTime: "20-35",
     distance: 0.8,
-    imageIndex: 5,
+    imageIndex: 5, // Street food vibe
     promo: "Buy 5 pieces get 1 free",
     isOpen: true,
     isFeatured: true,
@@ -122,7 +127,7 @@ const allRestaurants = [
     deliveryFee: 800,
     deliveryTime: "30-45",
     distance: 1.1,
-    imageIndex: 6,
+    imageIndex: 6, // Restaurant counter
     promo: "50% off on 2nd pizza",
     isOpen: true,
     isFeatured: true,
@@ -136,7 +141,7 @@ const allRestaurants = [
     deliveryFee: 700,
     deliveryTime: "25-40",
     distance: 1.3,
-    imageIndex: 7,
+    imageIndex: 7, // Food display
     promo: "Monday special: 20% off",
     isOpen: true,
     isFeatured: true,
@@ -150,7 +155,7 @@ const allRestaurants = [
     deliveryFee: 450,
     deliveryTime: "15-25",
     distance: 0.3,
-    imageIndex: 8,
+    imageIndex: 8, // Colorful dishes
     promo: "Free soup with every order",
     isOpen: true,
     isFeatured: false,
@@ -164,7 +169,7 @@ const allRestaurants = [
     deliveryFee: 750,
     deliveryTime: "25-35",
     distance: 1.4,
-    imageIndex: 9,
+    imageIndex: 9, // Traditional setting
     promo: "Buy 2 get 1 free",
     isOpen: false,
     isFeatured: false,
@@ -178,7 +183,7 @@ const allRestaurants = [
     deliveryFee: 500,
     deliveryTime: "20-30",
     distance: 0.6,
-    imageIndex: 10,
+    imageIndex: 10, // Local kitchen
     promo: "Free drink with pastry",
     isOpen: true,
     isFeatured: false,
@@ -192,10 +197,52 @@ const allRestaurants = [
     deliveryFee: 650,
     deliveryTime: "25-35",
     distance: 1.0,
-    imageIndex: 11,
+    imageIndex: 11, // Outdoor cooking
     promo: "20% off on combos",
     isOpen: true,
     isFeatured: false,
+  },
+  {
+    id: "jollof-pot",
+    name: "Jollof Pot",
+    rating: 4.8,
+    ratingCount: 340,
+    cuisine: "Jollof Rice • Party Rice • Catering",
+    deliveryFee: 600,
+    deliveryTime: "25-35",
+    distance: 1.8,
+    imageIndex: 12, // Jollof rice closeup
+    promo: "Free plantain",
+    isOpen: true,
+    isFeatured: false,
+  },
+  {
+    id: "fish-lovers",
+    name: "Fish Lovers Spot",
+    rating: 4.6,
+    ratingCount: 280,
+    cuisine: "Grilled Fish • Tilapia • Catfish",
+    deliveryFee: 550,
+    deliveryTime: "20-30",
+    distance: 2.1,
+    imageIndex: 14, // Grilled fish
+    promo: "Buy 1 fish get 1 drink free",
+    isOpen: true,
+    isFeatured: false,
+  },
+  {
+    id: "suya-kingdom",
+    name: "Suya Kingdom",
+    rating: 4.9,
+    ratingCount: 620,
+    cuisine: "Suya • Grilled Meat • Spicy",
+    deliveryFee: 650,
+    deliveryTime: "15-25",
+    distance: 1.3,
+    imageIndex: 15, // Fried chicken (suya vibe)
+    promo: "Free extra pepper",
+    isOpen: true,
+    isFeatured: true,
   },
 ];
 
@@ -352,7 +399,7 @@ export default function AllRestaurants() {
                   hoveredId={hoveredId}
                   setHoveredId={setHoveredId}
                   onClick={handleRestaurantClick}
-                  placeholderImages={placeholderImages}
+                  nigerianRestaurantImages={nigerianRestaurantImages}
                 />
               </motion.div>
             ))}
@@ -397,7 +444,7 @@ function RestaurantCard({
   hoveredId,
   setHoveredId,
   onClick,
-  placeholderImages,
+  nigerianRestaurantImages,
 }) {
   return (
     <motion.div
@@ -433,7 +480,9 @@ function RestaurantCard({
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.4 }}
           src={
-            placeholderImages[restaurant.imageIndex % placeholderImages.length]
+            nigerianRestaurantImages[
+              restaurant.imageIndex % nigerianRestaurantImages.length
+            ]
           }
           alt={restaurant.name}
           className="w-full h-full object-cover"
