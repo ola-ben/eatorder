@@ -1,33 +1,20 @@
-// components/FeaturedRestaurants.jsx
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import {
-  FaStar,
-  FaClock,
-  FaMotorcycle,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
-import { MdLocationOn } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaStar } from "react-icons/fa";
+import { FiClock } from "react-icons/fi";
+import { TbMotorbike } from "react-icons/tb";
 
-// Random placeholder images for restaurants
 const placeholderImages = [
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop",
-  "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=600&fit=crop",
 ];
 
-// Featured restaurants data
 const featuredRestaurants = [
   {
     id: "item-7-go-iwo-road",
@@ -145,438 +132,152 @@ const featuredRestaurants = [
 
 export function FeaturedRestaurants() {
   const navigate = useNavigate();
-  const [hoveredId, setHoveredId] = useState(null);
-  const [visibleRestaurants, setVisibleRestaurants] = useState([]);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const scrollContainerRef = useRef(null);
-  const dragStartX = useRef(0);
-  const dragScrollLeft = useRef(0);
-
-  // Filter only featured restaurants that are open
-  useEffect(() => {
-    const featured = featuredRestaurants.filter(
-      (r) => r.isFeatured && r.isOpen,
-    );
-    setVisibleRestaurants(featured);
-  }, []);
-
-  // Check scroll position to show/hide navigation arrows (for mobile only)
-  const checkScrollPosition = () => {
-    if (scrollContainerRef.current && window.innerWidth < 1024) {
-      const { scrollLeft, scrollWidth, clientWidth } =
-        scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 10);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      checkScrollPosition();
-      scrollContainer.addEventListener("scroll", checkScrollPosition);
-      window.addEventListener("resize", checkScrollPosition);
-      return () => {
-        scrollContainer.removeEventListener("scroll", checkScrollPosition);
-        window.removeEventListener("resize", checkScrollPosition);
-      };
-    }
-  }, [visibleRestaurants]);
-
-  // Scroll functions (for mobile)
-  const scroll = (direction) => {
-    if (scrollContainerRef.current && window.innerWidth < 1024) {
-      const scrollAmount = 300; // Width of one card
-      const newScrollLeft =
-        scrollContainerRef.current.scrollLeft +
-        (direction === "left" ? -scrollAmount : scrollAmount);
-
-      scrollContainerRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Handle drag to scroll (for mobile)
-  const handleDragStart = (e) => {
-    if (window.innerWidth < 1024) {
-      dragStartX.current = e.clientX;
-      dragScrollLeft.current = scrollContainerRef.current?.scrollLeft || 0;
-    }
-  };
-
-  const handleDragMove = (e) => {
-    if (!dragStartX.current || window.innerWidth >= 1024) return;
-    const dx = e.clientX - dragStartX.current;
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = dragScrollLeft.current - dx;
-    }
-  };
-
-  const handleDragEnd = () => {
-    dragStartX.current = 0;
-    dragScrollLeft.current = 0;
-  };
-
-  const handleRestaurantClick = (restaurantId) => {
-    navigate(`/restaurant/${restaurantId}`);
-  };
-
-  // Split restaurants for desktop (LG+)
-  const firstRowRestaurants = visibleRestaurants.slice(0, 4);
-  const secondRowRestaurants = visibleRestaurants.slice(4, 8);
-
-  // For mobile: create pairs of restaurants (2 per row, 4 total visible per scroll)
-  const mobileRestaurantPairs = [];
-  for (let i = 0; i < visibleRestaurants.length; i += 2) {
-    mobileRestaurantPairs.push(visibleRestaurants.slice(i, i + 2));
-  }
+  const featured = featuredRestaurants.filter((r) => r.isFeatured && r.isOpen);
+  const top = featured.slice(0, 4);
+  const popular = featured.slice(4);
 
   return (
-    <section className="py-12 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-end mb-8"
-        >
-          <div>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full mb-4 shadow-lg"
-            >
-              <span className="text-lg">🔥</span>
-              <span className="text-sm font-medium">Featured Restaurants</span>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
-              Popular Near You
-            </h2>
-          </div>
-
-          {/* Navigation Arrows - Only visible on mobile/tablet */}
-          <div className="flex lg:hidden items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => scroll("left")}
-              className={`p-3 rounded-full bg-white shadow-lg border border-gray-200 transition-all ${
-                canScrollLeft
-                  ? "text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
-                  : "text-gray-300 cursor-not-allowed"
-              }`}
-              disabled={!canScrollLeft}
-            >
-              <FaChevronLeft />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => scroll("right")}
-              className={`p-3 rounded-full bg-white shadow-lg border border-gray-200 transition-all ${
-                canScrollRight
-                  ? "text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
-                  : "text-gray-300 cursor-not-allowed"
-              }`}
-              disabled={!canScrollRight}
-            >
-              <FaChevronRight />
-            </motion.button>
-          </div>
-        </motion.div>
-
-        {/* Mobile/Tablet: Horizontal Scroll with 4 cards visible (2 rows of 2) */}
-        <div className="lg:hidden">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-4 pb-6 hide-scrollbar cursor-grab active:cursor-grabbing"
-            onMouseDown={handleDragStart}
-            onMouseMove={handleDragMove}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            style={{
-              scrollBehavior: "smooth",
-              WebkitOverflowScrolling: "touch",
-            }}
-          >
-            {mobileRestaurantPairs.map((pair, pairIndex) => (
-              <div
-                key={pairIndex}
-                className="flex-none w-[calc(100vw-2rem)] sm:w-[500px]"
-              >
-                {/* First row of the pair */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  {pair[0] && (
-                    <RestaurantCard
-                      restaurant={pair[0]}
-                      hoveredId={hoveredId}
-                      setHoveredId={setHoveredId}
-                      onClick={handleRestaurantClick}
-                      placeholderImages={placeholderImages}
-                    />
-                  )}
-                  {pair[1] && (
-                    <RestaurantCard
-                      restaurant={pair[1]}
-                      hoveredId={hoveredId}
-                      setHoveredId={setHoveredId}
-                      onClick={handleRestaurantClick}
-                      placeholderImages={placeholderImages}
-                    />
-                  )}
-                </div>
-
-                {/* Second row of the pair (if exists) */}
-                {visibleRestaurants[pairIndex * 2 + 2] && (
-                  <div className="grid grid-cols-2 gap-4">
-                    {visibleRestaurants[pairIndex * 2 + 2] && (
-                      <RestaurantCard
-                        restaurant={visibleRestaurants[pairIndex * 2 + 2]}
-                        hoveredId={hoveredId}
-                        setHoveredId={setHoveredId}
-                        onClick={handleRestaurantClick}
-                        placeholderImages={placeholderImages}
-                      />
-                    )}
-                    {visibleRestaurants[pairIndex * 2 + 3] && (
-                      <RestaurantCard
-                        restaurant={visibleRestaurants[pairIndex * 2 + 3]}
-                        hoveredId={hoveredId}
-                        setHoveredId={setHoveredId}
-                        onClick={handleRestaurantClick}
-                        placeholderImages={placeholderImages}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Mobile Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex justify-center mt-4"
-          >
-            <div className="flex gap-1">
-              {mobileRestaurantPairs.map((_, index) => (
-                <div key={index} className="w-2 h-2 rounded-full bg-gray-300" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 ml-2">Swipe to see more →</p>
-          </motion.div>
-        </div>
-
-        {/* LG Screens: Grid View - 4 cards up, 4 cards down */}
-        <div className="hidden lg:block">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            {/* First Row - 4 cards */}
-            {firstRowRestaurants.length > 0 && (
-              <div className="grid grid-cols-4 gap-6">
-                {firstRowRestaurants.map((restaurant) => (
-                  <RestaurantCard
-                    key={restaurant.id}
-                    restaurant={restaurant}
-                    hoveredId={hoveredId}
-                    setHoveredId={setHoveredId}
-                    onClick={handleRestaurantClick}
-                    placeholderImages={placeholderImages}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Second Row - 4 cards */}
-            {secondRowRestaurants.length > 0 && (
-              <div className="grid grid-cols-4 gap-6">
-                {secondRowRestaurants.map((restaurant) => (
-                  <RestaurantCard
-                    key={restaurant.id}
-                    restaurant={restaurant}
-                    hoveredId={hoveredId}
-                    setHoveredId={setHoveredId}
-                    onClick={handleRestaurantClick}
-                    placeholderImages={placeholderImages}
-                  />
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </div>
-
-        {/* View All Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-8"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/restaurants")}
-            className="inline-flex items-center gap-2 bg-white border-2 border-red-500 text-red-500 px-6 py-3 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            <span>View All Restaurants</span>
-            <span>→</span>
-          </motion.button>
-        </motion.div>
+    <section className="px-4 pb-8">
+      {/* Top picks — horizontal scroller */}
+      <SectionHeader
+        title="Top picks for you"
+        action="See all"
+        onAction={() => navigate("/restaurants")}
+      />
+      <div className="-mx-4 px-4 flex gap-3 overflow-x-auto no-scrollbar pb-1">
+        {top.map((r) => (
+          <FeaturedCard
+            key={r.id}
+            restaurant={r}
+            onClick={() => navigate(`/restaurant/${r.id}`)}
+          />
+        ))}
       </div>
 
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .line-clamp-1 {
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
+      {/* Popular near you — vertical list */}
+      <div className="mt-8">
+        <SectionHeader
+          title="Popular near you"
+          action="See all"
+          onAction={() => navigate("/restaurants")}
+        />
+        <div className="space-y-4">
+          {popular.map((r) => (
+            <RestaurantRow
+              key={r.id}
+              restaurant={r}
+              onClick={() => navigate(`/restaurant/${r.id}`)}
+            />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
 
-// Restaurant Card Component
-function RestaurantCard({
-  restaurant,
-  hoveredId,
-  setHoveredId,
-  onClick,
-  placeholderImages,
-}) {
+function SectionHeader({ title, action, onAction }) {
   return (
-    <motion.div
-      whileHover={{
-        y: -8,
-        transition: { type: "spring", stiffness: 300 },
-      }}
-      onHoverStart={() => setHoveredId(restaurant.id)}
-      onHoverEnd={() => setHoveredId(null)}
-      onClick={() => onClick(restaurant.id)}
-      className="w-full bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer group relative"
-    >
-      {/* Promo Badge */}
-      <motion.div
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="absolute top-2 left-2 z-10 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg"
-      >
-        {restaurant.promo}
-      </motion.div>
-
-      {/* Closed Badge */}
-      {!restaurant.isOpen && (
-        <div className="absolute top-2 right-2 z-10 bg-gray-800/80 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg">
-          Closed
-        </div>
+    <div className="flex items-end justify-between mb-3">
+      <h2 className="text-lg font-bold text-ink">{title}</h2>
+      {action && (
+        <button
+          onClick={onAction}
+          className="text-sm font-semibold text-brand"
+        >
+          {action}
+        </button>
       )}
+    </div>
+  );
+}
 
-      {/* Image Container */}
-      <div className="relative h-32 sm:h-36 overflow-hidden">
-        <motion.img
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.4 }}
-          src={
-            placeholderImages[restaurant.imageIndex % placeholderImages.length]
-          }
+function FeaturedCard({ restaurant, onClick }) {
+  const img = placeholderImages[restaurant.imageIndex % placeholderImages.length];
+  return (
+    <motion.button
+      whileTap={{ scale: 0.97 }}
+      onClick={onClick}
+      className="text-left flex-none w-[260px] bg-white rounded-2xl overflow-hidden shadow-card"
+    >
+      <div className="relative h-36 w-full overflow-hidden">
+        <img
+          src={img}
           alt={restaurant.name}
           className="w-full h-full object-cover"
         />
-
-        {/* Overlay with quick view */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          className="absolute inset-0 bg-black/40 flex items-center justify-center"
-        >
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="bg-white text-gray-800 px-3 py-1 rounded-full text-xs font-semibold shadow-lg"
-          >
-            View Menu →
-          </motion.button>
-        </motion.div>
-      </div>
-
-      {/* Content */}
-      <div className="p-3">
-        <div className="flex justify-between items-start mb-1">
-          <h3 className="font-bold text-sm text-gray-800 group-hover:text-red-500 transition-colors line-clamp-1">
-            {restaurant.name}
-          </h3>
-          <div className="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-full flex-shrink-0">
-            <FaStar className="text-yellow-500 text-[10px]" />
-            <span className="font-semibold text-[10px]">
-              {restaurant.rating}
-            </span>
-            <span className="text-[8px] text-gray-500">
-              ({restaurant.ratingCount})
-            </span>
-          </div>
+        <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-[11px] font-semibold text-ink px-2 py-1 rounded-full shadow-sm">
+          {restaurant.promo}
         </div>
-
-        <p className="text-[10px] text-gray-500 mb-2 line-clamp-1">
+        <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/65 text-white text-[11px] font-semibold px-2 py-1 rounded-full">
+          <FaStar className="text-yellow-400 text-[10px]" />
+          {restaurant.rating}
+        </div>
+      </div>
+      <div className="p-3">
+        <h3 className="font-semibold text-ink text-sm line-clamp-1">
+          {restaurant.name}
+        </h3>
+        <p className="text-[12px] text-ink-soft line-clamp-1 mt-0.5">
           {restaurant.cuisine}
         </p>
-
-        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-gray-600 mb-2">
-          <span className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded-full">
-            <FaMotorcycle className="text-red-500 text-[8px]" />₦
-            {restaurant.deliveryFee}
+        <div className="mt-2 flex items-center gap-3 text-[12px] text-ink-soft">
+          <span className="flex items-center gap-1">
+            <FiClock className="text-gray-400" /> {restaurant.deliveryTime} min
           </span>
-          <span className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded-full">
-            <FaClock className="text-red-500 text-[8px]" />
-            {restaurant.deliveryTime} min
-          </span>
-          <span className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded-full">
-            <MdLocationOn className="text-red-500 text-[8px]" />
-            {restaurant.distance} km
+          <span className="flex items-center gap-1">
+            <TbMotorbike className="text-gray-400" /> ₦{restaurant.deliveryFee}
           </span>
         </div>
-
-        <div className="flex items-center gap-1">
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${restaurant.isOpen ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
-          />
-          <span className="text-[8px] text-gray-500">
-            {restaurant.isOpen ? "Open now" : "Closed"}
-          </span>
-        </div>
-
-        {/* Featured indicator */}
-        {restaurant.isFeatured && (
-          <div className="absolute bottom-0 right-0 bg-gradient-to-l from-yellow-400 to-orange-500 text-white text-[8px] px-2 py-0.5 rounded-tl-lg">
-            Featured
-          </div>
-        )}
-
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: hoveredId === restaurant.id ? "100%" : "0%" }}
-          className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-red-500 to-orange-500"
-        />
       </div>
-    </motion.div>
+    </motion.button>
+  );
+}
+
+function RestaurantRow({ restaurant, onClick }) {
+  const img = placeholderImages[restaurant.imageIndex % placeholderImages.length];
+  return (
+    <motion.button
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-card"
+    >
+      <div className="relative h-40 w-full overflow-hidden">
+        <img
+          src={img}
+          alt={restaurant.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute top-3 left-3 bg-white text-[11px] font-semibold text-brand px-2 py-1 rounded-full shadow-sm">
+          {restaurant.promo}
+        </div>
+        <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-ink-soft">
+          ♡
+        </div>
+      </div>
+      <div className="p-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-semibold text-ink text-base line-clamp-1">
+            {restaurant.name}
+          </h3>
+          <div className="flex items-center gap-1 bg-ink/5 px-2 py-0.5 rounded-full text-xs">
+            <FaStar className="text-yellow-500 text-[11px]" />
+            <span className="font-semibold text-ink">{restaurant.rating}</span>
+            <span className="text-ink-soft">({restaurant.ratingCount})</span>
+          </div>
+        </div>
+        <p className="text-[13px] text-ink-soft line-clamp-1 mt-0.5">
+          {restaurant.cuisine}
+        </p>
+        <div className="mt-2 flex items-center gap-3 text-[12px] text-ink-soft">
+          <span className="flex items-center gap-1">
+            <FiClock className="text-gray-400" /> {restaurant.deliveryTime} min
+          </span>
+          <span className="flex items-center gap-1">
+            <TbMotorbike className="text-gray-400" /> ₦{restaurant.deliveryFee}
+          </span>
+          <span>· {restaurant.distance} km</span>
+        </div>
+      </div>
+    </motion.button>
   );
 }

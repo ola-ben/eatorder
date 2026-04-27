@@ -1,38 +1,30 @@
-// pages/AllRestaurants.jsx
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import {
-  FaStar,
-  FaClock,
-  FaMotorcycle,
-  FaSearch,
-  FaArrowLeft,
-} from "react-icons/fa";
-import { MdLocationOn } from "react-icons/md";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaStar } from "react-icons/fa";
+import { FiArrowLeft, FiSearch, FiSliders, FiClock } from "react-icons/fi";
+import { TbMotorbike } from "react-icons/tb";
+import BottomNav from "../components/BottomNav";
 
-// Nigerian restaurant aesthetic images - mixing food and restaurant vibes
-const nigerianRestaurantImages = [
-  // Local food joints and bukas
-  "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=400&h=300&fit=crop", // Modern restaurant interior
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop", // Busy restaurant
-  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop", // Cozy restaurant
-  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&h=300&fit=crop", // Outdoor seating
-  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop", // Fine dining
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=300&fit=crop", // Street food vibe
-  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop", // Restaurant counter
-  "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop", // Food display
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop", // Colorful dishes
-  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop", // Traditional setting
-  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop", // Local kitchen
-  "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop", // Outdoor cooking
-  "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&h=300&fit=crop", // Jollof rice closeup
-  "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop", // Fried rice
-  "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=400&h=300&fit=crop", // Grilled fish
-  "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop", // Fried chicken
+const restaurantImages = [
+  "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800&h=600&fit=crop",
 ];
 
-// All restaurants data
 const allRestaurants = [
   {
     id: "item-7-go-iwo-road",
@@ -43,10 +35,9 @@ const allRestaurants = [
     deliveryFee: 700,
     deliveryTime: "20-30",
     distance: 0.7,
-    imageIndex: 0, // Modern restaurant interior
+    imageIndex: 0,
     promo: "Free drink on first order",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "shrider-store",
@@ -57,10 +48,9 @@ const allRestaurants = [
     deliveryFee: 500,
     deliveryTime: "15-25",
     distance: 1.2,
-    imageIndex: 1, // Busy restaurant
+    imageIndex: 1,
     promo: "10% off on first order",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "taste-of-lagos",
@@ -71,10 +61,9 @@ const allRestaurants = [
     deliveryFee: 600,
     deliveryTime: "25-35",
     distance: 0.9,
-    imageIndex: 2, // Cozy restaurant
+    imageIndex: 2,
     promo: "Buy 1 Get 1 Free",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "buka-joint",
@@ -85,10 +74,9 @@ const allRestaurants = [
     deliveryFee: 550,
     deliveryTime: "20-30",
     distance: 0.5,
-    imageIndex: 3, // Outdoor seating
+    imageIndex: 3,
     promo: "Free delivery",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "spice-route",
@@ -99,10 +87,9 @@ const allRestaurants = [
     deliveryFee: 650,
     deliveryTime: "25-40",
     distance: 1.5,
-    imageIndex: 4, // Fine dining
+    imageIndex: 4,
     promo: "20% off on grills",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "chicken-republic",
@@ -113,10 +100,9 @@ const allRestaurants = [
     deliveryFee: 600,
     deliveryTime: "20-35",
     distance: 0.8,
-    imageIndex: 5, // Street food vibe
+    imageIndex: 5,
     promo: "Buy 5 pieces get 1 free",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "dominos-pizza",
@@ -127,10 +113,9 @@ const allRestaurants = [
     deliveryFee: 800,
     deliveryTime: "30-45",
     distance: 1.1,
-    imageIndex: 6, // Restaurant counter
+    imageIndex: 6,
     promo: "50% off on 2nd pizza",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "kfc",
@@ -141,10 +126,9 @@ const allRestaurants = [
     deliveryFee: 700,
     deliveryTime: "25-40",
     distance: 1.3,
-    imageIndex: 7, // Food display
+    imageIndex: 7,
     promo: "Monday special: 20% off",
     isOpen: true,
-    isFeatured: true,
   },
   {
     id: "mama-put",
@@ -155,10 +139,9 @@ const allRestaurants = [
     deliveryFee: 450,
     deliveryTime: "15-25",
     distance: 0.3,
-    imageIndex: 8, // Colorful dishes
+    imageIndex: 8,
     promo: "Free soup with every order",
     isOpen: true,
-    isFeatured: false,
   },
   {
     id: "kilimanjaro",
@@ -169,10 +152,9 @@ const allRestaurants = [
     deliveryFee: 750,
     deliveryTime: "25-35",
     distance: 1.4,
-    imageIndex: 9, // Traditional setting
+    imageIndex: 9,
     promo: "Buy 2 get 1 free",
     isOpen: false,
-    isFeatured: false,
   },
   {
     id: "sweet-sensation",
@@ -183,10 +165,9 @@ const allRestaurants = [
     deliveryFee: 500,
     deliveryTime: "20-30",
     distance: 0.6,
-    imageIndex: 10, // Local kitchen
+    imageIndex: 10,
     promo: "Free drink with pastry",
     isOpen: true,
-    isFeatured: false,
   },
   {
     id: "tantalizers",
@@ -197,10 +178,9 @@ const allRestaurants = [
     deliveryFee: 650,
     deliveryTime: "25-35",
     distance: 1.0,
-    imageIndex: 11, // Outdoor cooking
+    imageIndex: 11,
     promo: "20% off on combos",
     isOpen: true,
-    isFeatured: false,
   },
   {
     id: "jollof-pot",
@@ -211,10 +191,9 @@ const allRestaurants = [
     deliveryFee: 600,
     deliveryTime: "25-35",
     distance: 1.8,
-    imageIndex: 12, // Jollof rice closeup
+    imageIndex: 12,
     promo: "Free plantain",
     isOpen: true,
-    isFeatured: false,
   },
   {
     id: "fish-lovers",
@@ -225,10 +204,9 @@ const allRestaurants = [
     deliveryFee: 550,
     deliveryTime: "20-30",
     distance: 2.1,
-    imageIndex: 14, // Grilled fish
+    imageIndex: 14,
     promo: "Buy 1 fish get 1 drink free",
     isOpen: true,
-    isFeatured: false,
   },
   {
     id: "suya-kingdom",
@@ -239,329 +217,189 @@ const allRestaurants = [
     deliveryFee: 650,
     deliveryTime: "15-25",
     distance: 1.3,
-    imageIndex: 15, // Fried chicken (suya vibe)
+    imageIndex: 15,
     promo: "Free extra pepper",
     isOpen: true,
-    isFeatured: true,
   },
+];
+
+const sortOptions = [
+  { id: "rating", label: "Top rated" },
+  { id: "deliveryTime", label: "Fastest" },
+  { id: "distance", label: "Nearest" },
 ];
 
 export default function AllRestaurants() {
   const navigate = useNavigate();
-  const [hoveredId, setHoveredId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("rating");
-  const [filteredRestaurants, setFilteredRestaurants] =
-    useState(allRestaurants);
 
-  // Ref for header to calculate proper padding
-  const headerRef = useRef(null);
-  const [headerHeight, setHeaderHeight] = useState(0);
-
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Calculate header height for proper content positioning
-  useEffect(() => {
-    if (headerRef.current) {
-      setHeaderHeight(headerRef.current.offsetHeight);
-    }
+  const restaurants = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    let list = q
+      ? allRestaurants.filter(
+          (r) =>
+            r.name.toLowerCase().includes(q) ||
+            r.cuisine.toLowerCase().includes(q),
+        )
+      : [...allRestaurants];
 
-    const handleResize = () => {
-      if (headerRef.current) {
-        setHeaderHeight(headerRef.current.offsetHeight);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Filter and sort restaurants
-  useEffect(() => {
-    let filtered = [...allRestaurants];
-
-    // Apply search filter
-    if (searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(
-        (r) =>
-          r.name.toLowerCase().includes(query) ||
-          r.cuisine.toLowerCase().includes(query),
-      );
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "rating":
-          return b.rating - a.rating;
-        case "deliveryTime":
-          return parseInt(a.deliveryTime) - parseInt(b.deliveryTime);
-        case "distance":
-          return a.distance - b.distance;
-        default:
-          return 0;
-      }
+    list.sort((a, b) => {
+      if (sortBy === "rating") return b.rating - a.rating;
+      if (sortBy === "deliveryTime")
+        return parseInt(a.deliveryTime) - parseInt(b.deliveryTime);
+      if (sortBy === "distance") return a.distance - b.distance;
+      return 0;
     });
-
-    setFilteredRestaurants(filtered);
+    return list;
   }, [searchQuery, sortBy]);
 
-  const handleRestaurantClick = (restaurantId) => {
-    navigate(`/restaurant/${restaurantId}`);
-  };
-
-  const handleGoBack = () => {
-    navigate("/");
-  };
-
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Fixed Header */}
-      <div
-        ref={headerRef}
-        className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleGoBack}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+    <main className="min-h-screen bg-canvas pb-safe-nav">
+      <div className="max-w-md mx-auto bg-white min-h-screen">
+        {/* Header */}
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
+          <div className="px-4 pt-4 pb-3 flex items-center gap-3">
+            <button
+              onClick={() => navigate("/")}
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-ink"
             >
-              <FaArrowLeft className="text-gray-600" />
-            </motion.button>
-            <h1 className="text-2xl font-bold text-gray-800">
-              All Restaurants
-            </h1>
+              <FiArrowLeft />
+            </button>
+            <h1 className="text-lg font-bold text-ink">Browse restaurants</h1>
           </div>
 
-          {/* Search Bar */}
-          <div className="mt-4">
-            <div className="relative">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className="px-4 pb-3">
+            <div className="flex items-center gap-2 bg-gray-100 rounded-2xl px-3 h-11">
+              <FiSearch className="text-gray-500" />
               <input
                 type="text"
-                placeholder="Search restaurants by name or cuisine..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-red-500 focus:outline-none shadow-sm"
+                placeholder="Search restaurants or cuisines"
+                className="flex-1 bg-transparent outline-none text-sm text-ink placeholder:text-gray-500"
               />
             </div>
           </div>
 
-          {/* Sort and Count */}
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-500">
-              {filteredRestaurants.length}{" "}
-              {filteredRestaurants.length === 1 ? "restaurant" : "restaurants"}{" "}
-              found
-            </p>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-red-500 bg-white"
-            >
-              <option value="rating">Sort by: Rating</option>
-              <option value="deliveryTime">Sort by: Delivery Time</option>
-              <option value="distance">Sort by: Distance</option>
-            </select>
+          {/* Sort chips */}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 pb-3">
+            <button className="flex items-center gap-1.5 px-3 h-9 rounded-full bg-white border border-gray-200 text-sm text-ink font-medium whitespace-nowrap">
+              <FiSliders className="text-base" /> Filters
+            </button>
+            {sortOptions.map((o) => {
+              const active = sortBy === o.id;
+              return (
+                <button
+                  key={o.id}
+                  onClick={() => setSortBy(o.id)}
+                  className={`px-3 h-9 rounded-full text-sm font-medium whitespace-nowrap border ${
+                    active
+                      ? "bg-ink text-white border-ink"
+                      : "bg-white text-ink border-gray-200"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              );
+            })}
           </div>
         </div>
+
+        {/* Count */}
+        <div className="px-4 pt-4 pb-2">
+          <p className="text-xs text-ink-soft">
+            {restaurants.length}{" "}
+            {restaurants.length === 1 ? "restaurant" : "restaurants"} found
+          </p>
+        </div>
+
+        {/* List */}
+        <div className="px-4 pb-8 space-y-4">
+          {restaurants.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-5xl mb-2">🔍</div>
+              <p className="font-semibold text-ink">No restaurants found</p>
+              <p className="text-sm text-ink-soft">
+                Try a different search term
+              </p>
+            </div>
+          ) : (
+            restaurants.map((r, i) => (
+              <RestaurantRow
+                key={r.id}
+                restaurant={r}
+                index={i}
+                onClick={() => navigate(`/restaurant/${r.id}`)}
+              />
+            ))
+          )}
+        </div>
       </div>
-
-      {/* Spacer to prevent content from hiding behind fixed header */}
-      <div style={{ height: headerHeight }} className="w-full" />
-
-      {/* Restaurants Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        {filteredRestaurants.length > 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6"
-          >
-            {filteredRestaurants.map((restaurant, index) => (
-              <motion.div
-                key={restaurant.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="relative"
-                style={{ zIndex: 10 }}
-              >
-                <RestaurantCard
-                  restaurant={restaurant}
-                  hoveredId={hoveredId}
-                  setHoveredId={setHoveredId}
-                  onClick={handleRestaurantClick}
-                  nigerianRestaurantImages={nigerianRestaurantImages}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              No restaurants found
-            </h3>
-            <p className="text-gray-600">Try adjusting your search criteria</p>
-          </motion.div>
-        )}
-      </div>
-
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .line-clamp-1 {
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
-    </section>
+      <BottomNav />
+    </main>
   );
 }
 
-// Restaurant Card Component
-function RestaurantCard({
-  restaurant,
-  hoveredId,
-  setHoveredId,
-  onClick,
-  nigerianRestaurantImages,
-}) {
+function RestaurantRow({ restaurant, index, onClick }) {
+  const img =
+    restaurantImages[restaurant.imageIndex % restaurantImages.length];
   return (
-    <motion.div
-      whileHover={{
-        y: -8,
-        transition: { type: "spring", stiffness: 300 },
-      }}
-      onHoverStart={() => setHoveredId(restaurant.id)}
-      onHoverEnd={() => setHoveredId(null)}
-      onClick={() => onClick(restaurant.id)}
-      className="w-full bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer group relative"
+    <motion.button
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: Math.min(index * 0.03, 0.3) }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-card relative"
     >
-      {/* Promo Badge */}
-      <motion.div
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="absolute top-2 left-2 z-10 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg"
-      >
-        {restaurant.promo}
-      </motion.div>
-
-      {/* Closed Badge */}
-      {!restaurant.isOpen && (
-        <div className="absolute top-2 right-2 z-10 bg-gray-800/80 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg">
-          Closed
-        </div>
-      )}
-
-      {/* Image Container */}
-      <div className="relative h-28 sm:h-32 lg:h-36 overflow-hidden">
-        <motion.img
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.4 }}
-          src={
-            nigerianRestaurantImages[
-              restaurant.imageIndex % nigerianRestaurantImages.length
-            ]
-          }
+      <div className="relative h-40 w-full overflow-hidden">
+        <img
+          src={img}
           alt={restaurant.name}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover ${
+            !restaurant.isOpen ? "grayscale opacity-70" : ""
+          }`}
         />
-
-        {/* Overlay with quick view */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          className="absolute inset-0 bg-black/40 flex items-center justify-center"
-        >
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="bg-white text-gray-800 px-2 py-1 lg:px-3 lg:py-1 rounded-full text-[10px] lg:text-xs font-semibold shadow-lg"
-          >
-            View Menu →
-          </motion.button>
-        </motion.div>
-      </div>
-
-      {/* Content */}
-      <div className="p-2 lg:p-3">
-        <div className="flex justify-between items-start mb-1">
-          <h3 className="font-bold text-xs lg:text-sm text-gray-800 group-hover:text-red-500 transition-colors line-clamp-1">
-            {restaurant.name}
-          </h3>
-          <div className="flex items-center gap-1 bg-green-50 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full flex-shrink-0">
-            <FaStar className="text-yellow-500 text-[8px] lg:text-[10px]" />
-            <span className="font-semibold text-[8px] lg:text-[10px]">
-              {restaurant.rating}
+        <div className="absolute top-3 left-3 bg-white text-[11px] font-semibold text-brand px-2 py-1 rounded-full shadow-sm">
+          {restaurant.promo}
+        </div>
+        {!restaurant.isOpen && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="bg-black/70 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              Currently closed
             </span>
-            <span className="text-[6px] lg:text-[8px] text-gray-500">
-              ({restaurant.ratingCount})
-            </span>
-          </div>
-        </div>
-
-        <p className="text-[8px] lg:text-[10px] text-gray-500 mb-1 lg:mb-2 line-clamp-1">
-          {restaurant.cuisine}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-1 lg:gap-1.5 text-[8px] lg:text-[10px] text-gray-600 mb-1 lg:mb-2">
-          <span className="flex items-center gap-1 bg-gray-100 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full">
-            <FaMotorcycle className="text-red-500 text-[6px] lg:text-[8px]" />₦
-            {restaurant.deliveryFee}
-          </span>
-          <span className="flex items-center gap-1 bg-gray-100 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full">
-            <FaClock className="text-red-500 text-[6px] lg:text-[8px]" />
-            {restaurant.deliveryTime} min
-          </span>
-          <span className="flex items-center gap-1 bg-gray-100 px-1 py-0.5 lg:px-1.5 lg:py-0.5 rounded-full">
-            <MdLocationOn className="text-red-500 text-[6px] lg:text-[8px]" />
-            {restaurant.distance} km
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <span
-            className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${restaurant.isOpen ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
-          />
-          <span className="text-[7px] lg:text-[8px] text-gray-500">
-            {restaurant.isOpen ? "Open now" : "Closed"}
-          </span>
-        </div>
-
-        {/* Featured indicator */}
-        {restaurant.isFeatured && (
-          <div className="absolute bottom-0 right-0 bg-gradient-to-l from-yellow-400 to-orange-500 text-white text-[6px] lg:text-[8px] px-1 lg:px-2 py-0.5 rounded-tl-lg">
-            Featured
           </div>
         )}
-
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: hoveredId === restaurant.id ? "100%" : "0%" }}
-          className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-red-500 to-orange-500"
-        />
       </div>
-    </motion.div>
+      <div className="p-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-semibold text-ink text-base line-clamp-1">
+            {restaurant.name}
+          </h3>
+          <div className="flex items-center gap-1 bg-ink/5 px-2 py-0.5 rounded-full text-xs">
+            <FaStar className="text-yellow-500 text-[11px]" />
+            <span className="font-semibold text-ink">{restaurant.rating}</span>
+            <span className="text-ink-soft">({restaurant.ratingCount})</span>
+          </div>
+        </div>
+        <p className="text-[13px] text-ink-soft line-clamp-1 mt-0.5">
+          {restaurant.cuisine}
+        </p>
+        <div className="mt-2 flex items-center gap-3 text-[12px] text-ink-soft">
+          <span className="flex items-center gap-1">
+            <FiClock className="text-gray-400" /> {restaurant.deliveryTime} min
+          </span>
+          <span className="flex items-center gap-1">
+            <TbMotorbike className="text-gray-400" /> ₦{restaurant.deliveryFee}
+          </span>
+          <span>· {restaurant.distance} km</span>
+        </div>
+      </div>
+    </motion.button>
   );
 }

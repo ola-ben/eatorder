@@ -1,126 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSearch, FaStar, FaArrowLeft } from "react-icons/fa";
-import { GiMeat, GiDrinkMe, GiNoodles } from "react-icons/gi";
-import { HiOutlineSparkles } from "react-icons/hi2";
-import { IoClose } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
+import { FaStar } from "react-icons/fa";
+import { FiArrowLeft, FiSearch, FiHeart, FiShare2, FiX } from "react-icons/fi";
+import { FiClock } from "react-icons/fi";
+import { TbMotorbike } from "react-icons/tb";
 import { Pizza } from "./Pizza";
-import Cartbtn from "./Cartbtn";
+import { useCart } from "../context/CartContext";
 
-// Original dishes data from Menu component with LOCAL images
-const localDishes = [
-  {
-    name: "Jollof Rice",
-    ingredients:
-      "Made with long-grain parboiled rice, tomatoes, tomato paste, onions, bell peppers, Scotch bonnet peppers, garlic, and ginger.",
-    price: 1500.0,
-    photoName: "/images/pizzaimages/jollofricee.jpg",
-    type: "maindishes",
-  },
-  {
-    name: "Amala & Beans Soup",
-    ingredients:
-      "Made from yam flour (elubo) mixed with hot water into a smooth, stretchy dough. Beans soup, often prepared as ewa alagbado or gbegiri, includes peeled cooked beans, palm oil, seasoning cubes with meat",
-    price: 1700.0,
-    photoName: "/images/pizzaimages/amalaa.jpg",
-    type: "maindishes",
-  },
-  {
-    name: "Pounded Yam",
-    ingredients:
-      "Made by boiling yam pieces until soft and then pounding or blending them into a smooth, stretchy dough using only yam and water.",
-    price: 900.0,
-    photoName: "/images/pizzaimages/poundedyammm.jpg",
-    type: "maindishes",
-  },
-  {
-    name: "Eba & Efo",
-    ingredients:
-      "made from garri (cassava flakes) mixed with hot water, while Efo (vegetable soup) is prepared with spinach or fluted pumpkin leaves, palm oil, tomatoes, peppers, onions, crayfish, locust beans, and assorted meat or fish.",
-    price: 1500.0,
-    photoName: "/images/pizzaimages/ebaa.jpg",
-    type: "maindishes",
-  },
-  {
-    name: "Fried rice and Chicken",
-    ingredients:
-      "Fried rice with chicken made with parboiled rice, mixed vegetables (carrots, peas, sweet corn, green beans), onions, garlic, soy sauce, curry powder, and seasoning, served with seasoned and fried or grilled chicken.",
-    price: 2000.0,
-    photoName: "/images/pizzaimages/friedricewithchicken.jpg",
-    type: "maindishes",
-  },
-  {
-    name: "Yam and Egg",
-    ingredients:
-      "Made with boiled yam slices served alongside a fried egg sauce prepared with eggs, tomatoes, onions, peppers, and seasoning.",
-    price: 1700.0,
-    photoName: "/images/pizzaimages/yamegg.jpg",
-    type: "proteins",
-  },
-  {
-    name: "Fish",
-    ingredients:
-      "Made with ingredients like fresh or smoked fish, onions, peppers, tomatoes, garlic, seasoning cubes, and palm or vegetable oil, depending on the cooking style.",
-    price: 2500.0,
-    photoName: "/images/pizzaimages/fish.jpg",
-    type: "proteins",
-  },
-  {
-    name: "Moi Moi",
-    ingredients:
-      "made from blended peeled beans, onions, peppers, oil (usually palm or vegetable), seasoning cubes, and optional additions like eggs, fish, or ground crayfish.",
-    price: 500.0,
-    photoName: "/images/pizzaimages/moimoii.jpg",
-    type: "proteins",
-  },
-  {
-    name: "Bush Meat",
-    ingredients:
-      "Prepared with ingredients like the meat itself (such as antelope or grasscutter), onions, peppers, garlic, ginger, seasoning cubes, and palm oil or vegetable oil, often cooked in a spicy sauce or soup.",
-    price: 500.0,
-    photoName: "/images/pizzaimages/bushmeat.jpg",
-    type: "proteins",
-  },
-  {
-    name: "Fanta",
-    ingredients: "Carbonated drinks",
-    price: 500.0,
-    photoName: "/images/pizzaimages/fanta.jpeg",
-    type: "extrasanddrinks",
-  },
-  {
-    name: "Margerita Pizza",
-    ingredients:
-      "Fresh mozzarella, tomato sause, and basil on our hand-tossed dough",
-    price: 4500.0,
-    photoName: "/images/pizzaimages/Margheritapizza.jpg",
-    type: "extrasanddrinks",
-  },
-  {
-    name: "Shawarma",
-    ingredients: "Carbonated drinks",
-    price: 1000.0,
-    photoName: "/images/pizzaimages/shawama.jpg",
-    type: "extrasanddrinks",
-  },
-  {
-    name: "Coke",
-    ingredients: "Carbonated drinks",
-    price: 1000.0,
-    photoName: "/images/pizzaimages/coke.jpg",
-    type: "extrasanddrinks",
-  },
-  {
-    name: "Sprite",
-    ingredients: "Carbonated drinks",
-    price: 1000.0,
-    photoName: "/images/pizzaimages/sprite.jpeg",
-    type: "extrasanddrinks",
-  },
-];
-
-// Restaurant data with MIX of local and splash images
 const restaurantsData = {
   "item-7-go-iwo-road": {
     id: "item-7-go-iwo-road",
@@ -131,14 +18,14 @@ const restaurantsData = {
     deliveryFee: 700,
     distance: 0.7,
     deliveryTime: "20-30 mins",
-    image: "/images/pizzaimages/jollofricee.jpg", // Local image
+    image: "/images/pizzaimages/jollofricee.jpg",
     dishes: [
       {
         name: "Jollof Rice with Chicken",
         ingredients:
           "Perfectly cooked jollof rice with grilled chicken, plantains, and coleslaw",
         price: 2500,
-        photoName: "/images/pizzaimages/jollofricee.jpg", // Local image
+        photoName: "/images/pizzaimages/jollofricee.jpg",
         type: "maindishes",
       },
       {
@@ -146,7 +33,7 @@ const restaurantsData = {
         ingredients:
           "Grilled chicken, beef, vegetables, and special sauce wrapped in toasted bread",
         price: 2000,
-        photoName: "/images/pizzaimages/shawama.jpg", // Local image
+        photoName: "/images/pizzaimages/shawama.jpg",
         type: "extrasanddrinks",
       },
       {
@@ -154,7 +41,7 @@ const restaurantsData = {
         ingredients:
           "Nigerian fried rice with mixed vegetables and fried chicken",
         price: 2200,
-        photoName: "/images/pizzaimages/friedricewithchicken.jpg", // Local image
+        photoName: "/images/pizzaimages/friedricewithchicken.jpg",
         type: "maindishes",
       },
       {
@@ -162,14 +49,14 @@ const restaurantsData = {
         ingredients:
           "Fresh tilapia grilled with peppers, onions, and special spices",
         price: 3500,
-        photoName: "/images/pizzaimages/fish.jpg", // Local image
+        photoName: "/images/pizzaimages/fish.jpg",
         type: "proteins",
       },
       {
         name: "Coke",
         ingredients: "Chilled carbonated drink",
         price: 500,
-        photoName: "/images/pizzaimages/coke.jpg", // Local image
+        photoName: "/images/pizzaimages/coke.jpg",
         type: "extrasanddrinks",
       },
     ],
@@ -183,48 +70,48 @@ const restaurantsData = {
     deliveryFee: 500,
     distance: 1.2,
     deliveryTime: "15-25 mins",
-    image: "/images/pizzaimages/amalaa.jpg", // Local image
+    image: "/images/pizzaimages/amalaa.jpg",
     dishes: [
       {
         name: "Amala & Beans Soup",
         ingredients: "Smooth amala with rich beans soup and assorted meat",
         price: 1700,
-        photoName: "/images/pizzaimages/amalaa.jpg", // Local image
+        photoName: "/images/pizzaimages/amalaa.jpg",
         type: "maindishes",
       },
       {
         name: "Pounded Yam with Egusi",
         ingredients: "Smooth pounded yam served with rich egusi soup and meat",
         price: 2000,
-        photoName: "/images/pizzaimages/poundedyammm.jpg", // Local image
+        photoName: "/images/pizzaimages/poundedyammm.jpg",
         type: "maindishes",
       },
       {
         name: "Eba & Efo Riro",
         ingredients: "Garri eba with vegetable soup, assorted meat and fish",
         price: 1800,
-        photoName: "/images/pizzaimages/ebaa.jpg", // Local image
+        photoName: "/images/pizzaimages/ebaa.jpg",
         type: "maindishes",
       },
       {
         name: "Moi Moi",
         ingredients: "Steamed bean pudding with fish and eggs",
         price: 700,
-        photoName: "/images/pizzaimages/moimoii.jpg", // Local image
+        photoName: "/images/pizzaimages/moimoii.jpg",
         type: "proteins",
       },
       {
         name: "Bush Meat",
         ingredients: "Spicy grilled bush meat with peppers and onions",
         price: 3500,
-        photoName: "/images/pizzaimages/bushmeat.jpg", // Local image
+        photoName: "/images/pizzaimages/bushmeat.jpg",
         type: "proteins",
       },
       {
         name: "Fanta",
         ingredients: "Chilled orange carbonated drink",
         price: 500,
-        photoName: "/images/pizzaimages/fanta.jpeg", // Local image
+        photoName: "/images/pizzaimages/fanta.jpeg",
         type: "extrasanddrinks",
       },
     ],
@@ -238,14 +125,15 @@ const restaurantsData = {
     deliveryFee: 600,
     distance: 0.9,
     deliveryTime: "25-35 mins",
-    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=400&fit=crop", // Splash image
+    image:
+      "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=400&fit=crop",
     dishes: [
       {
         name: "Jollof Rice Special",
         ingredients:
           "Party jollof rice with fried plantains, coleslaw, and grilled chicken",
         price: 2800,
-        photoName: "/images/pizzaimages/jollofricee.jpg", // Local image
+        photoName: "/images/pizzaimages/jollofricee.jpg",
         type: "maindishes",
       },
       {
@@ -253,21 +141,22 @@ const restaurantsData = {
         ingredients:
           "Fresh tilapia grilled with peppers, onions, and special sauce",
         price: 4000,
-        photoName: "/images/pizzaimages/fish.jpg", // Local image
+        photoName: "/images/pizzaimages/fish.jpg",
         type: "proteins",
       },
       {
         name: "Fried Rice",
         ingredients: "Nigerian fried rice with mixed vegetables and liver",
         price: 2000,
-        photoName: "/images/pizzaimages/friedricewithchicken.jpg", // Local image
+        photoName: "/images/pizzaimages/friedricewithchicken.jpg",
         type: "maindishes",
       },
       {
         name: "Pepper Soup",
         ingredients: "Spicy pepper soup with goat meat or fish",
         price: 1800,
-        photoName: "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop",
         type: "proteins",
       },
     ],
@@ -281,14 +170,15 @@ const restaurantsData = {
     deliveryFee: 550,
     distance: 0.5,
     deliveryTime: "20-30 mins",
-    image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&h=400&fit=crop", // Splash image
+    image:
+      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&h=400&fit=crop",
     dishes: [
       {
         name: "Fufu with Egusi",
         ingredients:
           "Smooth fufu served with rich melon seed soup and assorted meat",
         price: 1800,
-        photoName: "/images/pizzaimages/amalaa.jpg", // Local image
+        photoName: "/images/pizzaimages/amalaa.jpg",
         type: "maindishes",
       },
       {
@@ -296,14 +186,16 @@ const restaurantsData = {
         ingredients:
           "Traditional oha leaves soup with cocoyam thickener and assorted meat",
         price: 2000,
-        photoName: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
         type: "maindishes",
       },
       {
         name: "Banga Soup",
         ingredients: "Palm nut soup with fresh catfish and spices",
         price: 2200,
-        photoName: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop",
         type: "maindishes",
       },
     ],
@@ -317,27 +209,30 @@ const restaurantsData = {
     deliveryFee: 650,
     distance: 1.5,
     deliveryTime: "25-40 mins",
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=400&fit=crop", // Splash image
+    image:
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=400&fit=crop",
     dishes: [
       {
         name: "Grilled Chicken",
         ingredients: "Half chicken grilled with peri-peri sauce and spices",
         price: 3000,
-        photoName: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&h=300&fit=crop",
         type: "proteins",
       },
       {
         name: "Spicy Wings",
         ingredients: "Chicken wings tossed in hot pepper sauce",
         price: 2000,
-        photoName: "https://images.unsplash.com/photo-1527477396000-2716fcb3b6c3?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1527477396000-2716fcb3b6c3?w=400&h=300&fit=crop",
         type: "proteins",
       },
       {
         name: "Barbecue Platter",
         ingredients: "Assorted grilled meats with barbecue sauce and fries",
         price: 5000,
-        photoName: "/images/pizzaimages/bushmeat.jpg", // Local image
+        photoName: "/images/pizzaimages/bushmeat.jpg",
         type: "maindishes",
       },
     ],
@@ -351,34 +246,38 @@ const restaurantsData = {
     deliveryFee: 600,
     distance: 0.8,
     deliveryTime: "20-35 mins",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=400&fit=crop", // Splash image
+    image:
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=400&fit=crop",
     dishes: [
       {
         name: "Fried Chicken (4 pieces)",
         ingredients: "Crispy fried chicken pieces with secret spices",
         price: 2500,
-        photoName: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop",
         type: "proteins",
       },
       {
         name: "Chicken Wings (6 pieces)",
         ingredients: "Spicy or mild chicken wings with dipping sauce",
         price: 2000,
-        photoName: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400&h=300&fit=crop",
         type: "proteins",
       },
       {
         name: "French Fries",
         ingredients: "Crispy golden fries with salt and seasoning",
         price: 800,
-        photoName: "/images/pizzaimages/yamegg.jpg", // Local image
+        photoName: "/images/pizzaimages/yamegg.jpg",
         type: "extrasanddrinks",
       },
       {
         name: "Chicken Burger",
         ingredients: "Grilled chicken patty with lettuce, tomato, and mayo",
         price: 1800,
-        photoName: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop",
         type: "maindishes",
       },
     ],
@@ -392,35 +291,37 @@ const restaurantsData = {
     deliveryFee: 800,
     distance: 1.1,
     deliveryTime: "30-45 mins",
-    image: "/images/pizzaimages/Margheritapizza.jpg", // Local image
+    image: "/images/pizzaimages/Margheritapizza.jpg",
     dishes: [
       {
         name: "Margherita Pizza",
         ingredients:
           "Fresh mozzarella, tomato sauce, and basil on hand-tossed dough",
         price: 4500,
-        photoName: "/images/pizzaimages/Margheritapizza.jpg", // Local image
+        photoName: "/images/pizzaimages/Margheritapizza.jpg",
         type: "maindishes",
       },
       {
         name: "Pepperoni Pizza",
         ingredients: "Tomato sauce, mozzarella, and double pepperoni",
         price: 5200,
-        photoName: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop",
         type: "maindishes",
       },
       {
         name: "Chicken Pasta",
         ingredients: "Creamy alfredo pasta with grilled chicken and mushrooms",
         price: 3200,
-        photoName: "https://images.unsplash.com/photo-1645112411342-4665e1ff9c9f?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1645112411342-4665e1ff9c9f?w=400&h=300&fit=crop",
         type: "maindishes",
       },
       {
         name: "Garlic Bread",
         ingredients: "Toasted bread with garlic butter and herbs",
         price: 1200,
-        photoName: "/images/pizzaimages/shawama.jpg", // Local image
+        photoName: "/images/pizzaimages/shawama.jpg",
         type: "extrasanddrinks",
       },
     ],
@@ -434,460 +335,331 @@ const restaurantsData = {
     deliveryFee: 700,
     distance: 1.3,
     deliveryTime: "25-40 mins",
-    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=400&fit=crop", // Splash image
+    image:
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=400&fit=crop",
     dishes: [
       {
         name: "Streetwise 2 (2pcs Chicken)",
         ingredients: "2 pieces of fried chicken with fries and coleslaw",
         price: 2200,
-        photoName: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop",
         type: "maindishes",
       },
       {
         name: "Zinger Burger",
         ingredients: "Spicy chicken fillet with lettuce and mayo in a bun",
         price: 2500,
-        photoName: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop", // Splash image
+        photoName:
+          "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop",
         type: "maindishes",
       },
       {
         name: "Chicken Bucket (6pcs)",
         ingredients: "6 pieces of original recipe or hot & spicy chicken",
         price: 6500,
-        photoName: "/images/pizzaimages/friedricewithchicken.jpg", // Local image
+        photoName: "/images/pizzaimages/friedricewithchicken.jpg",
         type: "proteins",
       },
       {
         name: "Fries (Large)",
         ingredients: "Large portion of seasoned fries",
         price: 1000,
-        photoName: "/images/pizzaimages/fanta.jpeg", // Local image
+        photoName: "/images/pizzaimages/fanta.jpeg",
         type: "extrasanddrinks",
       },
     ],
   },
 };
 
-// Categories configuration
 const categories = [
-  {
-    id: "maindishes",
-    label: "Main Dishes",
-    icon: <GiNoodles className="text-2xl md:text-3xl" />,
-    gradient: "from-orange-500 to-red-500",
-    lightColor: "bg-orange-500/10",
-    textColor: "text-orange-500",
-    borderColor: "border-orange-500/30",
-    shadow: "shadow-orange-500/20",
-  },
-  {
-    id: "proteins",
-    label: "Proteins",
-    icon: <GiMeat className="text-2xl md:text-3xl" />,
-    gradient: "from-orange-500 to-red-500",
-    lightColor: "bg-orange-500/10",
-    textColor: "text-orange-500",
-    borderColor: "border-orange-500/30",
-    shadow: "shadow-orange-500/20",
-  },
-  {
-    id: "extrasanddrinks",
-    label: "Extras & Drinks",
-    icon: <GiDrinkMe className="text-2xl md:text-3xl" />,
-    gradient: "from-orange-500 to-red-500",
-    lightColor: "bg-orange-500/10",
-    textColor: "text-orange-500",
-    borderColor: "border-orange-500/30",
-    shadow: "shadow-orange-500/20",
-  },
+  { id: "maindishes", label: "Main Dishes" },
+  { id: "proteins", label: "Proteins" },
+  { id: "extrasanddrinks", label: "Extras & Drinks" },
 ];
 
 export function RestaurantMenu() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
+  const { cart } = useCart();
+
   const [selectedCategory, setSelectedCategory] = useState("maindishes");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const searchInputRef = useRef(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const searchRef = useRef(null);
 
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, [restaurantId]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 160);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Handle scroll to show/hide scroll to top button
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (searchOpen) searchRef.current?.focus();
+  }, [searchOpen]);
 
   const restaurant = restaurantsData[restaurantId];
 
+  const totalCount = cart.reduce((s, i) => s + i.quantity, 0);
+  const totalPrice = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+  const filtered = useMemo(() => {
+    if (!restaurant) return [];
+    const inCat = restaurant.dishes.filter(
+      (d) => d.type === selectedCategory,
+    );
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return inCat;
+    return inCat.filter(
+      (d) =>
+        d.name.toLowerCase().includes(q) ||
+        d.ingredients.toLowerCase().includes(q),
+    );
+  }, [restaurant, selectedCategory, searchQuery]);
+
   if (!restaurant) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Restaurant not found</h2>
+      <div className="min-h-screen bg-canvas flex items-center justify-center p-6">
+        <div className="text-center max-w-sm">
+          <h2 className="text-xl font-bold mb-2 text-ink">
+            Restaurant not found
+          </h2>
+          <p className="text-ink-soft mb-4">
+            We couldn't find that restaurant.
+          </p>
           <button
             onClick={() => navigate("/")}
-            className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
+            className="bg-brand text-white px-5 py-2.5 rounded-full font-semibold"
           >
-            Go Back Home
+            Back home
           </button>
         </div>
       </div>
     );
   }
 
-  // Filter dishes based on category and search
-  const getFilteredDishes = () => {
-    const categoryFiltered = restaurant.dishes.filter(
-      (dish) => dish.type === selectedCategory,
-    );
-
-    if (searchQuery.trim() === "") return categoryFiltered;
-
-    const query = searchQuery.toLowerCase().trim();
-    return categoryFiltered.filter(
-      (dish) =>
-        dish.name.toLowerCase().includes(query) ||
-        dish.ingredients.toLowerCase().includes(query),
-    );
-  };
-
-  const filteredDishes = getFilteredDishes();
-  const currentCategory = categories.find((cat) => cat.id === selectedCategory);
-
-  const clearSearch = () => {
-    setSearchQuery("");
-    searchInputRef.current?.focus();
-  };
-
-  // Scroll to top function
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
-    <section className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-      {/* Cart Button - Fixed Position */}
-      <Cartbtn />
-
-      {/* Restaurant Header with Background Image */}
-      <div className="relative h-48 md:h-64 bg-cover bg-center bg-gray-200">
-        {/* Background Image with Loading State */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
-          style={{
-            backgroundImage: `url(${restaurant.image})`,
-            opacity: imageLoaded ? 1 : 0,
-          }}
-        />
-
-        {/* Show placeholder while loading */}
-        {!imageLoaded && (
-          <div className="absolute inset-0 bg-gray-300 animate-pulse" />
-        )}
-
-        {/* Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
-
-        {/* Hidden Image Preloader */}
-        <img
-          src={restaurant.image}
-          alt={restaurant.name}
-          className="hidden"
-          onLoad={() => setImageLoaded(true)}
-          onError={() => setImageLoaded(true)}
-        />
-
-        {/* Back Button */}
-        <button
-          onClick={() => navigate("/")}
-          className="absolute top-4 left-4 bg-white/20 backdrop-blur-md p-3 rounded-full text-white hover:bg-white/30 transition-all z-10"
-        >
-          <FaArrowLeft />
-        </button>
-
-        {/* Restaurant Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-7xl mx-auto"
+    <main className="min-h-screen bg-canvas">
+      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32">
+        {/* Floating header buttons over hero */}
+        <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-card flex items-center justify-center text-ink"
           >
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              {restaurant.name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <FaStar className="text-yellow-400" />
-                <span>{restaurant.rating}</span>
-                <span className="text-white/70 text-xs">
-                  ({restaurant.ratingCount}+)
-                </span>
-              </div>
-              <span className="text-white/50">•</span>
-              <span>{restaurant.cuisine}</span>
-              <span className="text-white/50">•</span>
-              <span className="flex items-center gap-1">
-                <span>🚴</span> ₦{restaurant.deliveryFee}
-              </span>
-              <span className="text-white/50">•</span>
-              <span className="flex items-center gap-1">
-                <span>📍</span> {restaurant.distance} km
-              </span>
-              <span className="text-white/50">•</span>
-              <span className="flex items-center gap-1">
-                <span>⏱</span> {restaurant.deliveryTime}
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Menu Section */}
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Header with badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full mb-4 shadow-lg"
-          >
-            <HiOutlineSparkles className="text-lg" />
-            <span className="text-sm font-medium">{restaurant.name} Menu</span>
-          </motion.div>
-        </motion.div>
-
-        {/* Search Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative max-w-md mx-auto mb-8"
-        >
-          <div
-            className={`relative flex items-center transition-all duration-300 ${
-              isSearchFocused ? "scale-105" : ""
-            }`}
-          >
-            <FaSearch
-              className={`absolute left-4 text-gray-400 transition-colors ${
-                isSearchFocused ? "text-red-500" : ""
-              }`}
-            />
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search in this restaurant..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              className="w-full pl-12 pr-12 py-4 rounded-2xl bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-red-500 focus:outline-none shadow-lg"
-            />
-            <AnimatePresence>
-              {searchQuery && (
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  onClick={clearSearch}
-                  className="absolute right-4 text-gray-400 hover:text-red-500"
-                >
-                  <IoClose className="text-xl" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
-            className="text-xs text-gray-500 mt-2 text-center"
-          >
-            Search by dish name or ingredients
-          </motion.p>
-        </motion.div>
-
-        {/* Category Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex justify-center mb-10"
-        >
-          <div className="bg-white/20 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-white/30 grid grid-cols-3 gap-2 w-full max-w-md">
-            {categories.map((category, index) => (
-              <motion.button
-                key={category.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.05 * index }}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`
-                  relative px-2 py-3 rounded-xl font-medium text-xs md:text-sm
-                  flex flex-col items-center gap-1.5 overflow-hidden
-                  ${selectedCategory === category.id ? "text-white" : "text-gray-600"}
-                `}
-              >
-                <div className="absolute inset-0 bg-white/40 backdrop-blur-sm" />
-
-                {selectedCategory === category.id && (
-                  <motion.div
-                    layoutId="activeCategory"
-                    className={`absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 to-red-500`}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  />
-                )}
-
-                <span className="relative z-10 flex flex-col items-center gap-1">
-                  <span
-                    className={`text-2xl md:text-3xl ${
-                      selectedCategory !== category.id ? "text-orange-500" : "text-white"
-                    }`}
-                  >
-                    {category.icon}
-                  </span>
-                  <span className="text-[10px] md:text-xs font-medium">
-                    {category.label}
-                  </span>
-                </span>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Results Header */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-wrap justify-between items-center gap-4 mb-6"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-orange-500/10 backdrop-blur-sm border border-orange-500/30">
-              <span className="text-xl text-orange-500">
-                {currentCategory?.icon}
-              </span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800 text-lg">
-                {currentCategory?.label}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {filteredDishes.length}{" "}
-                {filteredDishes.length === 1 ? "item" : "items"} available
-              </p>
-            </div>
-          </div>
-
-          {searchQuery && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-gray-600 flex items-center gap-2 border border-gray-200 shadow-sm"
+            <FiArrowLeft />
+          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-card flex items-center justify-center text-ink"
             >
-              <FaSearch className="text-gray-400 text-xs" />
-              <span>"{searchQuery}"</span>
-              <button
-                onClick={clearSearch}
-                className="ml-1 text-gray-400 hover:text-gray-600"
-              >
-                <IoClose className="text-lg" />
-              </button>
+              <FiSearch />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-card flex items-center justify-center text-ink">
+              <FiShare2 />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-card flex items-center justify-center text-ink">
+              <FiHeart />
+            </button>
+          </div>
+        </div>
+
+        {/* Sticky compact header on scroll */}
+        <AnimatePresence>
+          {scrolled && (
+            <motion.div
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -50, opacity: 0 }}
+              className="fixed top-0 inset-x-0 z-30 bg-white border-b border-gray-100"
+            >
+              <div className="max-w-md mx-auto px-3 h-14 flex items-center gap-3">
+                <button
+                  onClick={() => navigate(-1)}
+                  className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center"
+                >
+                  <FiArrowLeft />
+                </button>
+                <h2 className="font-semibold text-ink truncate flex-1">
+                  {restaurant.name}
+                </h2>
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center"
+                >
+                  <FiSearch />
+                </button>
+              </div>
             </motion.div>
           )}
-        </motion.div>
+        </AnimatePresence>
 
-        {/* Menu Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedCategory + searchQuery}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          >
-            {filteredDishes.length > 0 ? (
-              filteredDishes.map((dish, index) => (
-                <motion.div
-                  key={dish.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
+        {/* Hero image */}
+        <div className="relative h-52 w-full overflow-hidden">
+          <img
+            src={restaurant.image}
+            alt={restaurant.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
+        </div>
+
+        {/* Restaurant info card (overlaps hero) */}
+        <div className="px-4 -mt-8 relative z-10">
+          <div className="bg-white rounded-2xl shadow-card p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold text-ink leading-tight">
+                  {restaurant.name}
+                </h1>
+                <p className="text-sm text-ink-soft mt-1 line-clamp-1">
+                  {restaurant.cuisine}
+                </p>
+              </div>
+              <div className="flex items-center gap-1 bg-brand-soft text-brand px-2.5 py-1 rounded-full text-sm font-semibold shrink-0">
+                <FaStar className="text-[12px]" />
+                {restaurant.rating}
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-center justify-between text-xs text-ink-soft">
+              <div className="flex items-center gap-1.5">
+                <FiClock className="text-gray-400" />
+                <span>{restaurant.deliveryTime}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <TbMotorbike className="text-gray-400" />
+                <span>₦{restaurant.deliveryFee} delivery</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span>📍 {restaurant.distance} km</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search inline (when open) */}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden px-4 pt-4"
+            >
+              <div className="flex items-center gap-2 bg-gray-100 rounded-2xl px-3 h-11">
+                <FiSearch className="text-gray-500" />
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={`Search in ${restaurant.name}`}
+                  className="flex-1 bg-transparent outline-none text-sm text-ink placeholder:text-gray-500"
+                />
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSearchOpen(false);
+                  }}
+                  className="text-gray-500"
                 >
+                  <FiX />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Category tabs */}
+        <div className="sticky top-0 z-20 bg-white pt-4 pb-2">
+          {scrolled && <div className="h-14" />}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4">
+            {categories.map((c) => {
+              const active = c.id === selectedCategory;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCategory(c.id)}
+                  className={`px-4 h-10 rounded-full text-sm font-medium whitespace-nowrap border transition-colors ${
+                    active
+                      ? "bg-ink text-white border-ink"
+                      : "bg-white text-ink border-gray-200"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Dishes */}
+        <div className="px-4 pt-4 pb-6 space-y-3">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedCategory + searchQuery}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="space-y-3"
+            >
+              {filtered.length > 0 ? (
+                filtered.map((dish) => (
                   <Pizza
+                    key={dish.name}
                     name={dish.name}
                     ingredients={dish.ingredients}
                     price={dish.price}
                     photoName={dish.photoName}
                   />
-                </motion.div>
-              ))
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="col-span-full text-center py-16"
-              >
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg max-w-md mx-auto border border-gray-200">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    No items found
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    We couldn't find any items matching "{searchQuery}"
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-5xl mb-2">🔍</div>
+                  <p className="font-semibold text-ink">No items found</p>
+                  <p className="text-sm text-ink-soft">
+                    Try a different search or category
                   </p>
-                  <button
-                    onClick={clearSearch}
-                    className="text-red-500 font-medium hover:text-red-600 transition-colors"
-                  >
-                    Clear search
-                  </button>
                 </div>
-              </motion.div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        {/* Show result count */}
-        {filteredDishes.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-center mt-8 text-sm text-gray-500"
-          >
-            Showing {filteredDishes.length} of{" "}
-            {restaurant.dishes.filter((dish) => dish.type === selectedCategory).length}{" "}
-            items
-          </motion.div>
-        )}
-
-        {/* Scroll to Top Button */}
+        {/* Sticky View Cart bar */}
         <AnimatePresence>
-          {showScrollTop && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
-              onClick={scrollToTop}
-              className="fixed bottom-6 right-6 bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 hover:scale-110 backdrop-blur-sm bg-opacity-90"
+          {totalCount > 0 && (
+            <motion.div
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 80, opacity: 0 }}
+              className="fixed bottom-4 inset-x-0 z-40 px-4"
             >
-              ↑
-            </motion.button>
+              <button
+                onClick={() => navigate("/cartpage")}
+                className="max-w-md mx-auto w-full bg-brand text-white rounded-2xl shadow-pop h-14 flex items-center justify-between px-5"
+              >
+                <span className="flex items-center gap-2 font-semibold">
+                  <span className="bg-white/20 w-7 h-7 rounded-full flex items-center justify-center text-sm">
+                    {totalCount}
+                  </span>
+                  View cart
+                </span>
+                <span className="font-bold">
+                  ₦{totalPrice.toLocaleString("en-NG")}
+                </span>
+              </button>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </section>
+    </main>
   );
 }
