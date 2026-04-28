@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiSearch, FiBell, FiChevronDown } from "react-icons/fi";
-import { GiNoodles, GiMeat, GiDrinkMe, GiChickenOven, GiCupcake } from "react-icons/gi";
+import { FiSearch, FiHeart, FiChevronDown } from "react-icons/fi";
+import {
+  GiNoodles,
+  GiMeat,
+  GiDrinkMe,
+  GiChickenOven,
+  GiCupcake,
+} from "react-icons/gi";
 import { LuPizza, LuSandwich } from "react-icons/lu";
-import { useAuth } from "../hooks/useAuth";
+import { useFavorites } from "../context/FavoritesContext";
 
 const categories = [
   { id: "all", label: "All", Icon: GiNoodles },
@@ -26,7 +32,7 @@ function getGreeting() {
 
 export default function HomeHero() {
   const navigate = useNavigate();
-  const { loggedIn } = useAuth();
+  const { count: favCount } = useFavorites();
   const [activeCat, setActiveCat] = useState("all");
   const [name, setName] = useState("");
 
@@ -42,8 +48,8 @@ export default function HomeHero() {
 
   return (
     <header className="bg-white">
-      {/* Top app bar */}
-      <div className="px-4 pt-5 pb-3 flex items-center justify-between">
+      {/* Mobile-only top app bar (TopNav handles this on desktop) */}
+      <div className="lg:hidden px-4 pt-5 pb-3 flex items-center justify-between">
         <button
           onClick={() => navigate("/profile/addresses")}
           className="flex items-center gap-2 max-w-[70%] text-left"
@@ -62,28 +68,40 @@ export default function HomeHero() {
           </div>
         </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate(loggedIn ? "/profile" : "/logiformpage")}
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-ink"
-          >
-            <FiBell className="text-lg" />
-          </button>
-        </div>
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={() => navigate("/favourites")}
+          className="relative w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-ink"
+          aria-label="My favourites"
+        >
+          <FiHeart className="text-lg" />
+          {favCount > 0 && (
+            <motion.span
+              key={favCount}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 20 }}
+              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand text-white text-[10px] rounded-full flex items-center justify-center font-bold"
+            >
+              {favCount}
+            </motion.span>
+          )}
+        </motion.button>
       </div>
 
       {/* Greeting */}
-      <div className="px-4 pb-3">
-        <h1 className="text-2xl font-bold text-ink leading-tight">
-          {greeting}{name ? `, ${name}` : ""} 👋
+      <div className="px-4 lg:px-0 pb-3 lg:pb-5 lg:pt-2">
+        <h1 className="text-2xl lg:text-4xl font-bold text-ink leading-tight">
+          {greeting}
+          {name ? `, ${name}` : ""} 👋
         </h1>
-        <p className="text-sm text-ink-soft mt-0.5">
+        <p className="text-sm lg:text-base text-ink-soft mt-0.5 lg:mt-2">
           What would you like to eat today?
         </p>
       </div>
 
-      {/* Search */}
-      <div className="px-4 pb-4">
+      {/* Mobile-only search (TopNav has search on desktop) */}
+      <div className="lg:hidden px-4 pb-4">
         <button
           onClick={() => navigate("/restaurants")}
           className="w-full flex items-center gap-3 bg-gray-100 hover:bg-gray-200 transition-colors rounded-2xl px-4 h-12 text-left"
@@ -95,54 +113,57 @@ export default function HomeHero() {
         </button>
       </div>
 
-      {/* Category chips */}
-      <div className="pb-2">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 pb-2">
-          {categories.map(({ id, label, Icon }) => {
-            const active = activeCat === id;
-            return (
-              <button
-                key={id}
-                onClick={() => setActiveCat(id)}
-                className={`flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
-                  active
-                    ? "bg-brand text-white border-brand shadow-card"
-                    : "bg-white text-ink border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <Icon className="text-base" />
-                {label}
-              </button>
-            );
-          })}
+      {/* Categories + promo split on desktop */}
+      <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
+        {/* Category chips */}
+        <div className="lg:col-span-7 lg:order-2">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 lg:px-0 pb-2 lg:pb-0 lg:flex-wrap">
+            {categories.map(({ id, label, Icon }) => {
+              const active = activeCat === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => setActiveCat(id)}
+                  className={`flex items-center gap-2 px-4 h-10 lg:h-11 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
+                    active
+                      ? "bg-brand text-white border-brand shadow-card"
+                      : "bg-white text-ink border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <Icon className="text-base" />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Promo banner */}
-      <div className="px-4 pt-2 pb-4">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-2xl bg-linear-to-r from-brand to-accent text-white p-5 shadow-card"
-        >
-          <div className="relative z-10 max-w-[60%]">
-            <p className="text-xs font-medium uppercase tracking-wide text-white/80">
-              Today's Deal
-            </p>
-            <h3 className="text-xl font-bold mt-1 leading-snug">
-              Free delivery on orders over ₦7,000
-            </h3>
-            <button
-              onClick={() => navigate("/restaurants")}
-              className="mt-3 inline-flex items-center gap-1 bg-white text-brand text-sm font-semibold px-3 py-1.5 rounded-full"
-            >
-              Order now →
-            </button>
-          </div>
-          <div className="absolute -right-6 -bottom-6 text-[120px] leading-none opacity-20 select-none">
-            🍱
-          </div>
-        </motion.div>
+        {/* Promo banner */}
+        <div className="px-4 lg:px-0 pt-2 lg:pt-0 pb-4 lg:pb-0 lg:col-span-5 lg:order-1">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-2xl bg-linear-to-r from-brand to-accent text-white p-5 lg:p-7 shadow-card"
+          >
+            <div className="relative z-10 max-w-[60%] lg:max-w-[70%]">
+              <p className="text-xs font-medium uppercase tracking-wide text-white/80">
+                Today's Deal
+              </p>
+              <h3 className="text-xl lg:text-2xl font-bold mt-1 leading-snug">
+                Free delivery on orders over ₦7,000
+              </h3>
+              <button
+                onClick={() => navigate("/restaurants")}
+                className="mt-3 inline-flex items-center gap-1 bg-white text-brand text-sm font-semibold px-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                Order now →
+              </button>
+            </div>
+            <div className="absolute -right-6 -bottom-6 text-[120px] lg:text-[160px] leading-none opacity-20 select-none">
+              🍱
+            </div>
+          </motion.div>
+        </div>
       </div>
     </header>
   );

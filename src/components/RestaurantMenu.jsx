@@ -6,6 +6,7 @@ import { FiArrowLeft, FiSearch, FiHeart, FiShare2, FiX } from "react-icons/fi";
 import { FiClock } from "react-icons/fi";
 import { TbMotorbike } from "react-icons/tb";
 import { Pizza } from "./Pizza";
+import TopNav from "./TopNav";
 import { useCart } from "../context/CartContext";
 
 const restaurantsData = {
@@ -445,9 +446,10 @@ export function RestaurantMenu() {
 
   return (
     <main className="min-h-screen bg-canvas">
-      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32">
-        {/* Floating header buttons over hero */}
-        <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between">
+      <TopNav />
+      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32 lg:max-w-7xl lg:bg-transparent lg:px-6 lg:pt-6 lg:pb-24">
+        {/* Floating header buttons over hero (mobile only) */}
+        <div className="lg:hidden absolute top-3 left-3 right-3 z-30 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
             className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-card flex items-center justify-center text-ink"
@@ -470,14 +472,14 @@ export function RestaurantMenu() {
           </div>
         </div>
 
-        {/* Sticky compact header on scroll */}
+        {/* Sticky compact header on scroll (mobile only) */}
         <AnimatePresence>
           {scrolled && (
             <motion.div
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
-              className="fixed top-0 inset-x-0 z-30 bg-white border-b border-gray-100"
+              className="lg:hidden fixed top-0 inset-x-0 z-30 bg-white border-b border-gray-100"
             >
               <div className="max-w-md mx-auto px-3 h-14 flex items-center gap-3">
                 <button
@@ -501,34 +503,46 @@ export function RestaurantMenu() {
         </AnimatePresence>
 
         {/* Hero image */}
-        <div className="relative h-52 w-full overflow-hidden">
+        <div className="relative h-52 lg:h-80 w-full overflow-hidden lg:rounded-3xl">
           <img
             src={restaurant.image}
             alt={restaurant.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="hidden lg:block absolute bottom-6 left-8 text-white">
+            <p className="text-xs uppercase tracking-wider text-white/80">
+              Featured restaurant
+            </p>
+            <h1 className="text-4xl font-extrabold mt-1">{restaurant.name}</h1>
+            <p className="text-sm text-white/90 mt-1">{restaurant.cuisine}</p>
+          </div>
         </div>
 
         {/* Restaurant info card (overlaps hero) */}
-        <div className="px-4 -mt-8 relative z-10">
-          <div className="bg-white rounded-2xl shadow-card p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h1 className="text-xl font-bold text-ink leading-tight">
-                  {restaurant.name}
-                </h1>
-                <p className="text-sm text-ink-soft mt-1 line-clamp-1">
-                  {restaurant.cuisine}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 bg-brand-soft text-brand px-2.5 py-1 rounded-full text-sm font-semibold shrink-0">
-                <FaStar className="text-[12px]" />
-                {restaurant.rating}
+        <div className="px-4 lg:px-0 -mt-8 lg:mt-6 relative z-10">
+          <div className="bg-white rounded-2xl shadow-card p-4 lg:p-6 lg:flex lg:items-center lg:justify-between lg:gap-8">
+            <div className="lg:flex lg:items-center lg:gap-6">
+              <div className="flex items-start justify-between gap-3 lg:block">
+                <div className="min-w-0 lg:hidden">
+                  <h1 className="text-xl font-bold text-ink leading-tight">
+                    {restaurant.name}
+                  </h1>
+                  <p className="text-sm text-ink-soft mt-1 line-clamp-1">
+                    {restaurant.cuisine}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 bg-brand-soft text-brand px-3 py-1.5 rounded-full text-sm font-semibold shrink-0 lg:text-base">
+                  <FaStar className="text-[12px] lg:text-sm" />
+                  {restaurant.rating}
+                  <span className="text-brand/70 font-medium">
+                    ({restaurant.ratingCount}+)
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-xs text-ink-soft">
+            <div className="mt-3 lg:mt-0 flex items-center justify-between lg:justify-end lg:gap-8 text-xs lg:text-sm text-ink-soft">
               <div className="flex items-center gap-1.5">
                 <FiClock className="text-gray-400" />
                 <span>{restaurant.deliveryTime}</span>
@@ -578,19 +592,19 @@ export function RestaurantMenu() {
         </AnimatePresence>
 
         {/* Category tabs */}
-        <div className="sticky top-0 z-20 bg-white pt-4 pb-2">
-          {scrolled && <div className="h-14" />}
-          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4">
+        <div className="sticky top-0 lg:top-16 z-20 bg-white lg:bg-transparent pt-4 lg:pt-8 pb-2 lg:pb-4">
+          {scrolled && <div className="h-14 lg:hidden" />}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 lg:px-0">
             {categories.map((c) => {
               const active = c.id === selectedCategory;
               return (
                 <button
                   key={c.id}
                   onClick={() => setSelectedCategory(c.id)}
-                  className={`px-4 h-10 rounded-full text-sm font-medium whitespace-nowrap border transition-colors ${
+                  className={`px-4 lg:px-5 h-10 lg:h-11 rounded-full text-sm font-medium whitespace-nowrap border transition-colors ${
                     active
-                      ? "bg-ink text-white border-ink"
-                      : "bg-white text-ink border-gray-200"
+                      ? "bg-brand text-white border-brand shadow-card"
+                      : "bg-white text-ink border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   {c.label}
@@ -601,14 +615,14 @@ export function RestaurantMenu() {
         </div>
 
         {/* Dishes */}
-        <div className="px-4 pt-4 pb-6 space-y-3">
+        <div className="px-4 lg:px-0 pt-4 pb-6 lg:pb-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCategory + searchQuery}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="space-y-3"
+              className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-5"
             >
               {filtered.length > 0 ? (
                 filtered.map((dish) => (
@@ -621,7 +635,7 @@ export function RestaurantMenu() {
                   />
                 ))
               ) : (
-                <div className="text-center py-12">
+                <div className="text-center py-12 col-span-full">
                   <div className="text-5xl mb-2">🔍</div>
                   <p className="font-semibold text-ink">No items found</p>
                   <p className="text-sm text-ink-soft">
@@ -644,7 +658,7 @@ export function RestaurantMenu() {
             >
               <button
                 onClick={() => navigate("/cartpage")}
-                className="max-w-md mx-auto w-full bg-brand text-white rounded-2xl shadow-pop h-14 flex items-center justify-between px-5"
+                className="max-w-md lg:max-w-lg mx-auto w-full bg-brand text-white rounded-2xl shadow-pop h-14 flex items-center justify-between px-5 hover:bg-brand-deep transition-colors"
               >
                 <span className="flex items-center gap-2 font-semibold">
                   <span className="bg-white/20 w-7 h-7 rounded-full flex items-center justify-center text-sm">

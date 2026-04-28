@@ -13,27 +13,27 @@ import {
 import { HiOutlineLocationMarker, HiOutlineMail } from "react-icons/hi";
 import { FaNairaSign, FaRegStar, FaStar } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function OrdersPage() {
   const navigate = useNavigate();
+  const { loggedIn, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState([]);
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    if (!isLoggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view your orders");
       navigate("/logiformpage");
+      return;
     }
 
-    // Simulate loading
     setTimeout(() => {
       // Load orders from localStorage
       const savedOrders = JSON.parse(localStorage.getItem("orders")) || [];
@@ -44,7 +44,7 @@ export default function OrdersPage() {
       setOrders(sortedOrders);
       setIsLoading(false);
     }, 1000);
-  }, [navigate]);
+  }, [authLoading, loggedIn, navigate]);
 
   const formatNaira = (amount) => {
     return `₦${amount.toLocaleString("en-NG")}`;

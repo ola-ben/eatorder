@@ -1,6 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-// hi2 exports
 import {
   HiUser,
   HiLockClosed,
@@ -10,23 +8,25 @@ import {
   HiTrash,
   HiArrowRightOnRectangle,
 } from "react-icons/hi2";
-// hi exports
 import { HiShoppingBag } from "react-icons/hi";
 import { FaStar, FaNairaSign } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function ProfileMain() {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const fullName = user.fullName || "Guest User";
-  const email = user.email || "No email";
+  const fullName = user?.user_metadata?.full_name || "Guest User";
+  const email = user?.email || "No email";
   const tribeId = "NG12345";
 
-  const logout = () => {
-    localStorage.removeItem("loggedIn");
-    window.dispatchEvent(new Event("authChanged"));
-    window.dispatchEvent(new Event("storage"));
+  const logout = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast.error(error.message || "Could not log out");
+      return;
+    }
     toast.success("Logged out successfully!");
     navigate("/");
   };
@@ -60,16 +60,16 @@ export default function ProfileMain() {
     {
       name: "Delete Account",
       icon: HiTrash,
-      action: () => {
+      action: async () => {
         if (
           window.confirm(
             "Are you sure you want to delete your account? This action cannot be undone.",
           )
         ) {
-          localStorage.clear();
-          window.dispatchEvent(new Event("authChanged"));
-          window.dispatchEvent(new Event("storage"));
-          toast.success("Account deleted successfully!");
+          await signOut();
+          localStorage.removeItem("orders");
+          localStorage.removeItem("addresses");
+          toast.success("Account signed out. Contact support to fully delete.");
           navigate("/");
         }
       },

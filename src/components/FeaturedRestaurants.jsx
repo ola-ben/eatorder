@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { TbMotorbike } from "react-icons/tb";
+import FavoriteHeart from "./FavoriteHeart";
 
 const placeholderImages = [
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
@@ -137,14 +138,15 @@ export function FeaturedRestaurants() {
   const popular = featured.slice(4);
 
   return (
-    <section className="px-4 pb-8">
-      {/* Top picks — horizontal scroller */}
+    <section className="px-4 lg:px-0 pb-8 lg:pb-12 pt-2 lg:pt-10">
+      {/* Top picks */}
       <SectionHeader
         title="Top picks for you"
         action="See all"
         onAction={() => navigate("/restaurants")}
       />
-      <div className="-mx-4 px-4 flex gap-3 overflow-x-auto no-scrollbar pb-1">
+      {/* Mobile: horizontal scroll. Desktop: 4-col grid */}
+      <div className="-mx-4 px-4 lg:mx-0 lg:px-0 flex gap-3 lg:gap-5 overflow-x-auto no-scrollbar pb-1 lg:grid lg:grid-cols-4 lg:overflow-visible">
         {top.map((r) => (
           <FeaturedCard
             key={r.id}
@@ -154,14 +156,14 @@ export function FeaturedRestaurants() {
         ))}
       </div>
 
-      {/* Popular near you — vertical list */}
-      <div className="mt-8">
+      {/* Popular near you */}
+      <div className="mt-8 lg:mt-12">
         <SectionHeader
           title="Popular near you"
           action="See all"
           onAction={() => navigate("/restaurants")}
         />
-        <div className="space-y-4">
+        <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-5">
           {popular.map((r) => (
             <RestaurantRow
               key={r.id}
@@ -177,12 +179,12 @@ export function FeaturedRestaurants() {
 
 function SectionHeader({ title, action, onAction }) {
   return (
-    <div className="flex items-end justify-between mb-3">
-      <h2 className="text-lg font-bold text-ink">{title}</h2>
+    <div className="flex items-end justify-between mb-3 lg:mb-5">
+      <h2 className="text-lg lg:text-2xl font-bold text-ink">{title}</h2>
       {action && (
         <button
           onClick={onAction}
-          className="text-sm font-semibold text-brand"
+          className="text-sm font-semibold text-brand hover:underline"
         >
           {action}
         </button>
@@ -192,14 +194,16 @@ function SectionHeader({ title, action, onAction }) {
 }
 
 function FeaturedCard({ restaurant, onClick }) {
-  const img = placeholderImages[restaurant.imageIndex % placeholderImages.length];
+  const img =
+    placeholderImages[restaurant.imageIndex % placeholderImages.length];
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
+      whileHover={{ y: -4 }}
       onClick={onClick}
-      className="text-left flex-none w-[260px] bg-white rounded-2xl overflow-hidden shadow-card"
+      className="text-left flex-none w-[260px] lg:w-auto bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-pop transition-shadow"
     >
-      <div className="relative h-36 w-full overflow-hidden">
+      <div className="relative h-36 lg:h-44 w-full overflow-hidden">
         <img
           src={img}
           alt={restaurant.name}
@@ -208,16 +212,19 @@ function FeaturedCard({ restaurant, onClick }) {
         <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-[11px] font-semibold text-ink px-2 py-1 rounded-full shadow-sm">
           {restaurant.promo}
         </div>
+        <div className="absolute top-2 right-2">
+          <FavoriteHeart restaurant={restaurant} size="sm" />
+        </div>
         <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/65 text-white text-[11px] font-semibold px-2 py-1 rounded-full">
           <FaStar className="text-yellow-400 text-[10px]" />
           {restaurant.rating}
         </div>
       </div>
-      <div className="p-3">
-        <h3 className="font-semibold text-ink text-sm line-clamp-1">
+      <div className="p-3 lg:p-4">
+        <h3 className="font-semibold text-ink text-sm lg:text-base line-clamp-1">
           {restaurant.name}
         </h3>
-        <p className="text-[12px] text-ink-soft line-clamp-1 mt-0.5">
+        <p className="text-[12px] lg:text-sm text-ink-soft line-clamp-1 mt-0.5">
           {restaurant.cuisine}
         </p>
         <div className="mt-2 flex items-center gap-3 text-[12px] text-ink-soft">
@@ -234,14 +241,16 @@ function FeaturedCard({ restaurant, onClick }) {
 }
 
 function RestaurantRow({ restaurant, onClick }) {
-  const img = placeholderImages[restaurant.imageIndex % placeholderImages.length];
+  const img =
+    placeholderImages[restaurant.imageIndex % placeholderImages.length];
   return (
     <motion.button
       whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -4 }}
       onClick={onClick}
-      className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-card"
+      className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-pop transition-shadow"
     >
-      <div className="relative h-40 w-full overflow-hidden">
+      <div className="relative h-40 lg:h-48 w-full overflow-hidden">
         <img
           src={img}
           alt={restaurant.name}
@@ -250,13 +259,13 @@ function RestaurantRow({ restaurant, onClick }) {
         <div className="absolute top-3 left-3 bg-white text-[11px] font-semibold text-brand px-2 py-1 rounded-full shadow-sm">
           {restaurant.promo}
         </div>
-        <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-ink-soft">
-          ♡
+        <div className="absolute top-3 right-3">
+          <FavoriteHeart restaurant={restaurant} />
         </div>
       </div>
-      <div className="p-3">
+      <div className="p-3 lg:p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-ink text-base line-clamp-1">
+          <h3 className="font-semibold text-ink text-base lg:text-lg line-clamp-1">
             {restaurant.name}
           </h3>
           <div className="flex items-center gap-1 bg-ink/5 px-2 py-0.5 rounded-full text-xs">

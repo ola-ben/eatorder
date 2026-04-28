@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { HiArrowSmallLeft } from "react-icons/hi2";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 import ProfileMain from "./ProfileMain";
 import ProfileOrders from "./ProfileOrders";
@@ -9,19 +10,16 @@ import ProfileWallet from "./ProfileWallet";
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { loggedIn, loading } = useAuth();
   const [activeTab, setActiveTab] = useState("profile");
 
-  // Check if user is logged in
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    if (!isLoggedIn) {
+    if (!loading && !loggedIn) {
       toast.error("Please login to view your profile");
       navigate("/logiformpage");
     }
-
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, [navigate]);
+  }, [loading, loggedIn, navigate]);
 
   return (
     <section className="bg-gray-100 min-h-screen font-montserrat">

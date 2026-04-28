@@ -10,6 +10,7 @@ import {
 import { FaUser } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Loginsignup() {
   const navigate = useNavigate();
@@ -162,6 +163,7 @@ export default function Loginsignup() {
 
 function LoginForm({ setPage }) {
   const navigate = useNavigate();
+  const { signIn, resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -177,42 +179,47 @@ function LoginForm({ setPage }) {
       return;
     }
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { data, error } = await signIn({ email, password });
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!user) {
-      toast.error("No account found. Please sign up first.");
+    if (error) {
+      toast.error(error.message || "Invalid email or password");
       setIsLoading(false);
       return;
     }
 
-    if (email === user.email && password === user.password) {
-      localStorage.setItem("loggedIn", "true");
-
-      toast.success(
-        <div className="flex items-center gap-2">
-          <span className="text-green-500">✅</span>
-          <div>
-            <p className="font-semibold">Welcome back, {user.fullName}!</p>
-            <p className="text-xs">Login successful</p>
-          </div>
-        </div>,
-        { duration: 3000 },
-      );
-
-      window.dispatchEvent(new Event("authChanged"));
-      window.dispatchEvent(new Event("storage"));
-
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
-    } else {
-      toast.error("Invalid email or password");
+    const fullName = data?.user?.user_metadata?.full_name;
+    if (fullName) {
+      localStorage.setItem("fullName", fullName);
     }
 
+    toast.success(
+      <div className="flex items-center gap-2">
+        <span className="text-green-500">✅</span>
+        <div>
+          <p className="font-semibold">
+            Welcome back{fullName ? `, ${fullName.split(" ")[0]}` : ""}!
+          </p>
+          <p className="text-xs">Login successful</p>
+        </div>
+      </div>,
+      { duration: 3000 },
+    );
+
     setIsLoading(false);
+    setTimeout(() => navigate("/"), 400);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Enter your email above first");
+      return;
+    }
+    const { error } = await resetPassword(email);
+    if (error) {
+      toast.error(error.message || "Could not send reset email");
+    } else {
+      toast.success("Password reset email sent");
+    }
   };
 
   return (
@@ -274,7 +281,7 @@ function LoginForm({ setPage }) {
           <button
             type="button"
             className="text-sm text-red-600 hover:text-red-700 hover:underline transition-colors"
-            onClick={() => toast.success("Password reset feature coming soon!")}
+            onClick={handleForgotPassword}
           >
             Forgot password?
           </button>
@@ -333,6 +340,7 @@ function LoginForm({ setPage }) {
 
 function SignUpForm({ setPage }) {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -383,45 +391,34 @@ function SignUpForm({ setPage }) {
       return;
     }
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { data, error } = await signUp({ email, password, fullName });
 
-    const existingUser = JSON.parse(localStorage.getItem("user"));
-    if (existingUser && existingUser.email === email) {
-      toast.error("An account with this email already exists");
+    if (error) {
+      toast.error(error.message || "Could not create account");
       setIsLoading(false);
       return;
     }
 
-    const user = {
-      fullName,
-      email,
-      password,
-      createdAt: new Date().toISOString(),
-    };
+    localStorage.setItem("fullName", fullName);
 
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("loggedIn", "true");
-
+    const needsConfirmation = !data?.session;
     toast.success(
       <div className="flex items-center gap-2">
         <span className="text-green-500">🎉</span>
         <div>
           <p className="font-semibold">Welcome, {fullName}!</p>
-          <p className="text-xs">Account created successfully</p>
+          <p className="text-xs">
+            {needsConfirmation
+              ? "Check your email to confirm your account"
+              : "Account created successfully"}
+          </p>
         </div>
       </div>,
-      { duration: 3000 },
+      { duration: 4000 },
     );
 
-    window.dispatchEvent(new Event("authChanged"));
-    window.dispatchEvent(new Event("storage"));
-
-    setTimeout(() => {
-      navigate("/");
-    }, 500);
-
     setIsLoading(false);
+    setTimeout(() => navigate(needsConfirmation ? "/logiformpage" : "/"), 600);
   };
 
   const getPasswordStrengthColor = () => {

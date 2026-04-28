@@ -3,21 +3,28 @@ import { useState, useEffect } from "react";
 import { HiArrowSmallLeft, HiUser, HiPencil } from "react-icons/hi2"; // Remove HiPhotograph
 import { HiOutlineCamera } from "react-icons/hi"; // Keep this
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function ProfileDetails() {
   const navigate = useNavigate();
+  const { user: authUser, loggedIn, loading: authLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({});
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    if (!isLoggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view profile details");
       navigate("/logiformpage");
+      return;
     }
 
-    const userData = JSON.parse(localStorage.getItem("user")) || {};
+    const userData = authUser
+      ? {
+          email: authUser.email,
+          fullName: authUser.user_metadata?.full_name ?? "",
+        }
+      : {};
 
     // Load profile image from localStorage
     const savedImage = localStorage.getItem("profileImage");
@@ -33,7 +40,7 @@ export default function ProfileDetails() {
       dateOfBirth: userData.dateOfBirth || "",
       gender: userData.gender || "",
     });
-  }, [navigate]);
+  }, [authLoading, loggedIn, authUser, navigate]);
 
   const [formData, setFormData] = useState({
     fullName: "",

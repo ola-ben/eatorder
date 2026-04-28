@@ -4,23 +4,24 @@ import { HiArrowSmallLeft, HiGift, HiUser } from "react-icons/hi2";
 import { HiOutlineClipboardCopy } from "react-icons/hi";
 import { FaWhatsapp, FaFacebook, FaTwitter } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Referrals() {
   const navigate = useNavigate();
+  const { loggedIn, loading: authLoading } = useAuth();
   const [referralCode] = useState("FOOD2345");
   const [referralLink] = useState("https://deliciousfood.com/ref/FOOD2345");
   const [referrals, setReferrals] = useState([]);
 
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    if (!isLoggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view referrals");
       navigate("/logiformpage");
+      return;
     }
 
     // Mock referral data
@@ -47,7 +48,7 @@ export default function Referrals() {
         reward: 0,
       },
     ]);
-  }, [navigate]);
+  }, [authLoading, loggedIn, navigate]);
 
   const copyToClipboard = (text, message) => {
     navigator.clipboard.writeText(text);

@@ -9,9 +9,11 @@ import {
 } from "react-icons/hi2";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Addresses() {
   const navigate = useNavigate();
+  const { loggedIn, loading: authLoading } = useAuth();
   const [addresses, setAddresses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -31,16 +33,14 @@ export default function Addresses() {
   }, []);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    if (!isLoggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view addresses");
       navigate("/logiformpage");
+      return;
     }
-
-    // Load addresses from localStorage
     const savedAddresses = JSON.parse(localStorage.getItem("addresses")) || [];
     setAddresses(savedAddresses);
-  }, [navigate]);
+  }, [authLoading, loggedIn, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

@@ -5,6 +5,7 @@ import { FiArrowLeft, FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
 import { HiOutlineMapPin } from "react-icons/hi2";
 import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
+import TopNav from "../components/TopNav";
 
 export default function Checkoutpage() {
   const navigate = useNavigate();
@@ -91,9 +92,10 @@ export default function Checkoutpage() {
 
   return (
     <main className="min-h-screen bg-canvas">
-      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32">
-        {/* Header */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <TopNav />
+      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32 lg:max-w-7xl lg:bg-transparent lg:px-6 lg:py-8 lg:pb-12">
+        {/* Mobile sticky header */}
+        <div className="lg:hidden sticky top-0 z-20 bg-white border-b border-gray-100">
           <div className="px-4 h-14 flex items-center gap-3">
             <button
               onClick={() => navigate("/cartpage")}
@@ -105,7 +107,16 @@ export default function Checkoutpage() {
           </div>
         </div>
 
-        <div className="px-4 py-4 space-y-4">
+        {/* Desktop heading */}
+        <div className="hidden lg:block mb-6">
+          <h1 className="text-3xl font-bold text-ink">Checkout</h1>
+          <p className="text-sm text-ink-soft mt-1">
+            Almost done — just a few details
+          </p>
+        </div>
+
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+        <div className="px-4 lg:px-0 py-4 lg:py-0 space-y-4 lg:col-span-7 xl:col-span-8">
           {/* Delivery option */}
           <Section title="Delivery method" icon={<FiTruck />}>
             <div className="grid grid-cols-2 gap-2">
@@ -183,8 +194,10 @@ export default function Checkoutpage() {
               className="w-full bg-gray-100 rounded-xl p-3 text-sm text-ink placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-brand/30"
             />
           </Section>
+        </div>
 
-          {/* Order summary */}
+        {/* Sidebar: Order summary + desktop checkout */}
+        <div className="px-4 lg:px-0 pt-2 lg:pt-0 lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24 lg:self-start">
           <Section title="Order summary" icon={<FiShoppingBag />}>
             <div className="space-y-2 text-sm">
               {cartItems.slice(0, 3).map((it) => (
@@ -221,10 +234,12 @@ export default function Checkoutpage() {
                 </div>
               </div>
             </div>
+
           </Section>
         </div>
+        </div>
 
-        {/* Sticky place order */}
+        {/* Sticky place order (all screens) */}
         <div className="fixed bottom-4 inset-x-0 z-30 px-4">
           <button
             onClick={placeOrder}

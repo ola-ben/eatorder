@@ -5,6 +5,8 @@ import { FaStar } from "react-icons/fa";
 import { FiArrowLeft, FiSearch, FiSliders, FiClock } from "react-icons/fi";
 import { TbMotorbike } from "react-icons/tb";
 import BottomNav from "../components/BottomNav";
+import TopNav from "../components/TopNav";
+import FavoriteHeart from "../components/FavoriteHeart";
 
 const restaurantImages = [
   "https://images.unsplash.com/photo-1552566624-52f8b3ae5fd5?w=800&h=600&fit=crop",
@@ -259,10 +261,11 @@ export default function AllRestaurants() {
   }, [searchQuery, sortBy]);
 
   return (
-    <main className="min-h-screen bg-canvas pb-safe-nav">
-      <div className="max-w-md mx-auto bg-white min-h-screen">
-        {/* Header */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
+    <main className="min-h-screen bg-canvas pb-safe-nav lg:pb-12">
+      <TopNav />
+      <div className="max-w-md mx-auto bg-white min-h-screen lg:min-h-0 lg:bg-transparent lg:max-w-7xl lg:px-6 lg:py-8">
+        {/* Mobile sticky header (back + search + sort) */}
+        <div className="lg:hidden sticky top-0 z-20 bg-white border-b border-gray-100">
           <div className="px-4 pt-4 pb-3 flex items-center gap-3">
             <button
               onClick={() => navigate("/")}
@@ -286,7 +289,6 @@ export default function AllRestaurants() {
             </div>
           </div>
 
-          {/* Sort chips */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 pb-3">
             <button className="flex items-center gap-1.5 px-3 h-9 rounded-full bg-white border border-gray-200 text-sm text-ink font-medium whitespace-nowrap">
               <FiSliders className="text-base" /> Filters
@@ -299,8 +301,8 @@ export default function AllRestaurants() {
                   onClick={() => setSortBy(o.id)}
                   className={`px-3 h-9 rounded-full text-sm font-medium whitespace-nowrap border ${
                     active
-                      ? "bg-ink text-white border-ink"
-                      : "bg-white text-ink border-gray-200"
+                      ? "bg-brand text-white border-brand shadow-card"
+                      : "bg-white text-ink border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   {o.label}
@@ -310,24 +312,78 @@ export default function AllRestaurants() {
           </div>
         </div>
 
-        {/* Count */}
-        <div className="px-4 pt-4 pb-2">
+        {/* Desktop heading */}
+        <div className="hidden lg:flex items-end justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-ink">Browse restaurants</h1>
+            <p className="text-sm text-ink-soft mt-1">
+              {restaurants.length}{" "}
+              {restaurants.length === 1 ? "restaurant" : "restaurants"} found
+              near you
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-3 h-11 w-72 shadow-card">
+              <FiSearch className="text-gray-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search restaurants or cuisines"
+                className="flex-1 bg-transparent outline-none text-sm text-ink placeholder:text-gray-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop sort chips */}
+        <div className="hidden lg:flex gap-2 mb-6">
+          <button className="flex items-center gap-1.5 px-4 h-10 rounded-full bg-white border border-gray-200 text-sm text-ink font-medium hover:border-gray-300">
+            <FiSliders className="text-base" /> Filters
+          </button>
+          {sortOptions.map((o) => {
+            const active = sortBy === o.id;
+            return (
+              <button
+                key={o.id}
+                onClick={() => setSortBy(o.id)}
+                className={`px-4 h-10 rounded-full text-sm font-medium border transition-colors ${
+                  active
+                    ? "bg-brand text-white border-brand shadow-card"
+                    : "bg-white text-ink border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Mobile count */}
+        <div className="lg:hidden px-4 pt-4 pb-2">
           <p className="text-xs text-ink-soft">
             {restaurants.length}{" "}
             {restaurants.length === 1 ? "restaurant" : "restaurants"} found
           </p>
         </div>
 
-        {/* List */}
-        <div className="px-4 pb-8 space-y-4">
+        {/* List / grid */}
+        <motion.div
+          layout
+          className="px-4 lg:px-0 pb-8 space-y-4 lg:space-y-0 lg:grid lg:grid-cols-3 xl:grid-cols-4 lg:gap-5"
+        >
           {restaurants.length === 0 ? (
-            <div className="text-center py-16">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-16 col-span-full"
+            >
               <div className="text-5xl mb-2">🔍</div>
               <p className="font-semibold text-ink">No restaurants found</p>
               <p className="text-sm text-ink-soft">
                 Try a different search term
               </p>
-            </div>
+            </motion.div>
           ) : (
             restaurants.map((r, i) => (
               <RestaurantRow
@@ -338,7 +394,7 @@ export default function AllRestaurants() {
               />
             ))
           )}
-        </div>
+        </motion.div>
       </div>
       <BottomNav />
     </main>
@@ -354,10 +410,11 @@ function RestaurantRow({ restaurant, index, onClick }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.03, 0.3) }}
       whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -4 }}
       onClick={onClick}
-      className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-card relative"
+      className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-pop transition-shadow relative"
     >
-      <div className="relative h-40 w-full overflow-hidden">
+      <div className="relative h-40 lg:h-44 w-full overflow-hidden">
         <img
           src={img}
           alt={restaurant.name}
@@ -367,6 +424,9 @@ function RestaurantRow({ restaurant, index, onClick }) {
         />
         <div className="absolute top-3 left-3 bg-white text-[11px] font-semibold text-brand px-2 py-1 rounded-full shadow-sm">
           {restaurant.promo}
+        </div>
+        <div className="absolute top-3 right-3">
+          <FavoriteHeart restaurant={restaurant} />
         </div>
         {!restaurant.isOpen && (
           <div className="absolute inset-0 flex items-center justify-center">

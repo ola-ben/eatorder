@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowLeft, FiPlus, FiMinus, FiTrash2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
+import TopNav from "../components/TopNav";
 
 export default function Cartpage() {
   const navigate = useNavigate();
@@ -45,9 +46,10 @@ export default function Cartpage() {
 
   return (
     <main className="min-h-screen bg-canvas">
-      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32">
-        {/* Header */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <TopNav />
+      <div className="max-w-md mx-auto bg-white min-h-screen relative pb-32 lg:max-w-7xl lg:bg-transparent lg:px-6 lg:py-8 lg:pb-12 lg:grid lg:grid-cols-12 lg:gap-8">
+        {/* Mobile sticky header */}
+        <div className="lg:hidden sticky top-0 z-20 bg-white border-b border-gray-100">
           <div className="px-4 h-14 flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
@@ -67,11 +69,31 @@ export default function Cartpage() {
           </div>
         </div>
 
+        {/* Desktop heading row spans both columns */}
+        <div className="hidden lg:flex lg:col-span-12 items-end justify-between mb-2">
+          <div>
+            <h1 className="text-3xl font-bold text-ink">Your cart</h1>
+            <p className="text-sm text-ink-soft mt-1">
+              {cart.length === 0
+                ? "No items yet"
+                : `${totalItems} items ready for checkout`}
+            </p>
+          </div>
+          {cart.length > 0 && (
+            <button
+              onClick={handleClear}
+              className="text-sm font-semibold text-brand flex items-center gap-1 hover:underline"
+            >
+              <FiTrash2 className="text-base" /> Clear cart
+            </button>
+          )}
+        </div>
+
         {/* Empty state */}
         {cart.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center px-6 py-20">
+          <div className="lg:col-span-12 flex flex-col items-center justify-center text-center px-6 py-20 lg:py-28 bg-white lg:bg-transparent rounded-2xl">
             <div className="text-7xl mb-4">🛒</div>
-            <h3 className="text-xl font-bold text-ink mb-1">
+            <h3 className="text-xl lg:text-2xl font-bold text-ink mb-1">
               Your cart is empty
             </h3>
             <p className="text-ink-soft text-sm mb-6 max-w-xs">
@@ -80,15 +102,15 @@ export default function Cartpage() {
             </p>
             <button
               onClick={() => navigate("/")}
-              className="bg-brand text-white px-6 py-3 rounded-full font-semibold shadow-card"
+              className="bg-brand text-white px-6 py-3 rounded-full font-semibold shadow-card hover:bg-brand-deep transition-colors"
             >
               Start ordering
             </button>
           </div>
         ) : (
           <>
-            {/* Items */}
-            <div className="px-4 pt-4 pb-2 space-y-3">
+            {/* Items column */}
+            <div className="lg:col-span-7 xl:col-span-8 px-4 lg:px-0 pt-4 lg:pt-0 pb-2 lg:pb-0 space-y-3">
               <AnimatePresence initial={false}>
                 {cart.map((item) => (
                   <motion.article
@@ -144,10 +166,12 @@ export default function Cartpage() {
               </AnimatePresence>
             </div>
 
-            {/* Summary */}
-            <div className="px-4 pt-4">
-              <div className="bg-canvas rounded-2xl p-4 border border-gray-100">
-                <h3 className="font-semibold text-ink mb-3">Order summary</h3>
+            {/* Summary + Checkout sidebar */}
+            <div className="lg:col-span-5 xl:col-span-4 px-4 lg:px-0 pt-4 lg:pt-0 lg:sticky lg:top-24 lg:self-start lg:space-y-4">
+              <div className="bg-white lg:bg-white rounded-2xl p-4 lg:p-6 border border-gray-100 shadow-card">
+                <h3 className="font-semibold text-ink mb-3 lg:text-lg">
+                  Order summary
+                </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-ink-soft">
                     <span>Subtotal ({totalItems} items)</span>
@@ -171,14 +195,15 @@ export default function Cartpage() {
                   </div>
                 </div>
                 {subtotal > 0 && subtotal < 7000 && (
-                  <p className="mt-3 text-[12px] text-ink-soft bg-accent-soft text-accent rounded-lg px-3 py-2">
+                  <p className="mt-3 text-[12px] bg-accent-soft text-accent rounded-lg px-3 py-2">
                     Add {formatNaira(7000 - subtotal)} more for free delivery 🎉
                   </p>
                 )}
+
               </div>
             </div>
 
-            {/* Sticky Checkout */}
+            {/* Sticky checkout (all screens) */}
             <div className="fixed bottom-4 inset-x-0 z-30 px-4">
               <button
                 onClick={handleCheckout}

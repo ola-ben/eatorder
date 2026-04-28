@@ -3,23 +3,28 @@ import { useState, useEffect } from "react";
 import { HiArrowSmallLeft, HiLockClosed } from "react-icons/hi2";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function LoginDetails() {
   const navigate = useNavigate();
+  const { user: authUser, loggedIn, loading: authLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    if (!isLoggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view login details");
       navigate("/logiformpage");
+      return;
     }
-
-    const userData = JSON.parse(localStorage.getItem("user")) || {};
-    setUser(userData);
-  }, [navigate]);
+    if (authUser) {
+      setUser({
+        email: authUser.email,
+        fullName: authUser.user_metadata?.full_name ?? "",
+      });
+    }
+  }, [authLoading, loggedIn, authUser, navigate]);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
