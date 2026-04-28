@@ -273,14 +273,33 @@ function Message({ message }) {
   );
 }
 
-// Tiny inline formatter: turns **bold** into <strong>, preserves line breaks.
+// Tiny inline formatter: handles **bold**, [label](url) links, and line breaks.
 function FormattedText({ text }) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  // Split by **bold** OR [text](url) markers, keep the matches.
+  const tokenRegex = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+  const parts = text.split(tokenRegex);
+
   return (
     <>
       {parts.map((p, i) => {
         if (p.startsWith("**") && p.endsWith("**")) {
           return <strong key={i}>{p.slice(2, -2)}</strong>;
+        }
+        const linkMatch = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (linkMatch) {
+          const [, label, href] = linkMatch;
+          const isExternal = href.startsWith("http");
+          return (
+            <a
+              key={i}
+              href={href}
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
+              className="font-semibold underline underline-offset-2 hover:opacity-80"
+            >
+              {label}
+            </a>
+          );
         }
         return p.split("\n").map((line, j, arr) => (
           <span key={`${i}-${j}`}>

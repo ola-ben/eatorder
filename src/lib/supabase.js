@@ -3,17 +3,45 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+const isConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
+if (!isConfigured) {
   console.warn(
     "[supabase] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is missing. " +
-      "Add them to .env and restart the dev server.",
+      "Auth will be disabled. Add them in Vercel → Settings → Environment Variables and redeploy.",
   );
 }
 
-export const supabase = createClient(supabaseUrl ?? "", supabaseAnonKey ?? "", {
+const notConfiguredError = {
+  name: "ConfigError",
+  message:
+    "Auth isn't set up on this deployment. Please contact support or try again later.",
+};
+
+const stubResult = { data: null, error: notConfiguredError };
+
+const stubClient = {
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
+    getSession: async () => ({ data: { session: null }, error: null }),
+    getUser: async () => ({ data: { user: null }, error: null }),
+    onAuthStateChange: () => ({
+      data: { subscription: { unsubscribe: () => {} } },
+    }),
+    signUp: async () => stubResult,
+    signInWithPassword: async () => stubResult,
+    signOut: async () => ({ error: null }),
+    resetPasswordForEmail: async () => stubResult,
   },
-});
+};
+
+export const supabase = isConfigured
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    })
+  : stubClient;
+
+export const supabaseConfigured = isConfigured;

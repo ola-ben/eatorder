@@ -80,7 +80,7 @@ export const knowledgeBase = [
       "reach you", "talk to a person",
     ],
     answer:
-      "Reach our support team on **+234 706-302-6384** — 24/7. You can also email **support@eatorder.app**.",
+      "Reach our support team 24/7 — [call 0706 302 6374](tel:+2347063026374) or [chat on WhatsApp](https://wa.me/2347063026374). You can also email **support@eatorder.app**.",
   },
 
   // ─────────── Restaurants & Recommendations ───────────
@@ -246,13 +246,13 @@ export const knowledgeBase = [
     id: "cancel-order",
     keywords: ["cancel order", "cancel my order", "stop my order"],
     answer:
-      "If your order hasn't been confirmed by the restaurant yet, call us on **+234 706-302-6384** to cancel. Once it's being prepared, we can't cancel.",
+      "If your order hasn't been confirmed by the restaurant yet, [call 0706 302 6374](tel:+2347063026374) or [WhatsApp us](https://wa.me/2347063026374) to cancel. Once it's being prepared, we can't cancel.",
   },
   {
     id: "refund",
     keywords: ["refund", "money back", "wrong order", "missing item", "complaint"],
     answer:
-      "Sorry about that 😞 Call **+234 706-302-6384** with your order number and the issue — refunds for wrong/missing items are processed within **24–48 hours**.",
+      "Sorry about that 😞 [Call 0706 302 6374](tel:+2347063026374) or [WhatsApp us](https://wa.me/2347063026374) with your order number and the issue — refunds for wrong/missing items are processed within **24–48 hours**.",
   },
 
   // ─────────── Favourites ───────────
@@ -373,9 +373,9 @@ export function findAnswer(query) {
 }
 
 export const fallbackResponses = [
-  "I'm not sure about that one 🤔 Try asking about delivery, restaurants, payment, or your account — or call us on +234 706-302-6384.",
-  "Hmm, I don't have that in my brain yet. Want to try one of the suggested questions, or call support on +234 706-302-6384?",
-  "That's outside my menu 🍽️ I can help with deliveries, restaurants, dishes, your cart, or your account.",
+  "I'm not sure about that one 🤔 Try asking about delivery, restaurants, payment, or your account — or [call 0706 302 6374](tel:+2347063026374) / [chat on WhatsApp](https://wa.me/2347063026374).",
+  "Hmm, I don't have that in my brain yet. Want to try one of the suggested questions, or [call support](tel:+2347063026374) / [chat on WhatsApp](https://wa.me/2347063026374)?",
+  "That's outside my menu 🍽️ I can help with deliveries, restaurants, dishes, your cart, or your account. For anything else, [call 0706 302 6374](tel:+2347063026374) or [WhatsApp us](https://wa.me/2347063026374).",
 ];
 
 export function pickFallback() {

@@ -212,7 +212,7 @@ export default function FAQs() {
               Our support team is here to help you 24/7
             </p>
             <button
-              onClick={() => (window.location.href = "tel:+2347063026384")}
+              onClick={() => (window.location.href = "tel:+2347063026374")}
               className="bg-white text-red-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors w-full font-medium shadow-md"
             >
               Contact Support
