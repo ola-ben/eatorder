@@ -1,7 +1,8 @@
 {
-  "name": "pro2",
+  "name": "eatorder",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Food delivery web app for Ibadan — React + Vite frontend, Express backend, Supabase auth.",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh search *)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(git clone *)",
+      "WebFetch(domain:getdesign.md)"
+    ]
+  }
+}

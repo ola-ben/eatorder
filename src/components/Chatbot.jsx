@@ -8,7 +8,32 @@ import {
   suggestedQuestions,
 } from "../data/chatbot";
 
-const HIDE_ON_PATHS = ["/cartpage", "/checkoutpage", "/logiformpage"];
+const HIDE_ON_PATHS = ["/cartpage", "/checkoutpage", "/logiformpage", "/admin"];
+
+// Generates a pleasant two-tone "ding" using Web Audio API. No audio file needed.
+// Silently fails if the browser blocks audio (e.g. before user gesture).
+function playNotificationSound() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+    osc.onended = () => ctx.close();
+  } catch {
+    /* audio unavailable — silently skip */
+  }
+}
 
 const greeting = {
   id: "greet-init",
@@ -38,6 +63,15 @@ export default function Chatbot() {
     if (open) setTimeout(() => inputRef.current?.focus(), 200);
   }, [open]);
 
+  // On every page navigation, ping the user — sound + badge re-animation.
+  // 3-second delay so the page settles first.
+  // (First load is silent because browsers block audio before any user gesture.)
+  useEffect(() => {
+    if (HIDE_ON_PATHS.some((p) => pathname.startsWith(p))) return;
+    const t = setTimeout(() => playNotificationSound(), 3000);
+    return () => clearTimeout(t);
+  }, [pathname]);
+
   // Hide on certain routes (where the sticky CTA bar would clash)
   const hidden = HIDE_ON_PATHS.some((p) => pathname.startsWith(p));
   if (hidden) return null;
@@ -60,6 +94,7 @@ export default function Chatbot() {
           { id: `b-${Date.now()}`, role: "bot", text: reply },
         ]);
         setIsTyping(false);
+        playNotificationSound();
       },
       450 + Math.random() * 250,
     );
@@ -88,6 +123,19 @@ export default function Chatbot() {
             aria-label="Open chat"
           >
             <FiMessageCircle className="text-2xl" />
+
+            {/* "1" notification badge — appears 3s after each page load */}
+            <motion.span
+              key={pathname}
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 16, delay: 3 }}
+              className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-white text-brand text-[11px] font-bold rounded-full flex items-center justify-center shadow-card border-2 border-brand"
+            >
+              1
+            </motion.span>
+
+            {/* Pulsing ring */}
             <motion.span
               animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
               transition={{ duration: 2, repeat: Infinity }}

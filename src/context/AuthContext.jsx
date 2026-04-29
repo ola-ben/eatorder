@@ -60,11 +60,17 @@ export function AuthProvider({ children }) {
     return { data, error };
   };
 
+  const role =
+    user?.app_metadata?.role || user?.user_metadata?.role || "customer";
+
   const value = {
     session,
     user,
+    accessToken: session?.access_token ?? null,
     loggedIn: !!session,
     loading,
+    role,
+    isAdmin: role === "admin",
     signUp,
     signIn,
     signOut,

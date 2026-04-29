@@ -17,6 +17,13 @@ import AllRestaurants from "./pages/AllRestaurants";
 import Favourites from "./pages/Favourites";
 import { RestaurantMenu } from "./components/RestaurantMenu";
 
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminRestaurants from "./pages/admin/AdminRestaurants";
+import AdminUsers from "./pages/admin/AdminUsers";
+import RequireAdmin from "./pages/admin/RequireAdmin";
+
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
@@ -73,6 +80,21 @@ function AnimatedRoutes() {
           <Route path="/profile/faqs" element={<FAQs />} />
 
           <Route path="/orders" element={<OrdersPage />} />
+
+          {/* Admin */}
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <AdminLayout />
+              </RequireAdmin>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="restaurants" element={<AdminRestaurants />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
         </Routes>
       </motion.div>
     </AnimatePresence>

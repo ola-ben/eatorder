@@ -1,25 +1,36 @@
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  HiUser,
-  HiLockClosed,
-  HiGift,
-  HiMapPin,
-  HiQuestionMarkCircle,
-  HiTrash,
-  HiArrowRightOnRectangle,
+  HiOutlineUser,
+  HiOutlineLockClosed,
+  HiOutlineGift,
+  HiOutlineMapPin,
+  HiOutlineQuestionMarkCircle,
+  HiOutlineTrash,
+  HiOutlineArrowRightOnRectangle,
+  HiOutlineShoppingBag,
+  HiOutlineHeart,
+  HiOutlineChevronRight,
 } from "react-icons/hi2";
-import { HiShoppingBag } from "react-icons/hi";
-import { FaStar, FaNairaSign } from "react-icons/fa6";
+import { FaStar } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 export default function ProfileMain() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const { cart } = useCart();
+  const { count: favCount } = useFavorites();
 
-  const fullName = user?.user_metadata?.full_name || "Guest User";
-  const email = user?.email || "No email";
-  const tribeId = "NG12345";
+  const fullName = user?.user_metadata?.full_name || "Guest user";
+  const email = user?.email || "—";
+  const tribeId = user?.id?.slice(0, 8).toUpperCase() || "NG12345";
+  const orderCount = (
+    JSON.parse(localStorage.getItem("orders")) || []
+  ).length;
+  const totalCartItems = cart.reduce((s, i) => s + i.quantity, 0);
 
   const logout = async () => {
     const { error } = await signOut();
@@ -27,127 +38,208 @@ export default function ProfileMain() {
       toast.error(error.message || "Could not log out");
       return;
     }
-    toast.success("Logged out successfully!");
+    toast.success("Logged out");
+    navigate("/");
+  };
+
+  const deleteAccount = async () => {
+    if (
+      !window.confirm(
+        "Are you sure? This signs you out and clears local data. Account deletion requires support.",
+      )
+    ) return;
+    await signOut();
+    localStorage.removeItem("orders");
+    localStorage.removeItem("addresses");
+    localStorage.removeItem("favorites");
+    toast.success("Signed out and local data cleared");
     navigate("/");
   };
 
   const menu = [
     {
-      name: "Profile Details",
-      icon: HiUser,
+      label: "Profile details",
+      Icon: HiOutlineUser,
       action: () => navigate("/profile/details"),
     },
     {
-      name: "Login Details",
-      icon: HiLockClosed,
+      label: "Login & security",
+      Icon: HiOutlineLockClosed,
       action: () => navigate("/profile/login-details"),
     },
     {
-      name: "Referrals",
-      icon: HiGift,
-      action: () => navigate("/profile/referrals"),
-    },
-    {
-      name: "Addresses",
-      icon: HiMapPin,
+      label: "Addresses",
+      Icon: HiOutlineMapPin,
       action: () => navigate("/profile/addresses"),
     },
     {
-      name: "FAQs",
-      icon: HiQuestionMarkCircle,
+      label: "Referrals",
+      Icon: HiOutlineGift,
+      action: () => navigate("/profile/referrals"),
+    },
+    {
+      label: "FAQs",
+      Icon: HiOutlineQuestionMarkCircle,
       action: () => navigate("/profile/faqs"),
-    },
-    {
-      name: "Delete Account",
-      icon: HiTrash,
-      action: async () => {
-        if (
-          window.confirm(
-            "Are you sure you want to delete your account? This action cannot be undone.",
-          )
-        ) {
-          await signOut();
-          localStorage.removeItem("orders");
-          localStorage.removeItem("addresses");
-          toast.success("Account signed out. Contact support to fully delete.");
-          navigate("/");
-        }
-      },
-    },
-    {
-      name: "Log Out",
-      icon: HiArrowRightOnRectangle,
-      action: logout,
     },
   ];
 
-  const formatNaira = (amount) => {
-    return `₦${amount.toLocaleString("en-NG")}`;
-  };
-
   return (
-    <>
-      {/* Profile Header */}
-      <div className="flex flex-col items-center pt-6 pb-6 px-4">
-        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center text-white text-4xl shadow-lg">
-          <HiUser />
-        </div>
-        <h2 className="text-xl font-semibold mt-3">{fullName}</h2>
-        <p className="text-gray-500 text-sm">{email}</p>
-        <div className="flex gap-3 mt-4">
-          <div className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-sm font-medium border border-red-100">
-            ID: {tribeId}
+    <div className="pb-8">
+      {/* Avatar header */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="px-4 pt-6 pb-5"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-linear-to-br from-brand to-accent text-white flex items-center justify-center text-2xl font-bold shadow-card shrink-0">
+            {fullName.charAt(0).toUpperCase()}
           </div>
-          <div className="flex items-center gap-1 bg-green-50 text-green-600 px-4 py-2 rounded-full text-sm font-medium border border-green-100">
-            <FaStar className="text-yellow-400" />
-            4.9
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-ink truncate">{fullName}</h2>
+            <p className="text-sm text-ink-soft truncate">{email}</p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="text-[10px] font-mono bg-brand-soft text-brand px-2 py-0.5 rounded-full">
+                {tribeId}
+              </span>
+              <span className="flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
+                <FaStar className="text-yellow-500 text-[9px]" /> 4.9
+              </span>
+              {isAdmin && (
+                <span className="text-[10px] font-semibold bg-ink text-white px-2 py-0.5 rounded-full">
+                  ADMIN
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </motion.section>
 
-      {/* Quick Stats Cards */}
-      <div className="grid grid-cols-3 gap-3 px-4 mb-6">
-        <div className="bg-gradient-to-br from-red-50 to-red-100 p-3 rounded-xl text-center">
-          <HiShoppingBag className="text-red-500 text-xl mx-auto mb-1" />
-          <span className="text-xs text-gray-600">Orders</span>
-          <span className="block font-bold text-gray-800">24</span>
+      {/* Quick stats */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="px-4 mb-6"
+      >
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard
+            Icon={HiOutlineShoppingBag}
+            label="Orders"
+            value={orderCount}
+            onClick={() => navigate("/orders")}
+          />
+          <StatCard
+            Icon={HiOutlineHeart}
+            label="Saved"
+            value={favCount}
+            onClick={() => navigate("/favourites")}
+          />
+          <StatCard
+            Icon={HiOutlineGift}
+            label="In cart"
+            value={totalCartItems}
+            onClick={() => navigate("/cartpage")}
+          />
         </div>
-        <div className="bg-gradient-to-br from-red-50 to-red-100 p-3 rounded-xl text-center">
-          <FaNairaSign className="text-red-500 text-xl mx-auto mb-1" />
-          <span className="text-xs text-gray-600">Cashback</span>
-          <span className="block font-bold text-gray-800">
-            {formatNaira(12500)}
-          </span>
-        </div>
-        <div className="bg-gradient-to-br from-red-50 to-red-100 p-3 rounded-xl text-center">
-          <HiGift className="text-red-500 text-xl mx-auto mb-1" />
-          <span className="text-xs text-gray-600">Referrals</span>
-          <span className="block font-bold text-gray-800">12</span>
-        </div>
-      </div>
+      </motion.section>
 
-      {/* Menu */}
-      <div className="px-4 pb-8">
-        {menu.map((item, index) => {
-          const Icon = item.icon;
-          return (
+      {/* Admin entry (if applicable) */}
+      {isAdmin && (
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="px-4 mb-4"
+        >
+          <button
+            onClick={() => navigate("/admin")}
+            className="w-full bg-linear-to-r from-brand to-accent text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-card hover:opacity-95 transition-opacity"
+          >
+            <div className="text-left">
+              <p className="font-semibold">Admin panel</p>
+              <p className="text-xs text-white/80">
+                Manage orders, restaurants, users
+              </p>
+            </div>
+            <HiOutlineChevronRight className="text-xl" />
+          </button>
+        </motion.section>
+      )}
+
+      {/* Menu list */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="px-4 mb-4"
+      >
+        <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+          {menu.map((item, i) => (
             <button
-              key={index}
+              key={item.label}
               onClick={item.action}
-              className="flex items-center justify-between w-full py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              className={`w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors ${
+                i < menu.length - 1 ? "border-b border-gray-100" : ""
+              }`}
             >
-              <div className="flex items-center gap-3 text-gray-700">
-                <Icon className="text-xl text-gray-500" />
-                <span className="text-sm font-medium">{item.name}</span>
+              <div className="flex items-center gap-3 text-ink">
+                <item.Icon className="text-xl text-ink-soft" />
+                <span className="text-sm font-medium">{item.label}</span>
               </div>
-              <span className="text-gray-400 text-xl">›</span>
+              <HiOutlineChevronRight className="text-gray-400" />
             </button>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      </motion.section>
 
-      {/* App version */}
-      <p className="text-center text-gray-400 text-xs pb-8">v1.0.15</p>
-    </>
+      {/* Danger zone */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="px-4 mb-4"
+      >
+        <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+          <button
+            onClick={deleteAccount}
+            className="w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-gray-50 border-b border-gray-100 transition-colors"
+          >
+            <div className="flex items-center gap-3 text-ink">
+              <HiOutlineTrash className="text-xl text-ink-soft" />
+              <span className="text-sm font-medium">Delete account</span>
+            </div>
+            <HiOutlineChevronRight className="text-gray-400" />
+          </button>
+          <button
+            onClick={logout}
+            className="w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-brand-soft transition-colors"
+          >
+            <div className="flex items-center gap-3 text-brand">
+              <HiOutlineArrowRightOnRectangle className="text-xl" />
+              <span className="text-sm font-semibold">Log out</span>
+            </div>
+          </button>
+        </div>
+      </motion.section>
+
+      <p className="text-center text-[11px] text-ink-soft">EatOrder v0.1.0</p>
+    </div>
+  );
+}
+
+function StatCard({ Icon, label, value, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-white rounded-2xl shadow-card p-4 text-left hover:shadow-pop transition-shadow"
+    >
+      <Icon className="text-xl text-brand" />
+      <p className="text-[11px] text-ink-soft uppercase tracking-wider mt-2">
+        {label}
+      </p>
+      <p className="text-lg font-bold text-ink leading-none mt-1">{value}</p>
+    </button>
   );
 }
