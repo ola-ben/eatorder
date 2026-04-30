@@ -5,12 +5,15 @@ import { FiArrowLeft, FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
 import { HiOutlineMapPin } from "react-icons/hi2";
 import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../hooks/useAuth";
 import TopNav from "../components/TopNav";
+import { createOrder } from "../lib/ordersApi";
 
 export default function Checkoutpage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { cart, clearCart } = useCart();
+  const { loggedIn } = useAuth();
   const [isPlacing, setIsPlacing] = useState(false);
 
   const cartItems = location.state?.cart || cart;
@@ -52,7 +55,12 @@ export default function Checkoutpage() {
   const total = subtotal + deliveryFee;
   const formatNaira = (n) => `₦${n.toLocaleString("en-NG")}`;
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
+    if (!loggedIn) {
+      toast.error("Please sign in to place an order");
+      navigate("/logiformpage", { state: { from: "/checkoutpage" } });
+      return;
+    }
     if (!fullName || !phone || !email) {
       toast.error("Please fill all required fields");
       return;
@@ -61,33 +69,34 @@ export default function Checkoutpage() {
       toast.error("Please enter your delivery address");
       return;
     }
+
     setIsPlacing(true);
-    setTimeout(() => {
-      const orderId = `ORD-${Date.now().toString().slice(-6)}`;
-      const order = {
-        id: orderId,
-        fullName,
-        phone,
-        email,
-        delivery,
-        address: delivery === "delivery" ? address : "Pickup from store",
-        note,
-        items: cartItems.map((i) => ({
-          name: i.name,
-          price: i.price,
-          quantity: i.quantity,
-          photoName: i.photoName,
-        })),
-        totalPrice: total,
-        date: new Date().toLocaleDateString(),
-        status: "Processing",
-      };
-      const existing = JSON.parse(localStorage.getItem("orders")) || [];
-      localStorage.setItem("orders", JSON.stringify([order, ...existing]));
-      clearCart();
-      toast.success(`Order #${orderId} placed!`);
-      navigate("/successpage", { state: { order } });
-    }, 1200);
+    const { data: order, error } = await createOrder({
+      fullName,
+      phone,
+      email,
+      deliveryMethod: delivery,
+      address,
+      note,
+      totalPrice: total,
+      items: cartItems.map((i) => ({
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+        photoName: i.photoName,
+        ingredients: i.ingredients,
+      })),
+    });
+
+    if (error) {
+      setIsPlacing(false);
+      toast.error(error.message || "Could not place your order. Try again.");
+      return;
+    }
+
+    clearCart();
+    toast.success(`Order ${order.id} placed!`);
+    navigate("/successpage", { state: { order } });
   };
 
   return (

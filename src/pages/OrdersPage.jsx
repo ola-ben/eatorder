@@ -21,6 +21,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useCart } from "../context/CartContext";
 import BottomNav from "../components/BottomNav";
 import TopNav from "../components/TopNav";
+import { listMyOrders } from "../lib/ordersApi";
 
 const STATUS_FILTERS = ["all", "processing", "delivered", "pending"];
 
@@ -45,18 +46,27 @@ export default function OrdersPage() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading && !loggedIn) {
+    if (authLoading) return;
+    if (!loggedIn) {
       toast.error("Please login to view your orders");
       navigate("/logiformpage");
       return;
     }
-    const t = setTimeout(() => {
-      const saved = JSON.parse(localStorage.getItem("orders")) || [];
-      saved.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setOrders(saved);
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await listMyOrders();
+      if (cancelled) return;
+      if (error) {
+        toast.error(error.message || "Couldn't load your orders");
+        setOrders([]);
+      } else {
+        setOrders(data ?? []);
+      }
       setLoading(false);
-    }, 600);
-    return () => clearTimeout(t);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [authLoading, loggedIn, navigate]);
 
   const formatNaira = (n) => `₦${(n ?? 0).toLocaleString("en-NG")}`;

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -17,6 +18,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
+import { countMyOrders } from "../lib/ordersApi";
 
 export default function ProfileMain() {
   const navigate = useNavigate();
@@ -27,10 +29,18 @@ export default function ProfileMain() {
   const fullName = user?.user_metadata?.full_name || "Guest user";
   const email = user?.email || "—";
   const tribeId = user?.id?.slice(0, 8).toUpperCase() || "NG12345";
-  const orderCount = (
-    JSON.parse(localStorage.getItem("orders")) || []
-  ).length;
   const totalCartItems = cart.reduce((s, i) => s + i.quantity, 0);
+
+  const [orderCount, setOrderCount] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    countMyOrders().then(({ count }) => {
+      if (!cancelled) setOrderCount(count ?? 0);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const logout = async () => {
     const { error } = await signOut();

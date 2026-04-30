@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiClock, FiArrowRight } from "react-icons/fi";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import { listMyOrders } from "../lib/ordersApi";
 
 const statusStyle = {
   Pending: { bg: "bg-amber-50", text: "text-amber-700", icon: "⏳" },
@@ -16,9 +17,14 @@ export default function ProfileOrders() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("orders")) || [];
-    saved.sort((a, b) => new Date(b.date) - new Date(a.date));
-    setOrders(saved.slice(0, 3));
+    let cancelled = false;
+    (async () => {
+      const { data } = await listMyOrders({ limit: 3 });
+      if (!cancelled) setOrders(data ?? []);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const formatNaira = (n) => `₦${(n ?? 0).toLocaleString("en-NG")}`;
