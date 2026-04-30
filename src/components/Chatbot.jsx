@@ -10,26 +10,50 @@ import {
 
 const HIDE_ON_PATHS = ["/cartpage", "/checkoutpage", "/logiformpage", "/admin"];
 
-// Generates a pleasant two-tone "ding" using Web Audio API. No audio file needed.
-// Silently fails if the browser blocks audio (e.g. before user gesture).
+// Plays a two-tone "ding" via Web Audio API. No audio file needed.
+// If the browser blocks autoplay (no user gesture yet), the sound is deferred
+// until the next click/touch — so it still plays on deployed sites where the
+// user hasn't interacted yet.
+function emitDing(ctx) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(880, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
+  gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.4);
+  osc.onended = () => ctx.close();
+}
+
 function playNotificationSound() {
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return;
     const ctx = new Ctx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.4);
-    osc.onended = () => ctx.close();
+    if (ctx.state === "suspended") {
+      // Autoplay blocked — wait for the next user gesture, then play.
+      const resumeAndPlay = async () => {
+        try {
+          await ctx.resume();
+          emitDing(ctx);
+        } catch {
+          ctx.close();
+        }
+        window.removeEventListener("pointerdown", resumeAndPlay);
+        window.removeEventListener("touchstart", resumeAndPlay);
+        window.removeEventListener("keydown", resumeAndPlay);
+      };
+      window.addEventListener("pointerdown", resumeAndPlay, { once: true });
+      window.addEventListener("touchstart", resumeAndPlay, { once: true });
+      window.addEventListener("keydown", resumeAndPlay, { once: true });
+      return;
+    }
+    emitDing(ctx);
   } catch {
     /* audio unavailable — silently skip */
   }
@@ -48,6 +72,10 @@ export default function Chatbot() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([greeting]);
   const [isTyping, setIsTyping] = useState(false);
+  // One-time intro ping: triggers 3s after the user lands on the home page,
+  // shows the "1" badge and plays a soft chime. Never re-fires after that.
+  const [showBadge, setShowBadge] = useState(false);
+  const hasPinged = useRef(false);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -63,12 +91,16 @@ export default function Chatbot() {
     if (open) setTimeout(() => inputRef.current?.focus(), 200);
   }, [open]);
 
-  // On every page navigation, ping the user — sound + badge re-animation.
-  // 3-second delay so the page settles first.
-  // (First load is silent because browsers block audio before any user gesture.)
+  // One-time ping: only on the home page, only once per session.
   useEffect(() => {
-    if (HIDE_ON_PATHS.some((p) => pathname.startsWith(p))) return;
-    const t = setTimeout(() => playNotificationSound(), 3000);
+    if (hasPinged.current) return;
+    if (pathname !== "/") return;
+    const t = setTimeout(() => {
+      if (hasPinged.current) return;
+      hasPinged.current = true;
+      setShowBadge(true);
+      playNotificationSound();
+    }, 3000);
     return () => clearTimeout(t);
   }, [pathname]);
 
@@ -124,16 +156,20 @@ export default function Chatbot() {
           >
             <FiMessageCircle className="text-2xl" />
 
-            {/* "1" notification badge — appears 3s after each page load */}
-            <motion.span
-              key={pathname}
-              initial={{ scale: 0, rotate: -20 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 16, delay: 3 }}
-              className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-white text-brand text-[11px] font-bold rounded-full flex items-center justify-center shadow-card border-2 border-brand"
-            >
-              1
-            </motion.span>
+            {/* "1" notification badge — appears once, 3s after home loads */}
+            <AnimatePresence>
+              {showBadge && (
+                <motion.span
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  exit={{ scale: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 16 }}
+                  className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-white text-brand text-[11px] font-bold rounded-full flex items-center justify-center shadow-card border-2 border-brand"
+                >
+                  1
+                </motion.span>
+              )}
+            </AnimatePresence>
 
             {/* Pulsing ring */}
             <motion.span
