@@ -12,6 +12,7 @@ import {
   HiOutlineShoppingBag,
   HiOutlineHeart,
   HiOutlineChevronRight,
+  HiOutlineCalendarDays,
 } from "react-icons/hi2";
 import { FaStar } from "react-icons/fa6";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { countMyOrders } from "../lib/ordersApi";
+import { countMyReservations } from "../lib/reservationsApi";
 
 export default function ProfileMain() {
   const navigate = useNavigate();
@@ -32,10 +34,14 @@ export default function ProfileMain() {
   const totalCartItems = cart.reduce((s, i) => s + i.quantity, 0);
 
   const [orderCount, setOrderCount] = useState(0);
+  const [bookingCount, setBookingCount] = useState(0);
   useEffect(() => {
     let cancelled = false;
     countMyOrders().then(({ count }) => {
       if (!cancelled) setOrderCount(count ?? 0);
+    });
+    countMyReservations().then(({ count }) => {
+      if (!cancelled) setBookingCount(count ?? 0);
     });
     return () => {
       cancelled = true;
@@ -71,6 +77,11 @@ export default function ProfileMain() {
       label: "Profile details",
       Icon: HiOutlineUser,
       action: () => navigate("/profile/details"),
+    },
+    {
+      label: "My bookings",
+      Icon: HiOutlineCalendarDays,
+      action: () => navigate("/bookings"),
     },
     {
       label: "Login & security",
@@ -133,12 +144,18 @@ export default function ProfileMain() {
         transition={{ delay: 0.05 }}
         className="px-4 mb-6"
       >
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <StatCard
             Icon={HiOutlineShoppingBag}
             label="Orders"
             value={orderCount}
             onClick={() => navigate("/orders")}
+          />
+          <StatCard
+            Icon={HiOutlineCalendarDays}
+            label="Bookings"
+            value={bookingCount}
+            onClick={() => navigate("/bookings")}
           />
           <StatCard
             Icon={HiOutlineHeart}

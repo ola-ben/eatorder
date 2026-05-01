@@ -7,6 +7,7 @@ import { FiClock } from "react-icons/fi";
 import { TbMotorbike } from "react-icons/tb";
 import { Pizza } from "./Pizza";
 import TopNav from "./TopNav";
+import BookingModal from "./BookingModal";
 import { useCart } from "../context/CartContext";
 
 const restaurantsData = {
@@ -388,6 +389,7 @@ export function RestaurantMenu() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -555,8 +557,25 @@ export function RestaurantMenu() {
                 <span>📍 {restaurant.distance} km</span>
               </div>
             </div>
+
+            {/* Action row — Book a table */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              whileHover={{ y: -1 }}
+              onClick={() => setBookingOpen(true)}
+              className="mt-4 lg:mt-0 lg:ml-auto w-full lg:w-auto bg-ink hover:bg-ink/90 text-white h-11 px-5 rounded-full text-sm font-semibold flex items-center justify-center gap-2 transition-colors shrink-0"
+            >
+              📅 Book a table
+            </motion.button>
           </div>
         </div>
+
+        <BookingModal
+          open={bookingOpen}
+          onClose={() => setBookingOpen(false)}
+          restaurant={restaurant}
+          onBooked={() => navigate("/bookings")}
+        />
 
         {/* Search inline (when open) */}
         <AnimatePresence>

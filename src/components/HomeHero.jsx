@@ -96,8 +96,24 @@ export default function HomeHero() {
           {name ? `, ${name}` : ""} 👋
         </h1>
         <p className="text-sm lg:text-base text-ink-soft mt-0.5 lg:mt-2">
-          What would you like to eat today?
+          Order delicious food or book a table at any restaurant.
         </p>
+
+        {/* Two-action hint pills */}
+        <div className="flex flex-wrap gap-2 mt-3">
+          <button
+            onClick={() => navigate("/restaurants")}
+            className="flex items-center gap-1.5 bg-brand-soft text-brand text-xs font-semibold px-3 h-7 rounded-full hover:bg-brand hover:text-white transition-colors"
+          >
+            🍽️ Order food
+          </button>
+          <button
+            onClick={() => navigate("/restaurants")}
+            className="flex items-center gap-1.5 bg-ink/5 text-ink text-xs font-semibold px-3 h-7 rounded-full hover:bg-ink hover:text-white transition-colors"
+          >
+            📅 Book a table
+          </button>
+        </div>
       </div>
 
       {/* Mobile-only search (TopNav has search on desktop) */}
@@ -115,26 +131,29 @@ export default function HomeHero() {
 
       {/* Categories + promo split on desktop */}
       <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
-        {/* Category chips */}
+        {/* Category chips — auto-scrolling marquee. Pauses on hover/focus. */}
         <div className="lg:col-span-7 lg:order-2">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 lg:px-0 pb-2 lg:pb-0 lg:flex-wrap">
-            {categories.map(({ id, label, Icon }) => {
-              const active = activeCat === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => setActiveCat(id)}
-                  className={`flex items-center gap-2 px-4 h-10 lg:h-11 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
-                    active
-                      ? "bg-brand text-white border-brand shadow-card"
-                      : "bg-white text-ink border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <Icon className="text-base" />
-                  {label}
-                </button>
-              );
-            })}
+          <div className="marquee-pause-on-hover overflow-hidden mask-fade-x px-4 lg:px-0 pb-2 lg:pb-0">
+            <div className="marquee-track flex gap-2">
+              {[...categories, ...categories].map(({ id, label, Icon }, i) => {
+                const active = activeCat === id;
+                return (
+                  <button
+                    key={`${id}-${i}`}
+                    onClick={() => setActiveCat(id)}
+                    aria-pressed={active}
+                    className={`flex items-center gap-2 px-4 h-10 lg:h-11 rounded-full text-sm font-medium whitespace-nowrap border transition-colors ${
+                      active
+                        ? "bg-brand text-white border-brand shadow-card"
+                        : "bg-white text-ink border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className="text-base" />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

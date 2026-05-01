@@ -84,3 +84,45 @@ body {
 .pb-safe-nav {
   padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
+
+/* Continuous marquee — content slides smoothly. Pause on hover for accessibility. */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee-x 35s linear infinite;
+  width: max-content;
+}
+/* Pause only while the cursor is over the marquee.
+   Click → action fires → cursor leaves → animation resumes. */
+.marquee-pause-on-hover:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Soft fade at horizontal edges — used on the marquee container. */
+.mask-fade-x {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 24px,
+    black calc(100% - 24px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 24px,
+    black calc(100% - 24px),
+    transparent 100%
+  );
+}

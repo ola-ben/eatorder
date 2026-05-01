@@ -95,6 +95,7 @@ export default function Checkoutpage() {
     }
 
     clearCart();
+    setNote(""); // order-specific — don't carry over to next checkout
     toast.success(`Order ${order.id} placed!`);
     navigate("/successpage", { state: { order } });
   };

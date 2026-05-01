@@ -26,6 +26,7 @@ const Successpage = lazy(() => import("./pages/Successpage"));
 const Loginformpage = lazy(() => import("./pages/Loginformpage"));
 const Favourites = lazy(() => import("./pages/Favourites"));
 const OrdersPage = lazy(() => import("./pages/OrdersPage"));
+const Bookings = lazy(() => import("./pages/Bookings"));
 
 // Profile cluster — all loaded together when the user enters /profile/*
 const Profile = lazy(() => import("./pages/Profile"));
@@ -41,6 +42,7 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminRestaurants = lazy(() => import("./pages/admin/AdminRestaurants"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminReservations = lazy(() => import("./pages/admin/AdminReservations"));
 const RequireAdmin = lazy(() => import("./pages/admin/RequireAdmin"));
 
 export default function App() {
@@ -94,6 +96,7 @@ function AnimatedRoutes() {
             <Route path="/profile/faqs" element={<FAQs />} />
 
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/bookings" element={<Bookings />} />
 
             {/* Admin */}
             <Route
@@ -106,6 +109,7 @@ function AnimatedRoutes() {
             >
               <Route index element={<AdminDashboard />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="reservations" element={<AdminReservations />} />
               <Route path="restaurants" element={<AdminRestaurants />} />
               <Route path="users" element={<AdminUsers />} />
             </Route>

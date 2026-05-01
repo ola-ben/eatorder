@@ -139,6 +139,10 @@ function LoginForm({ setPage }) {
     toast.success(
       `Welcome back${fullName ? `, ${fullName.split(" ")[0]}` : ""}! 👋`,
     );
+    // Clear inputs so they don't linger if the user comes back.
+    setEmail("");
+    setPassword("");
+    setShowPassword(false);
     setIsLoading(false);
     setTimeout(() => navigate("/"), 350);
   };
@@ -290,6 +294,9 @@ function SignUpForm({ setPage }) {
         ? `Welcome, ${fullName.split(" ")[0]}! Check your email to confirm.`
         : `Welcome, ${fullName.split(" ")[0]}! 🎉`,
     );
+    // Reset the form so it's clean if the user returns.
+    setForm({ fullName: "", email: "", password: "", confirm: "" });
+    setShowPassword(false);
     setIsLoading(false);
     setTimeout(() => navigate(needsConfirmation ? "/logiformpage" : "/"), 500);
   };

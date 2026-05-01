@@ -6,6 +6,7 @@ import healthRoutes from "./health.js";
 import adminOrders from "./admin/orders.js";
 import adminRestaurants from "./admin/restaurants.js";
 import adminUsers from "./admin/users.js";
+import adminReservations from "./admin/reservations.js";
 
 const router = Router();
 
@@ -29,5 +30,6 @@ const adminGate = [authenticate, requireAdmin];
 router.use("/admin/orders", adminGate, adminOrders);
 router.use("/admin/restaurants", adminGate, adminRestaurants);
 router.use("/admin/users", adminGate, adminUsers);
+router.use("/admin/reservations", adminGate, adminReservations);
 
 export default router;

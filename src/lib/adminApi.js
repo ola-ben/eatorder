@@ -58,4 +58,14 @@ export const adminApi = {
       method: "PATCH",
       body: { role },
     }),
+  listReservations: (status) =>
+    request(
+      `/admin/reservations${status ? `?status=${encodeURIComponent(status)}` : ""}`,
+    ),
+  getReservation: (id) => request(`/admin/reservations/${id}`),
+  updateReservationStatus: (id, status) =>
+    request(`/admin/reservations/${id}/status`, {
+      method: "PATCH",
+      body: { status },
+    }),
 };

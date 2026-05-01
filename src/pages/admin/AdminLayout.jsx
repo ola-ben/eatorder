@@ -6,6 +6,7 @@ import {
   HiOutlineBuildingStorefront,
   HiOutlineUsers,
   HiOutlineArrowLeftOnRectangle,
+  HiOutlineCalendarDays,
 } from "react-icons/hi2";
 import { FiArrowLeft } from "react-icons/fi";
 import { useAuth } from "../../hooks/useAuth";
@@ -13,6 +14,11 @@ import { useAuth } from "../../hooks/useAuth";
 const navItems = [
   { to: "/admin", label: "Dashboard", Icon: HiOutlineSquares2X2, end: true },
   { to: "/admin/orders", label: "Orders", Icon: HiOutlineShoppingBag },
+  {
+    to: "/admin/reservations",
+    label: "Bookings",
+    Icon: HiOutlineCalendarDays,
+  },
   {
     to: "/admin/restaurants",
     label: "Restaurants",
@@ -109,7 +115,7 @@ export default function AdminLayout() {
       </div>
 
       {/* Mobile bottom tab bar for admin */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-100 grid grid-cols-4">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-100 grid grid-cols-5">
         {navItems.map(({ to, label, Icon, end }) => (
           <NavLink
             key={to}
