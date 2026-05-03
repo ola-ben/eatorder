@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { adminApi } from "../../lib/adminApi";
+import { AdminTableRowSkeleton } from "../../components/skeletons/Skeleton";
 
 const STATUSES = ["all", "Pending", "Confirmed", "Completed", "Cancelled"];
 
@@ -27,36 +29,23 @@ function formatTime(t) {
 }
 
 export default function AdminReservations() {
-  const [reservations, setReservations] = useState([]);
+  const queryClient = useQueryClient();
   const [filter, setFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const load = async (status) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await adminApi.listReservations(
-        status === "all" ? undefined : status,
-      );
-      setReservations(data.reservations ?? []);
-    } catch (e) {
-      setError(e.message);
-      setReservations([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, isPending, isFetching, error } = useQuery({
+    queryKey: ["admin", "reservations", filter],
+    queryFn: () =>
+      adminApi.listReservations(filter === "all" ? undefined : filter),
+  });
 
-  useEffect(() => {
-    load(filter);
-  }, [filter]);
+  const reservations = data?.reservations ?? [];
 
   const updateStatus = async (id, status) => {
     try {
       await adminApi.updateReservationStatus(id, status);
       toast.success(`Reservation ${id} → ${status}`);
-      load(filter);
+      queryClient.invalidateQueries({ queryKey: ["admin", "reservations"] });
+      queryClient.invalidateQueries({ queryKey: ["reservations"] });
     } catch (e) {
       toast.error(e.message);
     }
@@ -65,7 +54,14 @@ export default function AdminReservations() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-ink">Reservations</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-ink flex items-center gap-2">
+          Reservations
+          {isFetching && !isPending && (
+            <span className="text-xs text-ink-soft font-medium animate-pulse">
+              updating…
+            </span>
+          )}
+        </h1>
         <p className="text-sm text-ink-soft mt-1">
           Review table bookings and update their status.
         </p>
@@ -89,14 +85,31 @@ export default function AdminReservations() {
 
       {error && (
         <div className="mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl px-4 py-3 text-sm">
-          {error}
+          {error.message || String(error)}
         </div>
       )}
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-ink-soft text-sm">
-            Loading reservations…
+        {isPending ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-ink-soft text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="text-left p-4">Booking</th>
+                  <th className="text-left p-4">Restaurant</th>
+                  <th className="text-left p-4">Customer</th>
+                  <th className="text-left p-4">Date · Time</th>
+                  <th className="text-left p-4">Guests</th>
+                  <th className="text-left p-4">Status</th>
+                  <th className="text-right p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <AdminTableRowSkeleton key={i} cols={7} />
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : reservations.length === 0 ? (
           <div className="p-8 text-center text-ink-soft text-sm">

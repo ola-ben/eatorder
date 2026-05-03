@@ -1,36 +1,25 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaStar } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { adminApi } from "../../lib/adminApi";
+import { AdminCardSkeleton } from "../../components/skeletons/Skeleton";
 
 export default function AdminRestaurants() {
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
-  const load = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await adminApi.listRestaurants();
-      setRestaurants(data.restaurants ?? []);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, isPending, isFetching, error } = useQuery({
+    queryKey: ["admin", "restaurants"],
+    queryFn: () => adminApi.listRestaurants(),
+  });
 
-  useEffect(() => {
-    load();
-  }, []);
+  const restaurants = data?.restaurants ?? [];
 
   const toggle = async (id) => {
     try {
       await adminApi.toggleRestaurantOpen(id);
       toast.success("Updated");
-      load();
+      queryClient.invalidateQueries({ queryKey: ["admin", "restaurants"] });
     } catch (e) {
       toast.error(e.message);
     }
@@ -39,7 +28,14 @@ export default function AdminRestaurants() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-ink">Restaurants</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-ink flex items-center gap-2">
+          Restaurants
+          {isFetching && !isPending && (
+            <span className="text-xs text-ink-soft font-medium animate-pulse">
+              updating…
+            </span>
+          )}
+        </h1>
         <p className="text-sm text-ink-soft mt-1">
           Manage restaurants — toggle open/closed status. CRUD endpoints are
           stubbed in the backend; extend the controller when you add a{" "}
@@ -49,15 +45,17 @@ export default function AdminRestaurants() {
 
       {error && (
         <div className="mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl px-4 py-3 text-sm">
-          {error}
+          {error.message || String(error)}
         </div>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {loading ? (
-          <div className="col-span-full p-8 text-center text-ink-soft text-sm bg-white rounded-2xl shadow-card">
-            Loading…
-          </div>
+        {isPending ? (
+          <>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <AdminCardSkeleton key={i} />
+            ))}
+          </>
         ) : restaurants.length === 0 ? (
           <div className="col-span-full p-8 text-center text-ink-soft text-sm bg-white rounded-2xl shadow-card">
             No restaurants found.

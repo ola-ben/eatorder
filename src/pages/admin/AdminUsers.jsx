@@ -1,35 +1,24 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { adminApi } from "../../lib/adminApi";
+import { AdminTableRowSkeleton } from "../../components/skeletons/Skeleton";
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
-  const load = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await adminApi.listUsers();
-      setUsers(data.users ?? []);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, isPending, isFetching, error } = useQuery({
+    queryKey: ["admin", "users"],
+    queryFn: () => adminApi.listUsers(),
+  });
 
-  useEffect(() => {
-    load();
-  }, []);
+  const users = data?.users ?? [];
 
   const setRole = async (id, role) => {
     try {
       await adminApi.setUserRole(id, role);
       toast.success(`Role updated to ${role}`);
-      load();
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
     } catch (e) {
       toast.error(e.message);
     }
@@ -38,7 +27,14 @@ export default function AdminUsers() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-ink">Users</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-ink flex items-center gap-2">
+          Users
+          {isFetching && !isPending && (
+            <span className="text-xs text-ink-soft font-medium animate-pulse">
+              updating…
+            </span>
+          )}
+        </h1>
         <p className="text-sm text-ink-soft mt-1">
           Supabase auth users. Promote to admin or demote to customer.
         </p>
@@ -46,13 +42,31 @@ export default function AdminUsers() {
 
       {error && (
         <div className="mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl px-4 py-3 text-sm">
-          {error}
+          {error.message || String(error)}
         </div>
       )}
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-ink-soft text-sm">Loading users…</div>
+        {isPending ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-ink-soft text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="text-left p-4">Name</th>
+                  <th className="text-left p-4">Email</th>
+                  <th className="text-left p-4">Role</th>
+                  <th className="text-left p-4">Joined</th>
+                  <th className="text-left p-4">Last sign-in</th>
+                  <th className="text-right p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <AdminTableRowSkeleton key={i} cols={6} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : users.length === 0 ? (
           <div className="p-8 text-center text-ink-soft text-sm">
             No users found.

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import {
   FiArrowLeft,
   FiClock,
@@ -22,6 +23,7 @@ import { useCart } from "../context/CartContext";
 import BottomNav from "../components/BottomNav";
 import TopNav from "../components/TopNav";
 import { listMyOrders } from "../lib/ordersApi";
+import { OrderCardSkeleton, StatCardSkeleton } from "../components/skeletons/Skeleton";
 
 const STATUS_FILTERS = ["all", "processing", "delivered", "pending"];
 
@@ -34,40 +36,43 @@ const statusStyle = {
 
 export default function OrdersPage() {
   const navigate = useNavigate();
-  const { loggedIn, loading: authLoading } = useAuth();
+  const { loggedIn, loading: authLoading, user } = useAuth();
   const { addToCart } = useCart();
-  const [orders, setOrders] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
   const [filter, setFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!loggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view your orders");
       navigate("/logiformpage");
-      return;
     }
-    let cancelled = false;
-    (async () => {
-      const { data, error } = await listMyOrders();
-      if (cancelled) return;
-      if (error) {
-        toast.error(error.message || "Couldn't load your orders");
-        setOrders([]);
-      } else {
-        setOrders(data ?? []);
-      }
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
   }, [authLoading, loggedIn, navigate]);
+
+  const {
+    data: orders = [],
+    isPending,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ["orders", "mine", user?.id],
+    queryFn: async () => {
+      const { data, error } = await listMyOrders();
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !authLoading && loggedIn,
+  });
+
+  useEffect(() => {
+    if (error) toast.error(error.message || "Couldn't load your orders");
+  }, [error]);
+
+  // Show skeleton only on first load (no cached data yet).
+  const showSkeleton = isPending;
 
   const formatNaira = (n) => `₦${(n ?? 0).toLocaleString("en-NG")}`;
 
@@ -117,18 +122,6 @@ export default function OrdersPage() {
     toast("Rating feature coming soon ⭐", { icon: "✨" });
   };
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-canvas flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-          className="w-10 h-10 border-3 border-brand border-t-transparent rounded-full"
-        />
-      </main>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-canvas pb-safe-nav lg:pb-12">
       <TopNav />
@@ -148,15 +141,37 @@ export default function OrdersPage() {
 
         {/* Desktop heading */}
         <div className="hidden lg:block mb-6">
-          <h1 className="text-3xl font-bold text-ink">My orders</h1>
+          <h1 className="text-3xl font-bold text-ink flex items-center gap-2">
+            My orders
+            {isFetching && !showSkeleton && (
+              <span className="text-xs text-ink-soft font-medium animate-pulse">
+                updating…
+              </span>
+            )}
+          </h1>
           <p className="text-sm text-ink-soft mt-1">
-            {orders.length === 0
-              ? "No orders yet"
-              : `${orders.length} order${orders.length === 1 ? "" : "s"} placed`}
+            {showSkeleton
+              ? "Loading…"
+              : orders.length === 0
+                ? "No orders yet"
+                : `${orders.length} order${orders.length === 1 ? "" : "s"} placed`}
           </p>
         </div>
 
-        {orders.length === 0 ? (
+        {showSkeleton ? (
+          <div className="px-4 lg:px-0 pt-4 lg:pt-0 pb-8 space-y-3">
+            <div className="grid grid-cols-3 gap-3 mb-2">
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <OrderCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        ) : orders.length === 0 ? (
           <EmptyState onClick={() => navigate("/")} />
         ) : (
           <>

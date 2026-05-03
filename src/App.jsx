@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
@@ -8,6 +9,7 @@ import { FavoritesProvider } from "./context/FavoritesContext";
 import AnimatedToaster from "./components/AnimatedToaster";
 import Chatbot from "./components/Chatbot";
 import PageLoader from "./components/PageLoader";
+import { queryClient, persister } from "./lib/queryClient";
 
 // Eager: the most-visited route. Loads with the initial bundle so users
 // landing on "/" see the home page without a Suspense flash.
@@ -47,17 +49,22 @@ const RequireAdmin = lazy(() => import("./pages/admin/RequireAdmin"));
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <FavoritesProvider>
-          <BrowserRouter>
-            <AnimatedToaster />
-            <AnimatedRoutes />
-            <Chatbot />
-          </BrowserRouter>
-        </FavoritesProvider>
-      </CartProvider>
-    </AuthProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister, maxAge: 24 * 60 * 60 * 1000 }}
+    >
+      <AuthProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <BrowserRouter>
+              <AnimatedToaster />
+              <AnimatedRoutes />
+              <Chatbot />
+            </BrowserRouter>
+          </FavoritesProvider>
+        </CartProvider>
+      </AuthProvider>
+    </PersistQueryClientProvider>
   );
 }
 

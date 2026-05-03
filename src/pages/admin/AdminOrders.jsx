@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { adminApi } from "../../lib/adminApi";
+import { AdminTableRowSkeleton } from "../../components/skeletons/Skeleton";
 
 const STATUSES = ["all", "Pending", "Processing", "Delivered", "Cancelled"];
 
@@ -13,34 +15,29 @@ const statusStyle = {
 };
 
 export default function AdminOrders() {
-  const [orders, setOrders] = useState([]);
+  const queryClient = useQueryClient();
   const [filter, setFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const load = async (status) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await adminApi.listOrders(status === "all" ? undefined : status);
-      setOrders(data.orders ?? []);
-    } catch (e) {
-      setError(e.message);
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data,
+    isPending,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ["admin", "orders", filter],
+    queryFn: () =>
+      adminApi.listOrders(filter === "all" ? undefined : filter),
+  });
 
-  useEffect(() => {
-    load(filter);
-  }, [filter]);
+  const orders = data?.orders ?? [];
 
   const updateStatus = async (id, status) => {
     try {
       await adminApi.updateOrderStatus(id, status);
       toast.success(`Order ${id} → ${status}`);
-      load(filter);
+      // Invalidate so all admin order views (and customer's own) refresh.
+      queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     } catch (e) {
       toast.error(e.message);
     }
@@ -51,7 +48,14 @@ export default function AdminOrders() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-ink">Orders</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-ink flex items-center gap-2">
+          Orders
+          {isFetching && !isPending && (
+            <span className="text-xs text-ink-soft font-medium animate-pulse">
+              updating…
+            </span>
+          )}
+        </h1>
         <p className="text-sm text-ink-soft mt-1">
           Review and update order status.
         </p>
@@ -75,13 +79,32 @@ export default function AdminOrders() {
 
       {error && (
         <div className="mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl px-4 py-3 text-sm">
-          {error}
+          {error.message || String(error)}
         </div>
       )}
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-ink-soft text-sm">Loading orders…</div>
+        {isPending ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-ink-soft text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="text-left p-4">Order</th>
+                  <th className="text-left p-4">Customer</th>
+                  <th className="text-left p-4">Items</th>
+                  <th className="text-left p-4">Total</th>
+                  <th className="text-left p-4">Status</th>
+                  <th className="text-left p-4">Time</th>
+                  <th className="text-right p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <AdminTableRowSkeleton key={i} cols={7} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : orders.length === 0 ? (
           <div className="p-8 text-center text-ink-soft text-sm">
             No orders found.

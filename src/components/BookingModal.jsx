@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   FiX,
   FiCalendar,
@@ -38,6 +39,7 @@ function tomorrowISO() {
 
 export default function BookingModal({ open, onClose, restaurant, onBooked }) {
   const { user, loggedIn, fullName: authFullName } = useAuth();
+  const queryClient = useQueryClient();
 
   const [date, setDate] = useState(tomorrowISO());
   const [time, setTime] = useState("19:00");
@@ -105,6 +107,9 @@ export default function BookingModal({ open, onClose, restaurant, onBooked }) {
     localStorage.setItem("fullName", fullName);
     localStorage.setItem("phone", phone);
     if (email) localStorage.setItem("email", email);
+
+    // Invalidate cached reservations so /bookings + profile show the new one.
+    queryClient.invalidateQueries({ queryKey: ["reservations"] });
 
     toast.success(`Booked! ${data.id} · ${date} at ${time}`);
     setSubmitting(false);

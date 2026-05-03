@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { FiClock, FiArrowRight } from "react-icons/fi";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { listMyOrders } from "../lib/ordersApi";
+import { useAuth } from "../hooks/useAuth";
+import { OrderCardSkeleton } from "../components/skeletons/Skeleton";
 
 const statusStyle = {
   Pending: { bg: "bg-amber-50", text: "text-amber-700", icon: "⏳" },
@@ -14,20 +16,29 @@ const statusStyle = {
 
 export default function ProfileOrders() {
   const navigate = useNavigate();
-  const [orders, setOrders] = useState([]);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const { data } = await listMyOrders({ limit: 3 });
-      if (!cancelled) setOrders(data ?? []);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: orders = [], isPending } = useQuery({
+    queryKey: ["orders", "mine", user?.id, "recent3"],
+    queryFn: async () => {
+      const { data, error } = await listMyOrders({ limit: 3 });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
 
   const formatNaira = (n) => `₦${(n ?? 0).toLocaleString("en-NG")}`;
+
+  if (isPending) {
+    return (
+      <div className="px-4 lg:px-0 pt-2 pb-8 space-y-3">
+        <OrderCardSkeleton />
+        <OrderCardSkeleton />
+        <OrderCardSkeleton />
+      </div>
+    );
+  }
 
   if (orders.length === 0) {
     return (

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useQueries } from "@tanstack/react-query";
 import {
   HiOutlineShoppingBag,
   HiOutlineCurrencyDollar,
@@ -7,6 +7,7 @@ import {
   HiOutlineBuildingStorefront,
 } from "react-icons/hi2";
 import { adminApi } from "../../lib/adminApi";
+import { StatCardSkeleton } from "../../components/skeletons/Skeleton";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,48 +23,44 @@ const cardVariants = {
 };
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    orders: "—",
-    revenue: "—",
-    users: "—",
-    restaurants: "—",
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["admin", "orders"],
+        queryFn: () => adminApi.listOrders(),
+      },
+      {
+        queryKey: ["admin", "users"],
+        queryFn: () => adminApi.listUsers(),
+      },
+      {
+        queryKey: ["admin", "restaurants"],
+        queryFn: () => adminApi.listRestaurants(),
+      },
+      {
+        queryKey: ["admin", "reservations"],
+        queryFn: () => adminApi.listReservations(),
+      },
+    ],
   });
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let mounted = true;
-    Promise.allSettled([
-      adminApi.listOrders(),
-      adminApi.listUsers(),
-      adminApi.listRestaurants(),
-    ]).then(([orders, users, restaurants]) => {
-      if (!mounted) return;
-      const ordersData = orders.status === "fulfilled" ? orders.value : null;
-      const usersData = users.status === "fulfilled" ? users.value : null;
-      const restaurantsData =
-        restaurants.status === "fulfilled" ? restaurants.value : null;
+  const [orders, users, restaurants, reservations] = results;
+  const isPending = results.some((r) => r.isPending);
+  const error =
+    results.find((r) => r.error)?.error?.message || null;
 
-      const totalRevenue =
-        ordersData?.orders?.reduce((sum, o) => sum + (o.total || 0), 0) ?? 0;
+  const totalRevenue =
+    orders.data?.orders?.reduce((sum, o) => sum + (o.total || 0), 0) ?? 0;
 
-      setStats({
-        orders: ordersData?.total ?? "—",
-        revenue: totalRevenue ? `₦${totalRevenue.toLocaleString("en-NG")}` : "—",
-        users: usersData?.total ?? "—",
-        restaurants: restaurantsData?.total ?? "—",
-      });
-
-      const firstError = [orders, users, restaurants].find(
-        (r) => r.status === "rejected",
-      );
-      if (firstError) {
-        setError(firstError.reason?.message || "Could not reach the API.");
-      }
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const stats = {
+    orders: orders.data?.total ?? "—",
+    revenue: totalRevenue
+      ? `₦${totalRevenue.toLocaleString("en-NG")}`
+      : "—",
+    users: users.data?.total ?? "—",
+    restaurants: restaurants.data?.total ?? "—",
+    reservations: reservations.data?.total ?? "—",
+  };
 
   const cards = [
     {
@@ -108,34 +105,43 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
-      >
-        {cards.map(({ label, value, Icon, tint }) => (
-          <motion.div
-            key={label}
-            variants={cardVariants}
-            className="bg-white rounded-2xl shadow-card p-5"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-ink-soft">
-                  {label}
-                </p>
-                <p className="mt-2 text-2xl font-bold text-ink">{value}</p>
+      {isPending ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+      ) : (
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        >
+          {cards.map(({ label, value, Icon, tint }) => (
+            <motion.div
+              key={label}
+              variants={cardVariants}
+              className="bg-white rounded-2xl shadow-card p-5"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-ink-soft">
+                    {label}
+                  </p>
+                  <p className="mt-2 text-2xl font-bold text-ink">{value}</p>
+                </div>
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center ${tint}`}
+                >
+                  <Icon className="text-xl" />
+                </div>
               </div>
-              <div
-                className={`w-11 h-11 rounded-xl flex items-center justify-center ${tint}`}
-              >
-                <Icon className="text-xl" />
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
 
       <section className="mt-8 bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-semibold text-ink mb-2">Welcome to the admin panel</h2>

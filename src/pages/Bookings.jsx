@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   FiArrowLeft,
   FiCalendar,
@@ -14,6 +15,7 @@ import { useAuth } from "../hooks/useAuth";
 import { listMyReservations, cancelMyReservation } from "../lib/reservationsApi";
 import BottomNav from "../components/BottomNav";
 import TopNav from "../components/TopNav";
+import { BookingCardSkeleton, StatCardSkeleton } from "../components/skeletons/Skeleton";
 
 const STATUS_FILTERS = ["all", "pending", "confirmed", "completed", "cancelled"];
 
@@ -42,38 +44,41 @@ function formatTime(t) {
 
 export default function Bookings() {
   const navigate = useNavigate();
-  const { loggedIn, loading: authLoading } = useAuth();
-  const [bookings, setBookings] = useState([]);
+  const { loggedIn, loading: authLoading, user } = useAuth();
+  const queryClient = useQueryClient();
   const [filter, setFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!loggedIn) {
+    if (!authLoading && !loggedIn) {
       toast.error("Please login to view your bookings");
       navigate("/logiformpage");
-      return;
     }
-    let cancelled = false;
-    (async () => {
-      const { data, error } = await listMyReservations();
-      if (cancelled) return;
-      if (error) {
-        toast.error(error.message || "Couldn't load your bookings");
-        setBookings([]);
-      } else {
-        setBookings(data ?? []);
-      }
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
   }, [authLoading, loggedIn, navigate]);
+
+  const {
+    data: bookings = [],
+    isPending,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ["reservations", "mine", user?.id],
+    queryFn: async () => {
+      const { data, error } = await listMyReservations();
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !authLoading && loggedIn,
+  });
+
+  useEffect(() => {
+    if (error) toast.error(error.message || "Couldn't load your bookings");
+  }, [error]);
+
+  const showSkeleton = isPending;
 
   const filtered = useMemo(() => {
     if (filter === "all") return bookings;
@@ -102,21 +107,13 @@ export default function Bookings() {
       toast.error(error.message || "Could not cancel");
       return;
     }
-    setBookings((prev) => prev.map((b) => (b.id === id ? data : b)));
+    // Optimistically update the cache so the UI reflects the cancel instantly.
+    queryClient.setQueryData(
+      ["reservations", "mine", user?.id],
+      (prev) => (prev ?? []).map((b) => (b.id === id ? data : b)),
+    );
     toast.success("Booking cancelled");
   };
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-canvas flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-          className="w-10 h-10 border-3 border-brand border-t-transparent rounded-full"
-        />
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-canvas pb-safe-nav lg:pb-12">
@@ -137,15 +134,37 @@ export default function Bookings() {
 
         {/* Desktop heading */}
         <div className="hidden lg:block mb-6">
-          <h1 className="text-3xl font-bold text-ink">My bookings</h1>
+          <h1 className="text-3xl font-bold text-ink flex items-center gap-2">
+            My bookings
+            {isFetching && !showSkeleton && (
+              <span className="text-xs text-ink-soft font-medium animate-pulse">
+                updating…
+              </span>
+            )}
+          </h1>
           <p className="text-sm text-ink-soft mt-1">
-            {bookings.length === 0
-              ? "No bookings yet"
-              : `${bookings.length} booking${bookings.length === 1 ? "" : "s"} placed`}
+            {showSkeleton
+              ? "Loading…"
+              : bookings.length === 0
+                ? "No bookings yet"
+                : `${bookings.length} booking${bookings.length === 1 ? "" : "s"} placed`}
           </p>
         </div>
 
-        {bookings.length === 0 ? (
+        {showSkeleton ? (
+          <div className="px-4 lg:px-0 pt-4 lg:pt-0 pb-8 space-y-3">
+            <div className="grid grid-cols-3 gap-3 mb-2">
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <BookingCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        ) : bookings.length === 0 ? (
           <EmptyState onClick={() => navigate("/restaurants")} />
         ) : (
           <>

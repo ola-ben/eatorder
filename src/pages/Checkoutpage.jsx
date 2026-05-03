@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowLeft, FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
 import { HiOutlineMapPin } from "react-icons/hi2";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../hooks/useAuth";
 import TopNav from "../components/TopNav";
@@ -13,7 +14,8 @@ export default function Checkoutpage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { cart, clearCart } = useCart();
-  const { loggedIn } = useAuth();
+  const { loggedIn, user } = useAuth();
+  const queryClient = useQueryClient();
   const [isPlacing, setIsPlacing] = useState(false);
 
   const cartItems = location.state?.cart || cart;
@@ -96,6 +98,8 @@ export default function Checkoutpage() {
 
     clearCart();
     setNote(""); // order-specific — don't carry over to next checkout
+    // Invalidate cached orders so /orders + /profile show the new one immediately.
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
     toast.success(`Order ${order.id} placed!`);
     navigate("/successpage", { state: { order } });
   };

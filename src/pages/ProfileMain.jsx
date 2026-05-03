@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import {
   HiOutlineUser,
   HiOutlineLockClosed,
@@ -33,20 +33,23 @@ export default function ProfileMain() {
   const tribeId = user?.id?.slice(0, 8).toUpperCase() || "NG12345";
   const totalCartItems = cart.reduce((s, i) => s + i.quantity, 0);
 
-  const [orderCount, setOrderCount] = useState(0);
-  const [bookingCount, setBookingCount] = useState(0);
-  useEffect(() => {
-    let cancelled = false;
-    countMyOrders().then(({ count }) => {
-      if (!cancelled) setOrderCount(count ?? 0);
-    });
-    countMyReservations().then(({ count }) => {
-      if (!cancelled) setBookingCount(count ?? 0);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: orderCount = 0 } = useQuery({
+    queryKey: ["orders", "count", user?.id],
+    queryFn: async () => {
+      const { count } = await countMyOrders();
+      return count ?? 0;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: bookingCount = 0 } = useQuery({
+    queryKey: ["reservations", "count", user?.id],
+    queryFn: async () => {
+      const { count } = await countMyReservations();
+      return count ?? 0;
+    },
+    enabled: !!user?.id,
+  });
 
   const logout = async () => {
     const { error } = await signOut();
