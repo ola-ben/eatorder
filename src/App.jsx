@@ -9,6 +9,7 @@ import { FavoritesProvider } from "./context/FavoritesContext";
 import AnimatedToaster from "./components/AnimatedToaster";
 import Chatbot from "./components/Chatbot";
 import PageLoader from "./components/PageLoader";
+import PwaUpdatePrompt from "./components/PwaUpdatePrompt";
 import { queryClient, persister } from "./lib/queryClient";
 
 // Eager: the most-visited route. Loads with the initial bundle so users
@@ -58,6 +59,7 @@ export default function App() {
           <FavoritesProvider>
             <BrowserRouter>
               <AnimatedToaster />
+              <PwaUpdatePrompt />
               <AnimatedRoutes />
               <Chatbot />
             </BrowserRouter>

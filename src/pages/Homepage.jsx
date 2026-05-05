@@ -3,6 +3,7 @@ import HomeHero from "../components/HomeHero";
 import { FeaturedRestaurants } from "../components/FeaturedRestaurants";
 import BottomNav from "../components/BottomNav";
 import TopNav from "../components/TopNav";
+import InstallBanner from "../components/InstallBanner";
 
 export default function Homepage() {
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function Homepage() {
       <TopNav />
       <div className="bg-white lg:bg-transparent lg:max-w-7xl lg:mx-auto lg:px-6 lg:py-6 max-w-md mx-auto min-h-screen lg:min-h-0">
         <HomeHero />
+        <InstallBanner />
         <FeaturedRestaurants />
       </div>
       <BottomNav />
